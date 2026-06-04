@@ -12,9 +12,9 @@
         --text: #20242a;
         --muted: #737d8c;
         --line: #dde5ec;
-        --accent: #3b6ef6;
-        --accent-soft: #e8efff;
-        --violet: #7c5cff;
+        --accent: #171717;
+        --accent-soft: #f1f2f4;
+        --violet: #171717;
         --green: #20a779;
         --shadow: 0 22px 60px rgba(32, 44, 62, 0.11);
       }
@@ -71,11 +71,11 @@
         height: 46px;
         border: 0;
         border-radius: 14px;
-        background: #171717;
+        background: var(--accent);
         color: #fff;
         cursor: pointer;
         font-weight: 650;
-        box-shadow: 0 12px 26px rgba(23, 23, 23, 0.16);
+        box-shadow: 0 12px 26px rgba(23, 23, 23, 0.18);
       }
 
       .task-dialog {
@@ -143,7 +143,7 @@
       }
 
       .dialog-submit {
-        border: 1px solid rgba(59, 110, 246, 0.18);
+        border: 1px solid rgba(23, 23, 23, 0.18);
         background: var(--accent);
         color: #fff;
       }
@@ -162,7 +162,8 @@
       .primary-menu-button {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: flex-start;
+        gap: 10px;
         min-height: 40px;
         padding: 0 12px;
         border: 0;
@@ -178,6 +179,21 @@
       .primary-menu-button.active {
         background: rgba(255, 255, 255, 0.72);
         color: #20242a;
+      }
+
+      .primary-icon {
+        display: block;
+        flex: 0 0 18px;
+        width: 18px;
+        height: 18px;
+        margin: 0;
+      }
+
+      .primary-label {
+        display: inline-flex;
+        align-items: center;
+        min-width: 0;
+        line-height: 1;
       }
 
       .agent-nav {
@@ -199,6 +215,7 @@
         color: var(--muted);
         cursor: pointer;
         text-align: left;
+        text-decoration: none;
       }
 
       .nav-button {
@@ -284,6 +301,102 @@
         font-size: 12px;
       }
 
+
+
+      .agent-nav .nav-button {
+        min-height: 36px;
+        padding: 0 10px;
+        color: #6a7482;
+        font-size: 13px;
+        font-weight: 620;
+      }
+
+      .agent-nav .nav-icon {
+        width: 22px;
+        height: 22px;
+        border-radius: 7px;
+        background: transparent;
+        color: #6f7784;
+      }
+
+      .agent-nav .nav-button.active {
+        background: rgba(255, 255, 255, 0.56);
+        color: #303844;
+      }
+
+      .agent-nav .nav-button.active .nav-icon {
+        background: transparent;
+        color: var(--accent);
+      }
+
+
+      .app {
+        transition: grid-template-columns 180ms ease;
+      }
+
+      .app.sidebar-collapsed {
+        grid-template-columns: 78px minmax(0, 1fr);
+      }
+
+      .sidebar {
+        overflow: hidden;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .app.sidebar-collapsed .sidebar {
+        gap: 16px;
+        padding: 20px 12px;
+      }
+
+      .app.sidebar-collapsed .brand {
+        justify-content: center;
+        padding: 4px 0 8px;
+      }
+
+      .app.sidebar-collapsed .brand span,
+      .app.sidebar-collapsed .new-task span,
+      .app.sidebar-collapsed .primary-label,
+      .app.sidebar-collapsed .nav-label,
+      .app.sidebar-collapsed .task-name,
+      .app.sidebar-collapsed .section-title {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateX(-6px);
+        pointer-events: none;
+      }
+
+      .app.sidebar-collapsed .new-task,
+      .app.sidebar-collapsed .primary-menu-button,
+      .app.sidebar-collapsed .nav-button,
+      .app.sidebar-collapsed .task-item {
+        justify-content: center;
+        width: 46px;
+        padding: 0;
+      }
+
+      .app.sidebar-collapsed .primary-menu-button {
+        gap: 0;
+      }
+
+      .app.sidebar-collapsed .agent-nav {
+        margin-left: 0;
+        padding-left: 0;
+        border-left: 0;
+      }
+
+      .app.sidebar-collapsed .tasks {
+        display: none;
+      }
+
       main {
         display: flex;
         min-width: 0;
@@ -352,10 +465,10 @@
         min-height: 38px;
         max-width: min(100%, 520px);
         padding: 7px 12px;
-        border: 1px solid rgba(124, 92, 255, 0.17);
+        border: 1px solid rgba(23, 23, 23, 0.12);
         border-radius: 11px;
-        background: linear-gradient(180deg, #f1edff 0%, #e9e7ff 100%);
-        color: #654be0;
+        background: linear-gradient(180deg, #f4f5f6 0%, #eceff2 100%);
+        color: #303844;
         font-size: 15px;
         font-weight: 650;
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.74);
@@ -366,7 +479,7 @@
       .chip-label {
         flex: 0 0 auto;
         margin-right: 7px;
-        color: #8a78ea;
+        color: #747b86;
         font-size: 12px;
         font-weight: 650;
       }
@@ -421,9 +534,9 @@
       }
 
       .source-tab.active {
-        border-color: rgba(124, 92, 255, 0.25);
-        background: #f1edff;
-        color: #654be0;
+        border-color: rgba(23, 23, 23, 0.22);
+        background: var(--accent-soft);
+        color: #171717;
       }
 
       .run-button {
@@ -434,7 +547,7 @@
         height: 46px;
         border: 0;
         border-radius: 50%;
-        background: #b9caff;
+        background: #171717;
         color: #fff;
         cursor: pointer;
       }
@@ -483,7 +596,7 @@
 
       .quick-card:hover {
         transform: translateY(-2px);
-        border-color: rgba(124, 92, 255, 0.3);
+        border-color: rgba(23, 23, 23, 0.3);
         background: rgba(255, 255, 255, 0.92);
       }
 
@@ -554,18 +667,250 @@
           grid-template-columns: 1fr;
         }
       }
+
+      /* __SIDEBAR_OVERRIDE_START__ */
+
+      /* Unified sidebar lock: keep the left navigation identical on every page. */
+      .app {
+        display: grid !important;
+        grid-template-columns: 282px minmax(0, 1fr) !important;
+        min-height: 100vh !important;
+      }
+
+      .sidebar {
+        position: sticky !important;
+        top: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 22px !important;
+        width: 282px !important;
+        min-width: 282px !important;
+        max-width: 282px !important;
+        height: 100vh !important;
+        padding: 22px 16px !important;
+        border-right: 1px solid rgba(223, 216, 203, 0.78) !important;
+        background: rgba(244, 247, 249, 0.86) !important;
+        backdrop-filter: blur(18px) !important;
+        overflow: hidden !important;
+      }
+
+      .brand {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        gap: 8px !important;
+        padding: 6px 10px 10px !important;
+        color: var(--text) !important;
+        font-size: 22px !important;
+        font-weight: 840 !important;
+        line-height: 1.15 !important;
+        white-space: nowrap !important;
+      }
+
+      .new-task {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 8px !important;
+        width: 100% !important;
+        height: 46px !important;
+        min-height: 46px !important;
+        padding: 0 14px !important;
+        border: 0 !important;
+        border-radius: 14px !important;
+        background: var(--accent) !important;
+        color: #fff !important;
+        cursor: pointer !important;
+        font-size: 14px !important;
+        font-weight: 650 !important;
+        line-height: 1 !important;
+        white-space: nowrap !important;
+        box-shadow: 0 12px 26px rgba(23, 23, 23, 0.18) !important;
+      }
+
+      .primary-menu,
+      .nav-stack,
+      .task-stack {
+        display: grid !important;
+        gap: 8px !important;
+      }
+
+      .primary-menu-button,
+      .nav-button,
+      .task-item {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        width: 100% !important;
+        border: 0 !important;
+        border-radius: 12px !important;
+        background: transparent !important;
+        cursor: pointer !important;
+        text-align: left !important;
+        text-decoration: none !important;
+        white-space: nowrap !important;
+      }
+
+      .primary-menu-button {
+        justify-content: flex-start !important;
+        min-height: 40px !important;
+        padding: 0 12px !important;
+        color: #4c5563 !important;
+        font-size: 15px !important;
+        font-weight: 760 !important;
+      }
+
+      .primary-menu-button.active {
+        background: rgba(255, 255, 255, 0.72) !important;
+        color: #20242a !important;
+      }
+
+      .primary-icon,
+      .sidebar .primary-icon {
+        display: block !important;
+        flex: 0 0 18px !important;
+        width: 18px !important;
+        height: 18px !important;
+        margin: 0 !important;
+      }
+
+      .primary-label,
+      .nav-label,
+      .task-copy,
+      .task-name,
+      .section-title {
+        position: static !important;
+        width: auto !important;
+        height: auto !important;
+        overflow: visible !important;
+        opacity: 1 !important;
+        transform: none !important;
+        pointer-events: auto !important;
+      }
+
+      .primary-label {
+        display: inline-flex !important;
+        align-items: center !important;
+        min-width: 0 !important;
+        line-height: 1 !important;
+      }
+
+      .agent-nav {
+        margin-left: 12px !important;
+        padding-left: 10px !important;
+        border-left: 1px solid var(--line) !important;
+      }
+
+      .nav-button {
+        justify-content: flex-start !important;
+        min-height: 36px !important;
+        padding: 0 10px !important;
+        color: #6a7482 !important;
+        font-size: 14px !important;
+        font-weight: 680 !important;
+      }
+
+      .nav-button.active {
+        background: rgba(255, 255, 255, 0.56) !important;
+        color: #303844 !important;
+        box-shadow: none !important;
+      }
+
+      .nav-icon {
+        display: grid !important;
+        flex: 0 0 auto !important;
+        width: 22px !important;
+        height: 22px !important;
+        place-items: center !important;
+        border-radius: 7px !important;
+        background: transparent !important;
+        color: #6f7784 !important;
+      }
+
+      .nav-button.active .nav-icon {
+        background: transparent !important;
+        color: var(--accent) !important;
+      }
+
+      .tasks {
+        display: flex !important;
+        min-height: 0 !important;
+        margin-top: 12px !important;
+        flex: 1 !important;
+        flex-direction: column !important;
+        gap: 4px !important;
+      }
+
+      .tasks .task-stack {
+        gap: 4px !important;
+      }
+
+      .section-title {
+        display: block !important;
+        padding: 0 10px 2px !important;
+        color: #6f7a86 !important;
+        font-size: 14px !important;
+        font-weight: 760 !important;
+        line-height: 1.25 !important;
+        text-decoration: none !important;
+      }
+
+      .task-item {
+        justify-content: flex-start !important;
+        align-items: flex-start !important;
+        min-height: 38px !important;
+        padding: 8px 10px !important;
+        color: var(--muted) !important;
+        font-size: 14px !important;
+        font-weight: 650 !important;
+      }
+
+      .task-item.active {
+        background: rgba(255, 255, 255, 0.8) !important;
+      }
+
+      .task-copy {
+        display: grid !important;
+        gap: 4px !important;
+        min-width: 0 !important;
+      }
+
+      .task-name {
+        display: block !important;
+        overflow: hidden !important;
+        color: #38342e !important;
+        font-size: 14px !important;
+        font-weight: 650 !important;
+        line-height: 1.3 !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+      }
+
+      .sidebar svg {
+        width: 18px !important;
+        height: 18px !important;
+        fill: none !important;
+        stroke: currentColor !important;
+        stroke-linecap: round !important;
+        stroke-linejoin: round !important;
+        stroke-width: 2 !important;
+      }
+
+      /* __SIDEBAR_OVERRIDE_END__ */
     </style>
   </head>
   <body>
-    <div class="app">
+    <div class="app" id="appShell">
       <aside class="sidebar" aria-label="左侧导航">
-        <div class="brand">感知Agent</div>
+        <div class="brand">
+          <span>感知Agent</span>
+        </div>
         <button class="new-task" type="button" onclick="location.href='new-task.html'">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
           新建任务
         </button>
         <nav class="primary-menu" aria-label="功能导航">
-          <button class="primary-menu-button active" type="button" onclick="location.href='agent-management.html'">Agent</button>
+          <button class="primary-menu-button active" type="button" onclick="location.href='agent-management.html'"><svg class="primary-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 4v6c0 4-3 7-7 8-4-1-7-4-7-8V7z" /><path d="M9 12h6" /><path d="M12 9v6" /></svg><span class="primary-label">Agent</span></button>
           <div class="nav-stack agent-nav" aria-label="Agent功能">
             <button class="nav-button" type="button" onclick="location.href='index.html'">
               <span class="nav-icon">
@@ -580,29 +925,29 @@
               舆情分析
             </button>
           </div>
-          <button class="primary-menu-button" type="button" onclick="location.href='skill.html'">Skill</button>
-          <button class="primary-menu-button" type="button" onclick="location.href='tools.html'">工具集</button>
-          <button class="primary-menu-button" type="button" onclick="location.href='knowledge.html'">知识库</button>
-          <button class="primary-menu-button" type="button" onclick="location.href='effect-monitor.html'">效果监控</button>
+          <button class="primary-menu-button" type="button" onclick="location.href='skill.html'"><svg class="primary-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z" /><path d="M12 12l8-4.5" /><path d="M12 12v9" /><path d="M12 12 4 7.5" /></svg><span class="primary-label">Skill</span></button>
+          <button class="primary-menu-button" type="button" onclick="location.href='tools.html'"><svg class="primary-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.1 5.1l-5.3 5.3a2 2 0 0 0 2.8 2.8l5.3-5.3a4 4 0 0 0 5.1-5.1l-2.6 2.6-2.5-2.5z" /></svg><span class="primary-label">工具集</span></button>
+          <button class="primary-menu-button" type="button" onclick="location.href='knowledge.html'"><svg class="primary-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z" /><path d="M4 5.5v16" /><path d="M8 7h8" /><path d="M8 11h6" /></svg><span class="primary-label">知识库</span></button>
+          <button class="primary-menu-button" type="button" onclick="location.href='effect-monitor.html'"><svg class="primary-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5" /><path d="M4 19h16" /><path d="m7 15 4-4 3 3 5-7" /><path d="M17 7h2v2" /></svg><span class="primary-label">效果监控</span></button>
         </nav>
         <section class="tasks" aria-label="任务列表">
           <a class="section-title" href="task-list.html">任务列表</a>
           <div class="task-stack">
-            <button class="task-item" type="button">
+            <a class="task-item" href="task.html">
               <span class="task-copy">
                 <span class="task-name">榴莲虚假宣传直播间巡检</span>
               </span>
-            </button>
-            <button class="task-item" type="button">
+            </a>
+            <a class="task-item" href="task-fresh.html">
               <span class="task-copy">
-                <span class="task-name">AWLS社交平台舆情风险定级</span>
+                <span class="task-name">生鲜榜单直播间巡检</span>
               </span>
-            </button>
-            <button class="task-item" type="button">
+            </a>
+            <a class="task-item" href="task-host.html">
               <span class="task-copy">
-                <span class="task-name">通用风险线索研判任务</span>
+                <span class="task-name">男装榜主播不露脸巡检</span>
               </span>
-            </button>
+            </a>
           </div>
         </section>
       </aside>
@@ -637,7 +982,7 @@ https://video.example.com/feed/fake-product-review</textarea>
                   <button class="source-tab" data-source="api" type="button">AWLS 数据接口</button>
                   <button class="source-tab" data-source="manual" type="button">人工导入</button>
                 </div>
-                <button class="run-button" type="button" aria-label="开始研判" onclick="location.href='opinion-task.html'">
+                <button class="run-button" type="button" aria-label="开始研判" onclick="location.href='task.html'">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
                 </button>
               </div>
@@ -687,6 +1032,7 @@ https://video.example.com/feed/fake-product-review</textarea>
       </form>
     </dialog>
 
+    <script src="sidebar-lock.js?v=4"></script>
     <script>
       const newTaskDialog = document.querySelector("#newTaskDialog");
 
