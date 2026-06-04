@@ -1,0 +1,2816 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>巡检捉虫任务执行 - 感知Agent</title>
+    <style>
+      :root {
+        --bg: #f4f7fa;
+        --panel: #ffffff;
+        --panel-soft: #f7f9fb;
+        --text: #20242a;
+        --muted: #737d8c;
+        --line: #dde5ec;
+        --accent: #3b6ef6;
+        --accent-soft: #e8efff;
+        --danger: #e65045;
+        --warning: #e9971c;
+        --green: #22a06b;
+        --shadow: 0 20px 55px rgba(32, 44, 62, 0.11);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 76% 12%, rgba(232, 239, 255, 0.92), transparent 34%),
+          linear-gradient(135deg, #f2f5f8 0%, #fbfcfd 56%, #eef7f4 100%);
+        color: var(--text);
+        font-family:
+          Inter, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .app {
+        display: grid;
+        grid-template-columns: 282px minmax(0, 1fr);
+        min-height: 100vh;
+        transition: grid-template-columns 180ms ease;
+      }
+
+      .app.sidebar-collapsed {
+        grid-template-columns: 78px minmax(0, 1fr);
+      }
+
+      .sidebar {
+        position: sticky;
+        top: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        height: 100vh;
+        padding: 22px 16px;
+        border-right: 1px solid rgba(218, 228, 236, 0.88);
+        background: rgba(244, 247, 249, 0.9);
+        backdrop-filter: blur(18px);
+        overflow: hidden;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 6px 10px 10px;
+        font-size: 22px;
+        font-weight: 840;
+        line-height: 1.15;
+      }
+
+      .collapse-toggle {
+        display: inline-grid;
+        flex: 0 0 auto;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        border: 0;
+        border-radius: 10px;
+        background: transparent;
+        color: #8a8f94;
+        cursor: pointer;
+      }
+
+      .collapse-toggle:hover {
+        background: rgba(235, 238, 241, 0.9);
+        color: #626a72;
+      }
+
+      .collapse-toggle svg {
+        width: 21px;
+        height: 21px;
+        stroke-width: 2;
+      }
+
+      .sidebar svg {
+        width: 18px;
+        height: 18px;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none;
+      }
+
+      .new-task {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        height: 46px;
+        border: 0;
+        border-radius: 14px;
+        background: #171717;
+        color: #fff;
+        cursor: pointer;
+        font-weight: 650;
+        box-shadow: 0 12px 26px rgba(23, 23, 23, 0.16);
+      }
+
+      .task-dialog {
+        width: min(960px, calc(100vw - 48px));
+        padding: 0;
+        border: 1px solid rgba(218, 226, 231, 0.92);
+        border-radius: 20px;
+        background: #fff;
+        color: var(--text);
+        box-shadow: 0 28px 80px rgba(32, 44, 62, 0.18);
+      }
+
+      .task-dialog::backdrop {
+        background: rgba(32, 40, 52, 0.24);
+        backdrop-filter: blur(8px);
+      }
+
+      .dialog-head,
+      .dialog-body,
+      .dialog-actions {
+        padding: 18px 20px;
+      }
+
+      .dialog-head {
+        border-bottom: 1px solid var(--line);
+      }
+
+      .dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        border-top: 1px solid var(--line);
+      }
+
+      .dialog-title {
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      .dialog-body textarea {
+        width: 100%;
+        min-height: 320px;
+        resize: vertical;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 14px;
+        outline: 0;
+        background: #fbfcfd;
+        color: var(--text);
+        line-height: 1.7;
+      }
+
+      .dialog-actions button {
+        height: 36px;
+        padding: 0 14px;
+        border-radius: 11px;
+        cursor: pointer;
+        font-weight: 760;
+      }
+
+      .dialog-cancel {
+        border: 1px solid var(--line);
+        background: #fff;
+        color: #59636e;
+      }
+
+      .dialog-submit {
+        border: 1px solid rgba(59, 110, 246, 0.18);
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .new-task span,
+      .brand span,
+      .primary-label,
+      .nav-label,
+      .task-copy,
+      .section-title {
+        transition:
+          opacity 160ms ease,
+          transform 160ms ease;
+      }
+
+      .primary-menu,
+      .nav-stack,
+      .task-stack {
+        display: grid;
+        gap: 8px;
+      }
+
+      .primary-menu-button {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 40px;
+        padding: 0 12px;
+        border: 0;
+        border-radius: 12px;
+        background: transparent;
+        color: #4c5563;
+        cursor: pointer;
+        font-weight: 760;
+        font-size: 14px;
+        text-align: left;
+      }
+
+      .primary-menu-button.active {
+        background: rgba(255, 255, 255, 0.72);
+        color: #20242a;
+      }
+
+      .primary-menu-button::after {
+        display: none;
+        content: attr(data-short);
+      }
+
+      .agent-nav {
+        margin-left: 12px;
+        padding-left: 10px;
+        border-left: 1px solid var(--line);
+      }
+
+      .nav-button,
+      .task-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 42px;
+        width: 100%;
+        border: 0;
+        border-radius: 12px;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .nav-button {
+        padding: 0 12px;
+        font-weight: 650;
+      }
+
+      .nav-button.active {
+        background: #fff;
+        color: var(--text);
+        box-shadow: 0 10px 24px rgba(80, 72, 56, 0.08);
+      }
+
+      .nav-icon,
+      .task-dot {
+        display: grid;
+        flex: 0 0 auto;
+        place-items: center;
+      }
+
+      .nav-icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 9px;
+        background: var(--panel-soft);
+        color: #504b44;
+      }
+
+      .nav-button.active .nav-icon {
+        background: #e9f6f1;
+        color: var(--green);
+      }
+
+      .tasks {
+        display: flex;
+        min-height: 0;
+        margin-top: 14px;
+        flex: 1;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .section-title {
+        display: block;
+        padding: 0 10px;
+        color: #9a9285;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .section-title:hover {
+        color: #6f7a86;
+      }
+
+      .task-item {
+        align-items: flex-start;
+        padding: 10px;
+      }
+
+      .task-item.active {
+        background: #fff;
+        box-shadow: 0 10px 24px rgba(80, 72, 56, 0.08);
+      }
+
+      .task-item.active .task-dot {
+        background: var(--accent-soft);
+        color: #214fce;
+        font-weight: 760;
+      }
+
+      .task-dot {
+        width: 24px;
+        height: 24px;
+        margin-top: 1px;
+        border-radius: 50%;
+        background: #fff;
+        color: var(--accent);
+        font-size: 13px;
+      }
+
+      .task-copy {
+        display: grid;
+        gap: 4px;
+        min-width: 0;
+      }
+
+      .task-name {
+        overflow: hidden;
+        color: #38342e;
+        font-size: 14px;
+        font-weight: 650;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .task-meta {
+        color: #a09a91;
+        font-size: 12px;
+      }
+
+      .app.sidebar-collapsed .sidebar {
+        gap: 16px;
+        padding: 20px 12px;
+      }
+
+      .app.sidebar-collapsed .brand {
+        justify-content: center;
+        padding: 4px 0 8px;
+      }
+
+      .app.sidebar-collapsed .brand span,
+      .app.sidebar-collapsed .new-task span,
+      .app.sidebar-collapsed .primary-label,
+      .app.sidebar-collapsed .nav-label,
+      .app.sidebar-collapsed .task-copy,
+      .app.sidebar-collapsed .section-title {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateX(-6px);
+        pointer-events: none;
+      }
+
+      .app.sidebar-collapsed .new-task,
+      .app.sidebar-collapsed .primary-menu-button,
+      .app.sidebar-collapsed .nav-button,
+      .app.sidebar-collapsed .task-item {
+        justify-content: center;
+        width: 46px;
+        padding: 0;
+      }
+
+      .app.sidebar-collapsed .primary-menu-button::after {
+        display: grid;
+        width: 26px;
+        height: 26px;
+        place-items: center;
+        border-radius: 9px;
+        background: var(--panel-soft);
+        color: #504b44;
+        font-size: 12px;
+        font-weight: 820;
+      }
+
+      .app.sidebar-collapsed .primary-menu-button.active::after {
+        background: #e9f6f1;
+        color: var(--green);
+      }
+
+      .app.sidebar-collapsed .agent-nav {
+        margin-left: 0;
+        padding-left: 0;
+        border-left: 0;
+      }
+
+      .app.sidebar-collapsed .tasks {
+        align-items: center;
+      }
+
+      .app.sidebar-collapsed .task-stack {
+        display: none;
+      }
+
+      .task-main {
+        display: flex;
+        min-width: 0;
+        min-height: 0;
+      }
+
+      .inspection-workspace {
+        display: grid;
+        grid-template-columns: minmax(620px, 1fr) 380px;
+        gap: 14px;
+        width: 100%;
+        height: 100vh;
+        min-height: 0;
+        padding: 14px;
+      }
+
+      .dashboard-main,
+      .simulator-panel {
+        min-width: 0;
+        border: 1px solid rgba(218, 228, 236, 0.88);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.84);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(16px);
+      }
+
+      .dashboard-main {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        padding: 18px;
+      }
+
+      .dashboard-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 14px;
+      }
+
+      .dashboard-title {
+        margin: 6px 0 0;
+        font-size: 22px;
+        line-height: 1.18;
+      }
+
+      .dashboard-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 9px;
+      }
+
+      .dashboard-metrics {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .metric-card {
+        min-height: 92px;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: #fbfcfd;
+      }
+
+      .metric-card .metric-label {
+        font-size: 12px;
+      }
+
+      .metric-card .metric-value {
+        margin-top: 8px;
+      }
+
+      .metric-bar {
+        overflow: hidden;
+        height: 6px;
+        margin-top: 12px;
+        border-radius: 999px;
+        background: #e7edf3;
+      }
+
+      .metric-bar span {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #3b6ef6, #22a06b);
+      }
+
+      .metric-card.warning .metric-bar span {
+        background: linear-gradient(90deg, #e9971c, #e65045);
+      }
+
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+        flex: 1;
+        min-height: 0;
+      }
+
+      .filter-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .review-tools {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      .review-select-bar {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--line);
+        background: #fbfcfd;
+      }
+
+      .selection-summary {
+        color: #657184;
+        font-size: 12px;
+        font-weight: 720;
+      }
+
+      .selection-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .select-link {
+        height: 28px;
+        padding: 0 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #fff;
+        color: #4d5868;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 720;
+      }
+
+      .select-check {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #3f4856;
+        font-size: 13px;
+        font-weight: 760;
+      }
+
+      .select-check input {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--accent);
+      }
+
+      .filter-tab {
+        height: 28px;
+        padding: 0 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #fff;
+        color: #657184;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 720;
+      }
+
+      .filter-tab.active {
+        border-color: rgba(59, 110, 246, 0.28);
+        background: var(--accent-soft);
+        color: #214fce;
+      }
+
+      .log-panel,
+      .review-panel {
+        display: flex;
+        min-width: 0;
+        min-height: 0;
+        flex-direction: column;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: #fff;
+        overflow: hidden;
+      }
+
+      .log-list,
+      .review-list {
+        display: grid;
+        align-content: start;
+        gap: 10px;
+        overflow: auto;
+        padding: 14px;
+      }
+
+      .pagination-bar {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 14px;
+        border-top: 1px solid var(--line);
+        background: #fbfcfd;
+      }
+
+      .pagination-info {
+        color: #657184;
+        font-size: 12px;
+        font-weight: 720;
+      }
+
+      .pagination-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .page-btn {
+        min-width: 30px;
+        height: 30px;
+        padding: 0 9px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: #fff;
+        color: #4d5868;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 720;
+      }
+
+      .page-btn.active {
+        border-color: rgba(59, 110, 246, 0.28);
+        background: var(--accent-soft);
+        color: #214fce;
+      }
+
+      .page-size {
+        height: 30px;
+        padding: 0 28px 0 10px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background:
+          linear-gradient(45deg, transparent 50%, #657184 50%) calc(100% - 15px) 12px / 5px 5px no-repeat,
+          linear-gradient(135deg, #657184 50%, transparent 50%) calc(100% - 12px) 12px / 5px 5px no-repeat,
+          #fff;
+        color: #4d5868;
+        font-size: 12px;
+        font-weight: 720;
+        appearance: none;
+      }
+
+      .log-item {
+        position: relative;
+        display: grid;
+        gap: 4px;
+        padding-left: 20px;
+        color: #3f4856;
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .log-item::before {
+        position: absolute;
+        top: 6px;
+        left: 2px;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #bdc8d3;
+        content: "";
+      }
+
+      .log-item.active::before {
+        background: var(--accent);
+        box-shadow: 0 0 0 6px rgba(59, 110, 246, 0.12);
+      }
+
+      .log-item.alert::before {
+        background: var(--danger);
+      }
+
+      .log-time {
+        color: #9aa3af;
+        font-size: 11px;
+      }
+
+      .simulator-panel {
+        display: flex;
+        flex-direction: column;
+        padding: 16px;
+        overflow: hidden;
+      }
+
+      .simulator-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .device-select {
+        height: 34px;
+        min-width: 132px;
+        padding: 0 34px 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background:
+          linear-gradient(45deg, transparent 50%, #657184 50%) calc(100% - 18px) 14px / 6px 6px no-repeat,
+          linear-gradient(135deg, #657184 50%, transparent 50%) calc(100% - 14px) 14px / 6px 6px no-repeat,
+          #fff;
+        color: #3f4856;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 720;
+        appearance: none;
+      }
+
+      .simulator-panel .phone {
+        width: min(100%, 250px);
+      }
+
+      .simulator-panel .phone-stage {
+        flex: 0 0 auto;
+        min-height: 0;
+      }
+
+      .simulator-panel .log-panel {
+        flex: 1;
+        min-height: 260px;
+        margin-top: 14px;
+      }
+
+      .app .full-chat-stage,
+      .app .split-stage {
+        display: none;
+      }
+
+      .task-page {
+        display: grid;
+        grid-template-columns: minmax(520px, 0.92fr) minmax(620px, 1fr);
+        gap: 14px;
+        width: 100%;
+        height: 100vh;
+        min-height: 0;
+        padding: 14px;
+      }
+
+      .full-chat-stage {
+        display: none;
+        width: 100%;
+        height: 100vh;
+        min-height: 0;
+        padding: 18px 28px 22px;
+      }
+
+      .app[data-chat-state="full"] .full-chat-stage {
+        display: flex;
+        justify-content: center;
+      }
+
+      .app[data-chat-state="full"] .split-stage {
+        display: none;
+      }
+
+      .app[data-chat-state="split"] .split-stage {
+        display: grid;
+      }
+
+      .app[data-chat-state="split"] .full-chat-stage {
+        display: none;
+      }
+
+      .conversation,
+      .workbench {
+        min-width: 0;
+        border: 1px solid rgba(218, 228, 236, 0.88);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.84);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(16px);
+      }
+
+      .conversation {
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 28px);
+        min-height: 0;
+        overflow: hidden;
+        background: rgba(246, 247, 249, 0.9);
+      }
+
+      .full-chat-stage .conversation {
+        width: min(100%, 1120px);
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        backdrop-filter: none;
+      }
+
+      .full-chat-stage .left-head {
+        width: min(100%, 900px);
+        margin: 0 auto;
+        padding: 22px 4px 18px;
+        border-bottom: 0;
+      }
+
+      .full-chat-stage h1 {
+        margin-top: 0;
+        font-size: 28px;
+      }
+
+      .full-chat-stage .subtitle {
+        font-size: 13px;
+      }
+
+      .full-chat-stage .messages {
+        width: min(100%, 900px);
+        margin: 0 auto;
+        padding: 26px 4px 28px;
+      }
+
+      .full-chat-stage .robot-card {
+        border-color: rgba(218, 226, 231, 0.94);
+        border-radius: 18px;
+        box-shadow: 0 10px 28px rgba(42, 52, 68, 0.05);
+      }
+
+      .full-chat-stage .user-task-card {
+        max-width: min(86%, 720px);
+      }
+
+      .full-chat-stage .chat-input {
+        width: min(100%, 900px);
+        margin: 0 auto 2px;
+        min-height: 112px;
+        padding: 22px 22px 18px 24px;
+        background: rgba(255, 255, 255, 0.86);
+        box-shadow: 0 22px 56px rgba(42, 52, 68, 0.11);
+      }
+
+      .workbench {
+        height: calc(100vh - 28px);
+        min-height: 0;
+      }
+
+      .left-head,
+      .right-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .state-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      .state-link {
+        display: inline-flex;
+        align-items: center;
+        height: 32px;
+        padding: 0 11px;
+        border: 1px solid rgba(59, 110, 246, 0.2);
+        border-radius: 999px;
+        background: #fff;
+        color: #214fce;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 760;
+      }
+
+      .back-link {
+        display: inline-flex;
+        width: fit-content;
+        min-height: 28px;
+        align-items: center;
+        color: #6b7480;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 650;
+      }
+
+      .back-link:hover {
+        color: var(--accent);
+      }
+
+      h1 {
+        margin: 6px 0 0;
+        font-size: 22px;
+        line-height: 1.22;
+      }
+
+      .subtitle {
+        margin-top: 7px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .status-live,
+      .finish-link,
+      .stop-task-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        height: 32px;
+        padding: 0 11px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 760;
+        white-space: nowrap;
+      }
+
+      .status-live {
+        background: #ebf8f1;
+        color: #13784f;
+      }
+
+      .status-live.stopped {
+        background: #f2f4f7;
+        color: #68727c;
+      }
+
+      .finish-link {
+        border: 1px solid rgba(59, 110, 246, 0.22);
+        background: var(--accent-soft);
+        color: #214fce;
+        text-decoration: none;
+      }
+
+      .stop-task-button {
+        border: 1px solid #e3e8ee;
+        background: #fff;
+        color: #5f6872;
+        cursor: pointer;
+      }
+
+      .stop-task-button:hover {
+        border-color: rgba(230, 83, 83, 0.36);
+        background: #fff7f7;
+        color: #be3d3d;
+      }
+
+      .stop-task-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.58;
+      }
+
+      .pulse {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 0 6px rgba(34, 160, 107, 0.12);
+      }
+
+      .status-live.stopped .pulse {
+        background: #9aa3ad;
+        box-shadow: none;
+      }
+
+      .confirm-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 30;
+        display: none;
+        place-items: center;
+        padding: 24px;
+        background: rgba(28, 34, 42, 0.22);
+        backdrop-filter: blur(8px);
+      }
+
+      .confirm-backdrop.open {
+        display: grid;
+      }
+
+      .confirm-dialog {
+        width: min(420px, 100%);
+        padding: 22px;
+        border: 1px solid rgba(216, 224, 232, 0.92);
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 26px 70px rgba(32, 41, 52, 0.18);
+      }
+
+      .confirm-title {
+        margin: 0;
+        color: #252a30;
+        font-size: 18px;
+        line-height: 1.35;
+      }
+
+      .confirm-copy {
+        margin: 12px 0 0;
+        color: #69737e;
+        font-size: 14px;
+        line-height: 1.65;
+      }
+
+      .confirm-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .confirm-actions button {
+        height: 36px;
+        padding: 0 14px;
+        border-radius: 11px;
+        cursor: pointer;
+        font-weight: 760;
+      }
+
+      .cancel-stop {
+        border: 1px solid #dfe6ec;
+        background: #fff;
+        color: #59636e;
+      }
+
+      .confirm-stop {
+        border: 1px solid rgba(230, 83, 83, 0.22);
+        background: #e65353;
+        color: #fff;
+      }
+
+      .mini-metrics {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        padding: 14px 20px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(247, 249, 251, 0.7);
+      }
+
+      .right-metrics {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(247, 249, 251, 0.82);
+      }
+
+      .metric {
+        min-height: 72px;
+        padding: 11px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: #fff;
+      }
+
+      .metric-label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .metric-value {
+        margin-top: 9px;
+        font-size: 22px;
+        font-weight: 780;
+      }
+
+      .metric-value small {
+        color: #87909d;
+        font-size: 13px;
+      }
+
+      .messages {
+        display: grid;
+        align-content: start;
+        gap: 24px;
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
+        padding: 22px 26px;
+      }
+
+      .robot-message {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        align-items: start;
+      }
+
+      .robot-message > div {
+        display: grid;
+      }
+
+      .message-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 12px;
+        margin-bottom: 7px;
+        color: #929baa;
+        font-size: 12px;
+      }
+
+      .user-task .message-actions {
+        justify-content: flex-end;
+        padding-right: 2px;
+      }
+
+      .message-time {
+        white-space: nowrap;
+      }
+
+      .copy-message {
+        display: inline-grid;
+        position: relative;
+        width: 28px;
+        height: 28px;
+        place-items: center;
+        padding: 0;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: #9aa1a9;
+        cursor: pointer;
+      }
+
+      .copy-message:hover {
+        background: rgba(235, 238, 241, 0.9);
+        color: #626a72;
+      }
+
+      .copy-message svg {
+        width: 19px;
+        height: 19px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .copy-message rect {
+        fill: #fff;
+        stroke: currentColor;
+      }
+
+      .copy-message path {
+        fill: none;
+        stroke: currentColor;
+      }
+
+      .copy-message.copied {
+        color: var(--green);
+      }
+
+      .user-task .copy-message {
+        justify-self: end;
+        margin-top: 6px;
+        margin-right: 4px;
+      }
+
+      .robot-message .copy-message {
+        justify-self: start;
+        margin-top: 6px;
+        margin-left: 4px;
+      }
+
+      .robot-meta {
+        display: none;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 8px;
+      }
+
+      .robot-name {
+        color: #20242a;
+        font-size: 17px;
+        font-weight: 820;
+        line-height: 1;
+      }
+
+      .robot-tag {
+        display: inline-flex;
+        align-items: center;
+        height: 22px;
+        padding: 0 7px;
+        border-radius: 6px;
+        background: #fff0c9;
+        color: #a36700;
+        font-size: 12px;
+        font-weight: 760;
+      }
+
+      .robot-time {
+        color: #8d96a5;
+        font-size: 15px;
+      }
+
+      .robot-card {
+        max-width: 100%;
+        padding: 16px 18px;
+        border: 1px solid #d8dde4;
+        border-radius: 12px;
+        background: #fff;
+        color: #252b33;
+        font-size: 16px;
+        line-height: 1.68;
+        box-shadow: 0 2px 8px rgba(28, 36, 48, 0.03);
+      }
+
+      .robot-card a {
+        color: #286cff;
+        text-decoration: none;
+        word-break: break-all;
+      }
+
+      .robot-card .mono-line {
+        color: #2d3440;
+        word-break: break-word;
+      }
+
+      .robot-card .dim {
+        color: #677282;
+      }
+
+      .user-task {
+        display: grid;
+        justify-items: end;
+      }
+
+      .user-task-card {
+        max-width: 86%;
+        padding: 14px 16px;
+        border-radius: 14px 14px 4px 14px;
+        background: var(--accent);
+        color: #fff;
+        font-size: 15px;
+        line-height: 1.6;
+        box-shadow: 0 10px 24px rgba(59, 110, 246, 0.18);
+      }
+
+      .message {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+      }
+
+      .message.user {
+        justify-content: flex-end;
+      }
+
+      .avatar {
+        display: grid;
+        flex: 0 0 auto;
+        width: 32px;
+        height: 32px;
+        place-items: center;
+        border-radius: 10px;
+        background: #edf2f7;
+        color: #4d5868;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .bubble {
+        max-width: 82%;
+        padding: 12px 14px;
+        border-radius: 16px;
+        background: var(--panel-soft);
+        color: #3a4350;
+        font-size: 13px;
+        line-height: 1.62;
+      }
+
+      .message.user .bubble {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .task-card,
+      .alert-card {
+        display: grid;
+        gap: 8px;
+        margin-top: 10px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: #fff;
+      }
+
+      .alert-card {
+        border-color: rgba(230, 80, 69, 0.2);
+        background: #fff7f6;
+      }
+
+      .kv-row {
+        display: grid;
+        grid-template-columns: 82px minmax(0, 1fr);
+        gap: 10px;
+        font-size: 12px;
+      }
+
+      .kv-row strong {
+        color: #6f7784;
+      }
+
+      .timeline-note {
+        color: #8a94a3;
+        font-size: 11px;
+      }
+
+      .chat-input {
+        display: flex;
+        align-items: flex-end;
+        flex: 0 0 auto;
+        gap: 12px;
+        margin: 0 20px 20px;
+        min-height: 92px;
+        padding: 18px 18px 16px 20px;
+        border: 1px solid rgba(218, 226, 231, 0.92);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.78);
+        box-shadow: 0 18px 42px rgba(62, 55, 42, 0.1);
+      }
+
+      .chat-input input {
+        flex: 1;
+        min-width: 0;
+        min-height: 46px;
+        padding: 0;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: #3f4650;
+        font-size: 16px;
+      }
+
+      .chat-input button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        width: 46px;
+        height: 46px;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: #b3cbff;
+        color: #fff;
+        cursor: pointer;
+        transition:
+          background 160ms ease,
+          transform 160ms ease;
+      }
+
+      .chat-input button:hover {
+        background: var(--accent);
+        transform: translateY(-1px);
+      }
+
+      .chat-input button svg {
+        width: 22px;
+        height: 22px;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none;
+      }
+
+      .workbench {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .right-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 9px;
+      }
+
+      .device-tabs {
+        display: flex;
+        flex: 0 0 auto;
+        gap: 4px;
+        padding: 3px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #f5f8fb;
+      }
+
+      .device-tab {
+        height: 28px;
+        min-width: 58px;
+        padding: 0 10px;
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        color: #5f6a78;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 720;
+        white-space: nowrap;
+      }
+
+      .device-tab.active {
+        background: #fff;
+        color: #214fce;
+        box-shadow: 0 3px 10px rgba(59, 110, 246, 0.12);
+      }
+
+      .right-body {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+        flex: 1;
+        min-height: 0;
+        padding: 16px;
+      }
+
+      .phone-column,
+      .detail-column {
+        min-width: 0;
+      }
+
+      .phone-stage {
+        display: grid;
+        place-items: center;
+      }
+
+      .phone {
+        position: relative;
+        width: min(100%, 258px);
+        aspect-ratio: 9 / 19.5;
+        padding: 12px;
+        border: 9px solid #16191f;
+        border-radius: 40px;
+        background: #101318;
+        box-shadow:
+          0 24px 58px rgba(21, 28, 40, 0.24),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+      }
+
+      .phone::before {
+        position: absolute;
+        top: 7px;
+        left: 50%;
+        width: 82px;
+        height: 22px;
+        border-radius: 0 0 16px 16px;
+        background: #16191f;
+        content: "";
+        transform: translateX(-50%);
+        z-index: 3;
+      }
+
+      .screen {
+        position: relative;
+        overflow: hidden;
+        height: 100%;
+        border-radius: 28px;
+        background: #f7f2ea;
+      }
+
+      .live-room {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 46px 13px 13px;
+        color: #fff;
+        background:
+          linear-gradient(180deg, rgba(0, 0, 0, 0.26), rgba(0, 0, 0, 0.12) 38%, rgba(0, 0, 0, 0.78)),
+          linear-gradient(145deg, #b94c3d 0%, #e79a63 45%, #43363c 100%);
+      }
+
+      .live-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .host {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        padding: 5px 8px 5px 5px;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(8px);
+      }
+
+      .host-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #fff, #ffc6a6);
+      }
+
+      .host-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 12px;
+        font-weight: 760;
+      }
+
+      .live-tag {
+        display: inline-flex;
+        align-items: center;
+        height: 24px;
+        padding: 0 8px;
+        border-radius: 999px;
+        background: rgba(230, 80, 69, 0.92);
+        font-size: 11px;
+        font-weight: 760;
+      }
+
+      .product-stack {
+        display: grid;
+        gap: 10px;
+        margin: auto 0 18px;
+      }
+
+      .product-box {
+        display: grid;
+        place-items: center;
+        height: 164px;
+        border: 1px solid rgba(255, 255, 255, 0.26);
+        border-radius: 22px;
+        background:
+          radial-gradient(circle at 42% 38%, rgba(255, 222, 192, 0.92) 0 9%, transparent 10%),
+          radial-gradient(circle at 58% 50%, rgba(255, 188, 154, 0.92) 0 12%, transparent 13%),
+          rgba(255, 255, 255, 0.12);
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 14px;
+        font-weight: 760;
+        backdrop-filter: blur(8px);
+      }
+
+      .price-card {
+        padding: 12px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.94);
+        color: #272b31;
+        box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
+      }
+
+      .price-title {
+        color: #6f7784;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .price-value {
+        margin-top: 5px;
+        color: #dc3d32;
+        font-size: 25px;
+        font-weight: 820;
+      }
+
+      .price-value small {
+        font-size: 13px;
+      }
+
+      .speech {
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: rgba(0, 0, 0, 0.36);
+        color: rgba(255, 255, 255, 0.92);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .highlight-cursor {
+        position: absolute;
+        top: 49%;
+        left: 55%;
+        width: 46px;
+        height: 46px;
+        border: 2px solid #4f7bff;
+        border-radius: 50%;
+        box-shadow:
+          0 0 0 10px rgba(79, 123, 255, 0.14),
+          0 0 0 20px rgba(79, 123, 255, 0.08);
+        animation: pulseCursor 1.65s ease-in-out infinite;
+        z-index: 4;
+      }
+
+      .cursor-tip {
+        position: absolute;
+        right: -78px;
+        bottom: -2px;
+        min-width: 90px;
+        padding: 6px 8px;
+        border-radius: 10px;
+        background: #1f2937;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 720;
+      }
+
+      .phone-status {
+        display: grid;
+        gap: 9px;
+        margin-top: 14px;
+      }
+
+      .status-line {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: #fff;
+        color: #4d5868;
+        font-size: 12px;
+      }
+
+      .status-line strong {
+        color: #20242a;
+      }
+
+      .detail-column {
+        display: grid;
+        align-content: start;
+        gap: 12px;
+        overflow: auto;
+        padding-right: 2px;
+      }
+
+      .panel {
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: #fff;
+      }
+
+      .panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px 15px 11px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .panel-title {
+        font-size: 15px;
+        font-weight: 760;
+      }
+
+      .panel-note {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .detail-card,
+      .result-list {
+        display: grid;
+        gap: 10px;
+        padding: 13px;
+      }
+
+      .kv {
+        display: grid;
+        grid-template-columns: 78px minmax(0, 1fr);
+        gap: 10px;
+        color: #4d5868;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .kv strong {
+        color: #6f7784;
+        font-size: 12px;
+        font-weight: 720;
+      }
+
+      .evidence-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .evidence {
+        min-height: 60px;
+        padding: 10px;
+        border-radius: 12px;
+        background: #f0f4f8;
+        color: #4b5565;
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .evidence strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #222831;
+      }
+
+      .room-card {
+        padding: 13px;
+        border: 1px solid #e3eaf0;
+        border-radius: 16px;
+        background: #fbfcfd;
+      }
+
+      .room-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .room-name {
+        font-size: 14px;
+        font-weight: 760;
+      }
+
+      .room-link {
+        display: block;
+        overflow: hidden;
+        max-width: 320px;
+        margin-top: 5px;
+        color: var(--accent);
+        font-size: 12px;
+        text-decoration: none;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .result-status {
+        display: inline-flex;
+        align-items: center;
+        height: 26px;
+        padding: 0 9px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 760;
+        white-space: nowrap;
+      }
+
+      .result-status.violate {
+        background: #fff0ef;
+        color: #b33129;
+      }
+
+      .result-status.pass {
+        background: #ebf8f1;
+        color: #13784f;
+      }
+
+      .result-status.skip {
+        background: #eef2f7;
+        color: #657184;
+      }
+
+      .room-fields {
+        display: grid;
+        gap: 8px;
+        margin-top: 11px;
+      }
+
+      .room-field {
+        display: grid;
+        grid-template-columns: 112px minmax(0, 1fr);
+        gap: 10px;
+        color: #4d5868;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .room-field strong {
+        color: #6f7784;
+      }
+
+      .room-field a {
+        color: var(--accent);
+        text-decoration: none;
+        word-break: break-all;
+      }
+
+      .link-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .product-link {
+        display: inline-flex;
+        align-items: center;
+        min-height: 24px;
+        padding: 0 8px;
+        border: 1px solid rgba(59, 110, 246, 0.16);
+        border-radius: 999px;
+        background: #f4f8ff;
+        color: #214fce;
+        font-size: 11px;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .action-btn {
+        height: 30px;
+        padding: 0 10px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fff;
+        color: #4d5868;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 720;
+      }
+
+      .action-btn.primary {
+        border-color: rgba(59, 110, 246, 0.28);
+        background: var(--accent-soft);
+        color: #214fce;
+      }
+
+      .action-btn.danger {
+        border-color: rgba(230, 80, 69, 0.22);
+        background: #fff0ef;
+        color: #b33129;
+      }
+
+      .action-btn:disabled {
+        cursor: not-allowed;
+        opacity: 0.46;
+      }
+
+      .action-btn.locked {
+        opacity: 1;
+        box-shadow: inset 0 0 0 1px rgba(32, 36, 42, 0.04);
+      }
+
+      @keyframes pulseCursor {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+
+      @media (max-width: 1120px) {
+        .inspection-workspace,
+        .right-body {
+          grid-template-columns: 1fr;
+          overflow: auto;
+        }
+
+        .task-page {
+          grid-template-columns: 1fr;
+          overflow: auto;
+        }
+
+        .phone {
+          width: min(100%, 280px);
+        }
+      }
+
+      @media (max-width: 760px) {
+        .app,
+        .app.sidebar-collapsed {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          position: sticky;
+          top: 0;
+          z-index: 5;
+          height: auto;
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .app.sidebar-collapsed .sidebar {
+          padding: 16px 12px;
+        }
+
+        .task-page {
+          padding: 12px;
+        }
+
+        .inspection-workspace {
+          height: auto;
+          min-height: 100vh;
+          padding: 12px;
+        }
+
+        .dashboard-main,
+        .simulator-panel {
+          border-radius: 18px;
+        }
+
+        .dashboard-metrics,
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .full-chat-stage {
+          padding: 12px;
+        }
+
+        .conversation,
+        .workbench {
+          height: auto;
+          min-height: calc(100vh - 24px);
+          border-radius: 18px;
+        }
+
+        .left-head,
+        .right-head {
+          flex-direction: column;
+        }
+
+        .mini-metrics,
+        .right-metrics,
+        .evidence-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app" id="appShell">
+      <aside class="sidebar" aria-label="左侧导航">
+        <div class="brand">
+          <span>感知Agent</span>
+          <button class="collapse-toggle" id="sidebarToggle" type="button" aria-label="收起左侧菜单" aria-expanded="true">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="3.5" /><path d="M10 4v16" /></svg>
+          </button>
+        </div>
+
+        <button class="new-task" type="button" onclick="location.href='new-task.html'">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+          <span>新建任务</span>
+        </button>
+
+        <nav class="primary-menu" aria-label="功能导航">
+          <button class="primary-menu-button active" data-short="A" type="button" onclick="location.href='agent-management.html'" title="Agent"><span class="primary-label">Agent</span></button>
+          <div class="nav-stack agent-nav" aria-label="Agent功能">
+            <button class="nav-button active" type="button" onclick="location.href='index.html'" title="巡检捉虫">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m9 11 2 2 4-5" />
+                  <path d="M20 12a8 8 0 1 1-3.1-6.3" />
+                  <path d="M18 4h3v3" />
+                </svg>
+              </span>
+              <span class="nav-label">巡检捉虫</span>
+            </button>
+            <button class="nav-button" type="button" onclick="location.href='opinion.html'" title="舆情分析">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 12h4l3 8 4-16 3 8h4" />
+                </svg>
+              </span>
+              <span class="nav-label">舆情分析</span>
+            </button>
+          </div>
+          <button class="primary-menu-button" data-short="S" type="button" onclick="location.href='skill.html'" title="Skill"><span class="primary-label">Skill</span></button>
+          <button class="primary-menu-button" data-short="T" type="button" onclick="location.href='tools.html'" title="工具集"><span class="primary-label">工具集</span></button>
+          <button class="primary-menu-button" data-short="K" type="button" onclick="location.href='knowledge.html'" title="知识库"><span class="primary-label">知识库</span></button>
+          <button class="primary-menu-button" data-short="M" type="button" onclick="location.href='effect-monitor.html'" title="效果监控"><span class="primary-label">效果监控</span></button>
+        </nav>
+
+        <section class="tasks" aria-label="任务列表">
+          <a class="section-title" href="task-list.html">任务列表</a>
+          <div class="task-stack">
+            <button class="task-item active" type="button" aria-current="page">
+              <span class="task-copy">
+                <span class="task-name">榴莲虚假宣传直播间巡检</span>
+              </span>
+            </button>
+            <button class="task-item" type="button">
+              <span class="task-copy">
+                <span class="task-name">AWLS社交平台舆情风险定级</span>
+              </span>
+            </button>
+            <button class="task-item" type="button">
+              <span class="task-copy">
+                <span class="task-name">通用风险线索研判任务</span>
+              </span>
+            </button>
+          </div>
+        </section>
+      </aside>
+
+      <main class="task-main">
+        <section class="inspection-workspace" aria-label="巡检任务进行中详情">
+          <section class="dashboard-main">
+            <header class="dashboard-head">
+              <div>
+                <div class="subtitle">任务 ID：INSPECT-20260529-024</div>
+                <h1 class="dashboard-title">榴莲虚假宣传直播间巡检</h1>
+              </div>
+              <div class="dashboard-actions">
+                <div class="status-live" id="taskRunStatus"><span class="pulse"></span><span class="status-text">运行中</span></div>
+                <button class="stop-task-button" id="stopTaskButton" type="button">停止任务</button>
+              </div>
+            </header>
+
+            <section class="dashboard-metrics" aria-label="任务指标">
+              <div class="metric-card">
+                <div class="metric-label">巡检数量</div>
+                <div class="metric-value">28</div>
+                <div class="metric-bar"><span style="width: 28%"></span></div>
+              </div>
+              <div class="metric-card warning">
+                <div class="metric-label">违规数量</div>
+                <div class="metric-value">7</div>
+                <div class="metric-bar"><span style="width: 72%"></span></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">成功率</div>
+                <div class="metric-value">96%</div>
+                <div class="metric-bar"><span style="width: 96%"></span></div>
+              </div>
+            </section>
+
+            <section class="dashboard-grid">
+              <section class="review-panel" aria-label="巡检结果">
+                <div class="panel-head">
+                  <div class="panel-title">巡检结果</div>
+                  <div class="review-tools">
+                    <div class="filter-tabs" aria-label="直播间结果筛选">
+                      <button class="filter-tab active" data-filter="all" type="button">全部</button>
+                      <button class="filter-tab" data-filter="violate" type="button">违规</button>
+                      <button class="filter-tab" data-filter="pass" type="button">不违规</button>
+                      <button class="filter-tab" data-filter="skip" type="button">异常</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="review-select-bar">
+                  <div class="selection-summary">已选择 <span id="selectedCount">0</span> 项</div>
+                  <div class="selection-actions">
+                    <button class="select-link" data-select-scope="page" type="button">本页全选</button>
+                    <button class="select-link" data-select-scope="all" type="button">全部全选</button>
+                    <button class="action-btn primary bulk-action" data-bulk-action="report" type="button">批量上报研判</button>
+                    <button class="action-btn danger bulk-action" data-bulk-action="reject" type="button">批量驳回</button>
+                  </div>
+                </div>
+                <div class="review-list">
+                  <article class="room-card" data-result="violate">
+                    <div class="room-top">
+                      <div>
+                        <label class="select-check"><input class="room-select" type="checkbox" />老张鲜肉直播间 #001</label>
+                      </div>
+                      <div class="result-status violate">违规</div>
+                    </div>
+                    <div class="room-fields">
+                      <div class="room-field"><strong>直播间 ID</strong><span><a href="#">7645187296261966633</a></span></div>
+                      <div class="room-field"><strong>违规时间点</strong><span>00:18</span></div>
+                      <div class="room-field"><strong>违规挂车商品</strong><span><a href="#">3821932098797830322</a></span></div>
+                      <div class="room-field">
+                        <strong>挂车商品</strong>
+                        <span class="link-list">
+                          <a class="product-link" href="#">3821932098797830322</a><a class="product-link" href="#">3805494227979338130</a><a class="product-link" href="#">3684615238411485398</a><a class="product-link" href="#">3817961515290592225</a><a class="product-link" href="#">3820602604463980698</a><a class="product-link" href="#">3821664949609038171</a><a class="product-link" href="#">3815042073615270006</a><a class="product-link" href="#">3821666163012796590</a>
+                        </span>
+                      </div>
+                      <div class="room-field"><strong>算法判断依据</strong><span>价格 13.2元/斤低于15元/斤判定阈值，同时命中限时促单话术和重复画面特征。</span></div>
+                    </div>
+                    <div class="actions">
+                      <button class="action-btn primary review-action" data-action="report" type="button">上报研判</button>
+                      <button class="action-btn danger review-action" data-action="reject" type="button">驳回</button>
+                    </div>
+                  </article>
+
+                  <article class="room-card" data-result="pass">
+                    <div class="room-top">
+                      <div>
+                        <label class="select-check"><input class="room-select" type="checkbox" />源头好货甄选 #014</label>
+                      </div>
+                      <div class="result-status pass">不违规</div>
+                    </div>
+                    <div class="room-fields">
+                      <div class="room-field"><strong>直播间 ID</strong><span><a href="#">7382491057248105521</a></span></div>
+                      <div class="room-field"><strong>违规时间点</strong><span>无</span></div>
+                      <div class="room-field"><strong>违规挂车商品</strong><span>无</span></div>
+                      <div class="room-field">
+                        <strong>挂车商品</strong>
+                        <span class="link-list">
+                          <a class="product-link" href="#">3812049876201938401</a><a class="product-link" href="#">3812049876201938402</a><a class="product-link" href="#">3812049876201938403</a><a class="product-link" href="#">3812049876201938404</a><a class="product-link" href="#">3812049876201938405</a><a class="product-link" href="#">3812049876201938406</a><a class="product-link" href="#">3812049876201938407</a><a class="product-link" href="#">3812049876201938408</a>
+                        </span>
+                      </div>
+                      <div class="room-field"><strong>算法判断依据</strong><span>商品规格、主播话术与价格卡片一致，折算单价未低于当前规则阈值。</span></div>
+                    </div>
+                    <div class="actions">
+                      <button class="action-btn primary review-action" data-action="report" type="button">上报研判</button>
+                      <button class="action-btn danger review-action" data-action="reject" type="button">驳回</button>
+                    </div>
+                  </article>
+
+                  <article class="room-card" data-result="skip">
+                    <div class="room-top">
+                      <div>
+                        <label class="select-check"><input class="room-select" type="checkbox" />鲜肉肉铺直播间 #028</label>
+                      </div>
+                      <div class="result-status skip">异常</div>
+                    </div>
+                    <div class="room-fields">
+                      <div class="room-field"><strong>直播间 ID</strong><span><a href="#">7195604381204459068</a></span></div>
+                      <div class="room-field"><strong>违规时间点</strong><span>00:09</span></div>
+                      <div class="room-field"><strong>违规挂车商品</strong><span>未获取</span></div>
+                      <div class="room-field"><strong>挂车商品</strong><span class="link-list"><a class="product-link" href="#">3830194827601293001</a><a class="product-link" href="#">3830194827601293002</a><a class="product-link" href="#">3830194827601293003</a></span></div>
+                      <div class="room-field"><strong>算法判断依据</strong><span>页面卡死导致 OCR、ASR 和挂车商品列表未完整采集，样本异常并等待回扫。</span></div>
+                    </div>
+                    <div class="actions">
+                      <button class="action-btn primary review-action" data-action="report" type="button">上报研判</button>
+                      <button class="action-btn danger review-action" data-action="reject" type="button">驳回</button>
+                    </div>
+                  </article>
+                </div>
+                <div class="pagination-bar" aria-label="巡检结果分页">
+                  <div class="pagination-info">显示 1-10 条，共 128 条</div>
+                  <div class="pagination-actions">
+                    <button class="page-btn" type="button">上一页</button>
+                    <button class="page-btn active" type="button">1</button>
+                    <button class="page-btn" type="button">2</button>
+                    <button class="page-btn" type="button">3</button>
+                    <button class="page-btn" type="button">...</button>
+                    <button class="page-btn" type="button">13</button>
+                    <button class="page-btn" type="button">下一页</button>
+                    <select class="page-size" aria-label="每页条数">
+                      <option>10 条/页</option>
+                      <option>20 条/页</option>
+                      <option>50 条/页</option>
+                    </select>
+                  </div>
+                </div>
+              </section>
+            </section>
+          </section>
+
+          <aside class="simulator-panel" aria-label="巡检实时">
+            <div class="simulator-head">
+              <div>
+                <div class="panel-title">巡检实时</div>
+              </div>
+              <select class="device-select" aria-label="选择云手机">
+                <option>手机 1</option>
+                <option>手机 2</option>
+                <option>手机 3</option>
+                <option>手机 4</option>
+                <option>手机 5</option>
+                <option>手机 6</option>
+              </select>
+            </div>
+            <div class="phone-stage">
+              <div class="phone">
+                <div class="screen">
+                  <div class="live-room">
+                    <div class="live-top">
+                      <div class="host">
+                        <span class="host-avatar"></span>
+                        <span class="host-name">老张鲜肉...</span>
+                      </div>
+                      <span class="live-tag">LIVE #28</span>
+                    </div>
+                    <div class="product-stack">
+                      <div class="product-box">商品展示区</div>
+                      <div class="price-card">
+                        <div class="price-title">今日福利价</div>
+                        <div class="price-value">¥26.4 <small>2斤装</small></div>
+                      </div>
+                    </div>
+                    <div class="speech">最后100单，速拍速发，拍完就恢复原价。</div>
+                  </div>
+                  <div class="highlight-cursor"></div>
+                </div>
+              </div>
+            </div>
+            <section class="log-panel" aria-label="Agent思考日志">
+              <div class="log-list">
+                <div class="log-item"><span>搜索关键词：榴莲虚假宣传</span><span class="log-time">14:08:12</span></div>
+                <div class="log-item"><span>进入直播间 #28</span><span class="log-time">14:08:31</span></div>
+                <div class="log-item active"><span>OCR识别价格卡：榴莲 2斤装 26.4元</span><span class="log-time">14:08:46</span></div>
+                <div class="log-item active"><span>ASR识别话术：最后100单，拍完恢复原价</span><span class="log-time">14:08:49</span></div>
+                <div class="log-item"><span>发现“最后100单”促单话术</span><span class="log-time">14:08:52</span></div>
+                <div class="log-item"><span>计算单价：13.2元/斤</span><span class="log-time">14:08:55</span></div>
+                <div class="log-item alert"><span>判定违规：低于15元/斤阈值</span><span class="log-time">14:08:57</span></div>
+                <div class="log-item alert"><span>异常告警：疑似低价录播引流</span><span class="log-time">14:08:58</span></div>
+                <div class="log-item"><span>页面卡死，执行刷新恢复</span><span class="log-time">14:09:02</span></div>
+                <div class="log-item"><span>元素未找到，重新定位商品卡</span><span class="log-time">14:09:08</span></div>
+              </div>
+            </section>
+          </aside>
+        </section>
+
+        <section class="full-chat-stage" aria-label="进入直播间前的全页面对话">
+          <section class="conversation" aria-label="Agent全页面对话">
+            <header class="left-head">
+              <div>
+                <h1>榴莲虚假宣传直播间巡检</h1>
+                <div class="subtitle">进入第一个直播间前 · 全页面 Chatbot</div>
+              </div>
+              <div class="state-actions">
+                <div class="status-live"><span class="pulse"></span>运行中</div>
+                <button class="state-link" data-chat-state-target="split" type="button">进入第一个直播间后</button>
+              </div>
+            </header>
+
+            <section class="messages" aria-label="进入前对话内容">
+              <div class="user-task copy-scope">
+                <div class="message-actions">
+                  <span class="message-time">05.29 15:40</span>
+                </div>
+                <div class="user-task-card copy-content">启动「专项名称 榴莲虚假宣传」直播间巡检，当「结束条件 巡检20个直播间」后，自动结束本次巡检。</div>
+                <button class="copy-message" type="button" aria-label="复制用户提示词">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="8" y="8" width="12" height="12" rx="2" />
+                    <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
+                  </svg>
+                </button>
+              </div>
+
+              <div class="robot-message copy-scope">
+                <div>
+                  <div class="message-actions">
+                    <span class="message-time">05.29 15:40:37</span>
+                  </div>
+                  <div class="robot-card copy-content">
+                    [05.29 15:40:37]<br />
+                    任务初始化完成：已解析任务类型为直播间巡检，专项名称为“榴莲虚假宣传”，结束条件为巡检20个直播间。
+                  </div>
+                  <button class="copy-message" type="button" aria-label="复制Agent输出">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="8" y="8" width="12" height="12" rx="2" />
+                      <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="robot-message copy-scope">
+                <div>
+                  <div class="message-actions">
+                    <span class="message-time">05.29 15:40:52</span>
+                  </div>
+                  <div class="robot-card copy-content">
+                    [05.29 15:40:52]<br />
+                    云手机资源分配完成：device_id=aic-inspect.bytedance.net:34587，已完成登录态检查，当前账号可进入直播搜索链路。
+                  </div>
+                  <button class="copy-message" type="button" aria-label="复制Agent输出">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="8" y="8" width="12" height="12" rx="2" />
+                      <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="robot-message copy-scope">
+                <div>
+                  <div class="message-actions">
+                    <span class="message-time">05.29 15:41:12</span>
+                  </div>
+                  <div class="robot-card copy-content">
+                    [05.29 15:41:12]<br />
+                    正在打开抖音首页并搜索“榴莲虚假宣传”关键词，准备进入直播列表。进入第一个直播间后，页面将切换为左侧对话 + 右侧巡检结果视图。
+                  </div>
+                  <button class="copy-message" type="button" aria-label="复制Agent输出">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="8" y="8" width="12" height="12" rx="2" />
+                      <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <div class="chat-input">
+              <input value="继续观察起播入口状态" aria-label="继续对话" />
+              <button type="button" aria-label="发送">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
+              </button>
+            </div>
+          </section>
+        </section>
+
+        <div class="task-page split-stage">
+          <section class="conversation" aria-label="Agent对话与任务进展">
+        <header class="left-head">
+          <div>
+            <h1>榴莲虚假宣传直播间巡检</h1>
+            <div class="subtitle">任务 ID：INSPECT-20260529-024</div>
+          </div>
+          <div class="state-actions">
+            <button class="state-link" data-chat-state-target="full" type="button">查看进入前状态</button>
+            <div class="status-live"><span class="pulse"></span>运行中</div>
+          </div>
+        </header>
+
+        <section class="messages" aria-label="对话内容">
+          <div class="user-task copy-scope">
+            <div class="message-actions">
+              <span class="message-time">05.29 15:40</span>
+            </div>
+            <div class="user-task-card copy-content">启动「专项名称 榴莲虚假宣传」直播间巡检，当「结束条件 巡检20个直播间」后，自动结束本次巡检。</div>
+            <button class="copy-message" type="button" aria-label="复制用户提示词">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="8" y="8" width="12" height="12" rx="2" />
+                <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="robot-message copy-scope">
+            <div>
+              <div class="message-actions">
+                <span class="message-time">05.29 15:40:37</span>
+              </div>
+              <div class="robot-meta">
+                <span class="robot-name">智能巡检机器人</span>
+                <span class="robot-tag">机器人</span>
+                <span class="robot-time">15:40</span>
+              </div>
+              <div class="robot-card copy-content">
+                [05.29 15:40:37]<br />
+                设备初始化完成：device_id=aic-inspect.bytedance.net:34587，trace链接：<a href="#">https://fornax.bytedance.net/space/7590080701171019522/analytics/trace/4f5185a1304767a64ebf444e8deefbff</a>
+              </div>
+              <button class="copy-message" type="button" aria-label="复制Agent输出">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="8" y="8" width="12" height="12" rx="2" />
+                  <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="robot-message copy-scope">
+            <div>
+              <div class="message-actions">
+                <span class="message-time">05.29 15:41:33</span>
+              </div>
+              <div class="robot-meta">
+                <span class="robot-name">智能巡检机器人</span>
+                <span class="robot-tag">机器人</span>
+                <span class="robot-time">15:41</span>
+              </div>
+              <div class="robot-card copy-content">
+                [05.29 15:41:33]<br />
+                起播入口动作完成：已通过抖音首页搜索“榴莲虚假宣传”关键词，切换到直播列表后成功进入第一个直播间，当前已处于直播间页面，直播画面加载中，可进入后续巡检审核流程。
+              </div>
+              <button class="copy-message" type="button" aria-label="复制Agent输出">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="8" y="8" width="12" height="12" rx="2" />
+                  <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="robot-message copy-scope">
+            <div>
+              <div class="message-actions">
+                <span class="message-time">05.29 15:42:04</span>
+              </div>
+              <div class="robot-meta">
+                <span class="robot-name">智能巡检机器人</span>
+                <span class="robot-tag">机器人</span>
+                <span class="robot-time">15:42</span>
+              </div>
+              <div class="robot-card copy-content">
+                [05.29 15:42:04]<br />
+                榴莲巡检前置筛选完成：当前直播间为榴莲带货直播间，未关播，主卖商品为榴莲，符合巡检目标类型，页面右下角可见分享按钮，已处于可审核状态，可进入后续违规判定流程。
+              </div>
+              <button class="copy-message" type="button" aria-label="复制Agent输出">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="8" y="8" width="12" height="12" rx="2" />
+                  <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="robot-message copy-scope">
+            <div>
+              <div class="message-actions">
+                <span class="message-time">05.29 15:42:58</span>
+              </div>
+              <div class="robot-meta">
+                <span class="robot-name">智能巡检机器人</span>
+                <span class="robot-tag">机器人</span>
+                <span class="robot-time">15:42</span>
+              </div>
+              <div class="robot-card copy-content">
+                [05.29 15:42:58]<br />
+                <span class="mono-line">是否违规--理由--直播id--违规商品id--挂车商品ID列表</span><br />
+                <span class="mono-line">违规--主播宣称“泰国金枕”“坏果包赔”，但商品卡未展示产地与售后承诺--7645187296261966633--3821932098797830322--["3821932098797830322", "3805494227979338130", "3684615238411485398"]</span>
+              </div>
+              <button class="copy-message" type="button" aria-label="复制Agent输出">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="8" y="8" width="12" height="12" rx="2" />
+                  <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="robot-message copy-scope">
+            <div>
+              <div class="message-actions">
+                <span class="message-time">05.29 15:43:20</span>
+              </div>
+              <div class="robot-meta">
+                <span class="robot-name">智能巡检机器人</span>
+                <span class="robot-tag">机器人</span>
+                <span class="robot-time">15:43</span>
+              </div>
+              <div class="robot-card copy-content">
+                已完成第1个榴莲直播间巡检，继续处理剩余19个case。<br />
+                [05.29 15:43:20]<br />
+                已成功切换到下一个可审核的榴莲直播间：当前直播间为热带水果带货直播间，未关播，页面与商品卡加载正常，可进入后续违规判定流程。
+              </div>
+              <button class="copy-message" type="button" aria-label="复制Agent输出">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="8" y="8" width="12" height="12" rx="2" />
+                  <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <div class="chat-input">
+          <input value="继续查看当前风险证据" aria-label="继续对话" />
+          <button type="button" aria-label="发送">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
+          </button>
+        </div>
+      </section>
+
+      <section class="workbench" aria-label="具体巡检内容">
+        <header class="right-head">
+          <div>
+            <div class="panel-title">已巡检结束直播间结果</div>
+            <div class="subtitle">仅展示已完成巡检并产生判定结果的直播间</div>
+          </div>
+        </header>
+
+        <section class="right-metrics" aria-label="任务概览">
+          <div class="metric">
+            <div class="metric-label">巡检进度</div>
+            <div class="metric-value">8<small>/20</small></div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">疑似风险</div>
+            <div class="metric-value">2</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">已上报研判</div>
+            <div class="metric-value">1</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">异常样本</div>
+            <div class="metric-value">1</div>
+          </div>
+        </section>
+
+        <div class="right-body">
+          <div class="detail-column">
+            <section class="panel" aria-label="已巡检结束直播间结果">
+              <div class="panel-head">
+                <div class="panel-title">直播间结果列表</div>
+                <div class="panel-note">已完成 8 个</div>
+              </div>
+              <div class="result-list">
+                <article class="room-card">
+                  <div class="room-top">
+                    <div>
+                      <div class="room-name">榴莲源头好货</div>
+                    </div>
+                    <div class="result-status violate">违规</div>
+                  </div>
+                  <div class="room-fields">
+                    <div class="room-field"><strong>直播间名称</strong><span>榴莲源头好货</span></div>
+                    <div class="room-field"><strong>直播间 ID</strong><span><a href="#">7645187296261966633</a></span></div>
+                    <div class="room-field"><strong>违规时间点</strong><span>00:18</span></div>
+                    <div class="room-field"><strong>违规挂车商品</strong><span><a href="#">3821932098797830322</a></span></div>
+                    <div class="room-field">
+                      <strong>挂车商品</strong>
+                      <span class="link-list">
+                        <a class="product-link" href="#">3821932098797830322</a>
+                        <a class="product-link" href="#">3805494227979338130</a>
+                        <a class="product-link" href="#">3684615238411485398</a>
+                        <a class="product-link" href="#">3817961515290592225</a>
+                        <a class="product-link" href="#">3820602604463980698</a>
+                        <a class="product-link" href="#">3821664949609038171</a>
+                        <a class="product-link" href="#">3815042073615270006</a>
+                        <a class="product-link" href="#">3821666163012796590</a>
+                      </span>
+                    </div>
+                    <div class="room-field"><strong>算法判断依据</strong><span>ASR 命中产地与售后强承诺，OCR 未识别到商品卡产地字段和坏果包赔说明，话术与商品信息不一致。</span></div>
+                  </div>
+                  <div class="actions">
+                    <button class="action-btn primary review-action" data-action="report" type="button">上报研判</button>
+                    <button class="action-btn danger review-action" data-action="reject" type="button">驳回</button>
+                  </div>
+                </article>
+
+                <article class="room-card">
+                  <div class="room-top">
+                    <div>
+                      <div class="room-name">鲜果优选直播间</div>
+                    </div>
+                    <div class="result-status pass">不违规</div>
+                  </div>
+                  <div class="room-fields">
+                    <div class="room-field"><strong>直播间名称</strong><span>鲜果优选直播间</span></div>
+                    <div class="room-field"><strong>直播间 ID</strong><span><a href="#">7382491057248105521</a></span></div>
+                    <div class="room-field"><strong>违规时间点</strong><span>无</span></div>
+                    <div class="room-field"><strong>违规挂车商品</strong><span>无</span></div>
+                    <div class="room-field">
+                      <strong>挂车商品</strong>
+                      <span class="link-list">
+                        <a class="product-link" href="#">3812049876201938401</a>
+                        <a class="product-link" href="#">3812049876201938402</a>
+                        <a class="product-link" href="#">3812049876201938403</a>
+                        <a class="product-link" href="#">3812049876201938404</a>
+                        <a class="product-link" href="#">3812049876201938405</a>
+                        <a class="product-link" href="#">3812049876201938406</a>
+                        <a class="product-link" href="#">3812049876201938407</a>
+                        <a class="product-link" href="#">3812049876201938408</a>
+                      </span>
+                    </div>
+                    <div class="room-field"><strong>算法判断依据</strong><span>商品卡、主播话术、OCR 规格信息与售后描述一致，未发现虚假宣传或异常低价风险。</span></div>
+                  </div>
+                  <div class="actions">
+                    <button class="action-btn primary review-action" data-action="report" type="button">上报研判</button>
+                    <button class="action-btn danger review-action" data-action="reject" type="button">驳回</button>
+                  </div>
+                </article>
+
+                <article class="room-card">
+                  <div class="room-top">
+                    <div>
+                      <div class="room-name">热带水果仓</div>
+                    </div>
+                    <div class="result-status skip">异常</div>
+                  </div>
+                  <div class="room-fields">
+                    <div class="room-field"><strong>直播间名称</strong><span>热带水果仓</span></div>
+                    <div class="room-field"><strong>直播间 ID</strong><span><a href="#">7195604381204459068</a></span></div>
+                    <div class="room-field"><strong>违规时间点</strong><span>00:09</span></div>
+                    <div class="room-field"><strong>违规挂车商品</strong><span>未获取</span></div>
+                    <div class="room-field">
+                      <strong>挂车商品</strong>
+                      <span class="link-list">
+                        <a class="product-link" href="#">3830194827601293001</a>
+                        <a class="product-link" href="#">3830194827601293002</a>
+                        <a class="product-link" href="#">3830194827601293003</a>
+                      </span>
+                    </div>
+                    <div class="room-field"><strong>算法判断依据</strong><span>页面卡死导致 OCR、ASR 和挂车商品列表未完整采集，样本异常并等待后续回扫。</span></div>
+                  </div>
+                  <div class="actions">
+                    <button class="action-btn primary review-action" data-action="report" type="button">上报研判</button>
+                    <button class="action-btn danger review-action" data-action="reject" type="button">驳回</button>
+                  </div>
+                </article>
+              </div>
+            </section>
+          </div>
+        </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <div class="confirm-backdrop" id="stopTaskModal" role="dialog" aria-modal="true" aria-labelledby="stopTaskTitle" hidden>
+      <div class="confirm-dialog">
+        <h2 class="confirm-title" id="stopTaskTitle">确认停止当前巡检任务？</h2>
+        <p class="confirm-copy">停止后将不再继续进入新的直播间，已完成巡检结果仍可查看。</p>
+        <div class="confirm-actions">
+          <button class="cancel-stop" id="cancelStopTask" type="button">取消</button>
+          <button class="confirm-stop" id="confirmStopTask" type="button">确认停止</button>
+        </div>
+      </div>
+    </div>
+
+    <dialog class="task-dialog" id="newTaskDialog">
+      <form method="dialog">
+        <div class="dialog-head">
+          <div class="dialog-title">新建任务</div>
+        </div>
+        <div class="dialog-body">
+          <textarea placeholder="直接描述你想完成的任务。平台会理解任务意图，并选择合适的 Agent、Skill、工具和知识库执行。"></textarea>
+        </div>
+        <div class="dialog-actions">
+          <button class="dialog-cancel" value="cancel" type="submit">取消</button>
+          <button class="dialog-submit" value="submit" type="submit">提交任务</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script>
+      const appShell = document.querySelector("#appShell");
+      const newTaskDialog = document.querySelector("#newTaskDialog");
+
+      document.querySelectorAll(".open-task-dialog").forEach((button) => {
+        button.addEventListener("click", () => newTaskDialog.showModal());
+      });
+
+      document.querySelectorAll("[data-chat-state-target]").forEach((button) => {
+        button.addEventListener("click", () => {
+          appShell.dataset.chatState = button.dataset.chatStateTarget;
+        });
+      });
+
+      document.querySelectorAll(".copy-message").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const scope = button.closest(".copy-scope");
+          const content = scope?.querySelector(".copy-content")?.innerText.trim() || "";
+          if (!content) return;
+
+          try {
+            await navigator.clipboard.writeText(content);
+          } catch {
+            const selection = window.getSelection();
+            const range = document.createRange();
+            const target = scope.querySelector(".copy-content");
+            range.selectNodeContents(target);
+            selection.removeAllRanges();
+            selection.addRange(range);
+            document.execCommand("copy");
+            selection.removeAllRanges();
+          }
+
+          const originalLabel = button.getAttribute("aria-label") || "复制内容";
+          button.classList.add("copied");
+          button.setAttribute("aria-label", "已复制");
+          setTimeout(() => {
+            button.classList.remove("copied");
+            button.setAttribute("aria-label", originalLabel);
+          }, 1200);
+        });
+      });
+
+      document.querySelectorAll(".room-card").forEach((card) => {
+        const reportButton = card.querySelector('[data-action="report"]');
+        const rejectButton = card.querySelector('[data-action="reject"]');
+        if (!reportButton || !rejectButton) return;
+
+        reportButton.addEventListener("click", () => {
+          reportButton.textContent = "已上报研判";
+          reportButton.classList.add("locked");
+          reportButton.disabled = true;
+          rejectButton.disabled = true;
+        });
+
+        rejectButton.addEventListener("click", () => {
+          rejectButton.textContent = "已驳回";
+          rejectButton.classList.add("locked");
+          rejectButton.disabled = true;
+          reportButton.disabled = true;
+        });
+      });
+
+      const filterTabs = document.querySelectorAll(".filter-tab");
+      const reviewCards = document.querySelectorAll(".inspection-workspace .review-list .room-card");
+      const selectedCount = document.querySelector("#selectedCount");
+
+      function updateSelectedCount() {
+        const count = document.querySelectorAll(".inspection-workspace .room-select:checked").length;
+        selectedCount.textContent = String(count);
+      }
+
+      filterTabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const filter = tab.dataset.filter;
+          filterTabs.forEach((item) => item.classList.remove("active"));
+          tab.classList.add("active");
+          reviewCards.forEach((card) => {
+            card.hidden = filter !== "all" && card.dataset.result !== filter;
+          });
+        });
+      });
+
+      document.querySelectorAll(".inspection-workspace .room-select").forEach((checkbox) => {
+        checkbox.addEventListener("change", updateSelectedCount);
+      });
+
+      document.querySelectorAll("[data-select-scope]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const scope = button.dataset.selectScope;
+          reviewCards.forEach((card) => {
+            if (scope === "page" && card.hidden) return;
+            const checkbox = card.querySelector(".room-select");
+            if (checkbox) checkbox.checked = true;
+          });
+          updateSelectedCount();
+        });
+      });
+
+      document.querySelectorAll(".bulk-action").forEach((button) => {
+        button.addEventListener("click", () => {
+          const action = button.dataset.bulkAction;
+          reviewCards.forEach((card) => {
+            const checkbox = card.querySelector(".room-select");
+            if (!checkbox?.checked) return;
+            const target = card.querySelector(`[data-action="${action}"]`);
+            if (target && !target.disabled) target.click();
+          });
+          updateSelectedCount();
+        });
+      });
+
+      const stopTaskButton = document.querySelector("#stopTaskButton");
+      const stopTaskModal = document.querySelector("#stopTaskModal");
+      const cancelStopTask = document.querySelector("#cancelStopTask");
+      const confirmStopTask = document.querySelector("#confirmStopTask");
+      const taskRunStatus = document.querySelector("#taskRunStatus");
+
+      function openStopTaskModal() {
+        stopTaskModal.hidden = false;
+        stopTaskModal.classList.add("open");
+        confirmStopTask.focus();
+      }
+
+      function closeStopTaskModal() {
+        stopTaskModal.classList.remove("open");
+        stopTaskModal.hidden = true;
+        if (!stopTaskButton.disabled) stopTaskButton.focus();
+      }
+
+      stopTaskButton?.addEventListener("click", openStopTaskModal);
+      cancelStopTask?.addEventListener("click", closeStopTaskModal);
+      stopTaskModal?.addEventListener("click", (event) => {
+        if (event.target === stopTaskModal) closeStopTaskModal();
+      });
+
+      confirmStopTask?.addEventListener("click", () => {
+        taskRunStatus.classList.add("stopped");
+        taskRunStatus.querySelector(".status-text").textContent = "已停止";
+        stopTaskButton.textContent = "任务已停止";
+        stopTaskButton.disabled = true;
+        closeStopTaskModal();
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !stopTaskModal.hidden) closeStopTaskModal();
+      });
+
+      const sidebarToggle = document.querySelector("#sidebarToggle");
+
+      sidebarToggle.addEventListener("click", () => {
+        const collapsed = appShell.classList.toggle("sidebar-collapsed");
+        sidebarToggle.setAttribute("aria-expanded", String(!collapsed));
+        sidebarToggle.setAttribute("aria-label", collapsed ? "展开左侧菜单" : "收起左侧菜单");
+      });
+    </script>
+  </body>
+</html>

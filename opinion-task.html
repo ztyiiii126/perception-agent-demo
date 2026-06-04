@@ -1,0 +1,711 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>舆情风险研判 - 感知Agent</title>
+    <style>
+      :root {
+        --bg: #f4f7fa;
+        --panel: #ffffff;
+        --panel-soft: #f7f9fb;
+        --text: #20242a;
+        --muted: #737d8c;
+        --line: #dde5ec;
+        --accent: #3b6ef6;
+        --accent-soft: #e8efff;
+        --violet: #7c5cff;
+        --violet-soft: #f1edff;
+        --danger: #e65045;
+        --warning: #e9971c;
+        --green: #22a06b;
+        --shadow: 0 20px 55px rgba(32, 44, 62, 0.11);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 72% 12%, rgba(241, 237, 255, 0.96), transparent 34%),
+          linear-gradient(135deg, #f2f5f8 0%, #fbfcfd 56%, #eef7f4 100%);
+        color: var(--text);
+        font-family:
+          Inter, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .analysis-page {
+        display: grid;
+        grid-template-columns: minmax(560px, 1fr) 420px;
+        gap: 14px;
+        min-height: 100vh;
+        padding: 14px;
+      }
+
+      .console,
+      .inspector {
+        min-width: 0;
+        border: 1px solid rgba(218, 228, 236, 0.88);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.84);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(16px);
+      }
+
+      .console {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        padding: 20px;
+      }
+
+      .page-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 18px;
+      }
+
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        height: 34px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #fff;
+        color: #4d5868;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 650;
+      }
+
+      .title-block {
+        display: grid;
+        gap: 8px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 22px;
+        line-height: 1.18;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .status-live {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-width: max-content;
+        height: 34px;
+        padding: 0 12px;
+        border-radius: 999px;
+        background: var(--violet-soft);
+        color: #654be0;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .pulse {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--violet);
+        box-shadow: 0 0 0 6px rgba(124, 92, 255, 0.13);
+      }
+
+      .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .metric-card {
+        min-height: 104px;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: var(--panel-soft);
+      }
+
+      .metric-label {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 650;
+      }
+
+      .metric-value {
+        margin-top: 12px;
+        font-size: 28px;
+        font-weight: 760;
+      }
+
+      .metric-value small {
+        color: #87909d;
+        font-size: 16px;
+        font-weight: 650;
+      }
+
+      .progress-track {
+        overflow: hidden;
+        height: 7px;
+        margin-top: 16px;
+        border-radius: 999px;
+        background: #e5ebf1;
+      }
+
+      .progress-bar {
+        width: 71%;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--violet), var(--accent));
+      }
+
+      .board-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 0.95fr) minmax(330px, 1.05fr);
+        gap: 12px;
+        min-height: 0;
+      }
+
+      .panel {
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: #fff;
+      }
+
+      .panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 15px 16px 12px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .panel-title {
+        font-size: 15px;
+        font-weight: 760;
+      }
+
+      .panel-note {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .log-list {
+        display: grid;
+        max-height: 520px;
+        overflow: auto;
+        padding: 10px 0;
+      }
+
+      .log-row {
+        display: grid;
+        grid-template-columns: 28px minmax(0, 1fr);
+        gap: 10px;
+        padding: 8px 16px;
+      }
+
+      .log-dot {
+        position: relative;
+        width: 28px;
+      }
+
+      .log-dot::before {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #b8c3cf;
+        content: "";
+      }
+
+      .log-row.active .log-dot::before {
+        background: var(--violet);
+        box-shadow: 0 0 0 6px rgba(124, 92, 255, 0.12);
+      }
+
+      .log-row.warn .log-dot::before {
+        background: var(--warning);
+      }
+
+      .log-row.error .log-dot::before {
+        background: var(--danger);
+      }
+
+      .log-text {
+        color: #384252;
+        font-size: 13px;
+        line-height: 1.48;
+      }
+
+      .log-time {
+        display: block;
+        margin-top: 3px;
+        color: #9aa4b2;
+        font-size: 11px;
+      }
+
+      .decision-flow {
+        display: grid;
+        gap: 10px;
+        max-height: 520px;
+        overflow: auto;
+        padding: 14px;
+      }
+
+      .flow-card {
+        display: grid;
+        grid-template-columns: 36px minmax(0, 1fr) auto;
+        gap: 12px;
+        align-items: center;
+        padding: 12px;
+        border: 1px solid #e2e9f0;
+        border-radius: 16px;
+        background: #fbfcfd;
+      }
+
+      .flow-card.active {
+        border-color: rgba(124, 92, 255, 0.28);
+        background: var(--violet-soft);
+      }
+
+      .flow-card.reject {
+        opacity: 0.72;
+      }
+
+      .flow-index {
+        display: grid;
+        width: 36px;
+        height: 36px;
+        place-items: center;
+        border-radius: 12px;
+        background: #eef2f7;
+        color: #5f6a78;
+        font-size: 12px;
+        font-weight: 760;
+      }
+
+      .flow-card.active .flow-index {
+        background: #fff;
+        color: var(--violet);
+      }
+
+      .flow-title {
+        font-size: 13px;
+        font-weight: 760;
+      }
+
+      .flow-desc {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.42;
+      }
+
+      .decision {
+        display: inline-flex;
+        align-items: center;
+        height: 26px;
+        padding: 0 9px;
+        border-radius: 999px;
+        background: #edf7f2;
+        color: #13784f;
+        font-size: 12px;
+        font-weight: 760;
+      }
+
+      .decision.no {
+        background: #f2f5f8;
+        color: #6f7784;
+      }
+
+      .inspector {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        padding: 18px;
+      }
+
+      .source-card {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: #fff;
+      }
+
+      .source-hero {
+        min-height: 150px;
+        padding: 18px;
+        background:
+          linear-gradient(135deg, rgba(124, 92, 255, 0.82), rgba(59, 110, 246, 0.76)),
+          radial-gradient(circle at 18% 28%, rgba(255, 255, 255, 0.36), transparent 24%);
+        color: #fff;
+      }
+
+      .source-type {
+        display: inline-flex;
+        height: 26px;
+        align-items: center;
+        padding: 0 9px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.18);
+        font-size: 12px;
+        font-weight: 760;
+      }
+
+      .source-title {
+        margin-top: 18px;
+        font-size: 20px;
+        font-weight: 800;
+        line-height: 1.28;
+      }
+
+      .source-body {
+        display: grid;
+        gap: 12px;
+        padding: 16px;
+      }
+
+      .url-line {
+        overflow: hidden;
+        color: var(--accent);
+        font-size: 12px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        height: 28px;
+        padding: 0 9px;
+        border-radius: 999px;
+        background: #f2f5f8;
+        color: #55606e;
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .grade-box {
+        display: grid;
+        grid-template-columns: 84px minmax(0, 1fr);
+        gap: 12px;
+        align-items: center;
+        padding: 14px;
+        border: 1px solid rgba(230, 80, 69, 0.18);
+        border-radius: 18px;
+        background: #fff4f3;
+      }
+
+      .grade {
+        display: grid;
+        width: 72px;
+        height: 72px;
+        place-items: center;
+        border-radius: 20px;
+        background: #e65045;
+        color: #fff;
+        font-size: 34px;
+        font-weight: 850;
+      }
+
+      .grade-title {
+        font-size: 15px;
+        font-weight: 800;
+      }
+
+      .grade-desc {
+        margin-top: 6px;
+        color: #6f4d4a;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .evidence-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .evidence {
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: #fff;
+      }
+
+      .evidence strong {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 13px;
+      }
+
+      .evidence span {
+        color: #5f6a78;
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .push-panel {
+        display: grid;
+        gap: 10px;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: #fff;
+      }
+
+      .push-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        color: #4d5868;
+        font-size: 13px;
+      }
+
+      .push-row strong {
+        color: #20242a;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .action-btn {
+        height: 34px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fff;
+        color: #4d5868;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 720;
+      }
+
+      .action-btn.primary {
+        border-color: rgba(124, 92, 255, 0.28);
+        background: var(--violet-soft);
+        color: #654be0;
+      }
+
+      @media (max-width: 1120px) {
+        .analysis-page {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .analysis-page {
+          padding: 12px;
+        }
+
+        .metric-grid,
+        .board-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .page-header {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="analysis-page">
+      <section class="console" aria-label="舆情研判控制台">
+        <header class="page-header">
+          <div class="title-block">
+            <a class="back-link" href="opinion.html">返回舆情输入页</a>
+            <h1>社媒低价假货风险研判</h1>
+            <div class="subtitle">任务 ID：OPN-20260514-091 · 数据来源：媒体接口 / 社交平台接口</div>
+          </div>
+          <div class="status-live"><span class="pulse"></span>Agent研判中</div>
+        </header>
+
+        <section class="metric-grid" aria-label="舆情过程数据">
+          <div class="metric-card">
+            <div class="metric-label">接入舆情</div>
+            <div class="metric-value">128</div>
+            <div class="progress-track"><div class="progress-bar" style="width: 100%"></div></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">过滤有效</div>
+            <div class="metric-value">91</div>
+            <div class="progress-track"><div class="progress-bar"></div></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">风险命中</div>
+            <div class="metric-value">12</div>
+            <div class="progress-track"><div class="progress-bar" style="width: 38%; background: linear-gradient(90deg, #e9971c, #e65045)"></div></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">待推送</div>
+            <div class="metric-value">5</div>
+            <div class="progress-track"><div class="progress-bar" style="width: 42%; background: linear-gradient(90deg, #22a06b, #3b6ef6)"></div></div>
+          </div>
+        </section>
+
+        <section class="board-grid">
+          <section class="panel" aria-label="Agent思考日志">
+            <div class="panel-head">
+              <div class="panel-title">Agent思考日志</div>
+              <div class="panel-note">舆情数据过滤</div>
+            </div>
+            <div class="log-list">
+              <div class="log-row"><div class="log-dot"></div><div class="log-text">采买数据接口接入 72 条 URL<span class="log-time">15:22:04</span></div></div>
+              <div class="log-row"><div class="log-dot"></div><div class="log-text">CSV 数据接口接入 41 条 URL<span class="log-time">15:22:09</span></div></div>
+              <div class="log-row"><div class="log-dot"></div><div class="log-text">人工导入 15 条舆情线索<span class="log-time">15:22:12</span></div></div>
+              <div class="log-row active"><div class="log-dot"></div><div class="log-text">判断是否本平台舆情：命中 91 条<span class="log-time">15:22:18</span></div></div>
+              <div class="log-row warn"><div class="log-dot"></div><div class="log-text">发现重复 URL 21 条，合并至原事件<span class="log-time">15:22:27</span></div></div>
+              <div class="log-row"><div class="log-dot"></div><div class="log-text">关联事件 ID：EVT-558291<span class="log-time">15:22:35</span></div></div>
+              <div class="log-row active"><div class="log-dot"></div><div class="log-text">抽取主体：平台内店铺、商品链接、疑似品牌词<span class="log-time">15:22:42</span></div></div>
+              <div class="log-row"><div class="log-dot"></div><div class="log-text">识别社会平台层级：P0，高传播强度<span class="log-time">15:22:50</span></div></div>
+              <div class="log-row error"><div class="log-dot"></div><div class="log-text">命中 A 级风险：假冒/伪劣争议 + 外部媒体扩散<span class="log-time">15:22:58</span></div></div>
+              <div class="log-row active"><div class="log-dot"></div><div class="log-text">检查是否包含有效处置对象：商品 ID 与店铺 ID 均已命中<span class="log-time">15:23:04</span></div></div>
+              <div class="log-row"><div class="log-dot"></div><div class="log-text">输出风险级别准进：回扫平台 + 治理平台<span class="log-time">15:23:13</span></div></div>
+            </div>
+          </section>
+
+          <section class="panel" aria-label="风险定级流程">
+            <div class="panel-head">
+              <div class="panel-title">舆情风险定级</div>
+              <div class="panel-note">规则路径</div>
+            </div>
+            <div class="decision-flow">
+              <div class="flow-card active">
+                <div class="flow-index">01</div>
+                <div>
+                  <div class="flow-title">是否本平台舆情</div>
+                  <div class="flow-desc">URL 内容提及平台内商品、店铺与交易链路。</div>
+                </div>
+                <div class="decision">是</div>
+              </div>
+              <div class="flow-card active">
+                <div class="flow-index">02</div>
+                <div>
+                  <div class="flow-title">是否重复</div>
+                  <div class="flow-desc">与已有事件相似度 87%，进入事件合并与更新。</div>
+                </div>
+                <div class="decision">合并</div>
+              </div>
+              <div class="flow-card active">
+                <div class="flow-index">03</div>
+                <div>
+                  <div class="flow-title">是否生成过事件的衍生舆情</div>
+                  <div class="flow-desc">存在事件 ID，复用事件上下文并更新传播强度。</div>
+                </div>
+                <div class="decision">是</div>
+              </div>
+              <div class="flow-card active">
+                <div class="flow-index">04</div>
+                <div>
+                  <div class="flow-title">是否 S/A/B/C/D</div>
+                  <div class="flow-desc">假冒、伪劣、虚假宣传均为高优先级风险标签。</div>
+                </div>
+                <div class="decision">A级</div>
+              </div>
+              <div class="flow-card active">
+                <div class="flow-index">05</div>
+                <div>
+                  <div class="flow-title">社会平台层级</div>
+                  <div class="flow-desc">P0 社交平台且互动增长快，需要进入准进。</div>
+                </div>
+                <div class="decision">P0</div>
+              </div>
+              <div class="flow-card active">
+                <div class="flow-index">06</div>
+                <div>
+                  <div class="flow-title">是否包含处置对象 ID</div>
+                  <div class="flow-desc">已命中商品 ID、店铺 ID、达人 ID，可直接推送处置。</div>
+                </div>
+                <div class="decision">是</div>
+              </div>
+              <div class="flow-card reject">
+                <div class="flow-index">07</div>
+                <div>
+                  <div class="flow-title">是否仅满足次级条件</div>
+                  <div class="flow-desc">非“粉丝量/风险标签/投诉热度”单条件路线。</div>
+                </div>
+                <div class="decision no">跳过</div>
+              </div>
+            </div>
+          </section>
+        </section>
+      </section>
+
+      <aside class="inspector" aria-label="舆情详情与输出">
+        <section class="source-card">
+          <div class="source-hero">
+            <div class="source-type">社交平台舆情 URL</div>
+            <div class="source-title">消费者称平台店铺售卖疑似假冒品牌商品</div>
+          </div>
+          <div class="source-body">
+            <div class="url-line">https://social.example.com/post/brand-risk-927</div>
+          </div>
+        </section>
+
+        <section class="grade-box" aria-label="风险等级">
+          <div class="grade">A</div>
+          <div>
+            <div class="grade-title">A级舆情风险</div>
+            <div class="grade-desc">命中假冒/伪劣争议，传播平台层级高，且具备商品与店铺处置对象，建议准进治理平台并同步回扫。</div>
+          </div>
+        </section>
+
+        <section class="evidence-list" aria-label="舆情证据">
+          <div class="evidence">
+            <strong>媒体/社交原文</strong>
+            <span>“买到的包装和品牌旗舰店不一致，客服称渠道货，评论区多人反馈相同问题。”</span>
+          </div>
+          <div class="evidence">
+            <strong>主体识别</strong>
+            <span>店铺 ID：SHOP-7391；商品 ID：ITEM-48210。</span>
+          </div>
+          <div class="evidence">
+            <strong>传播信号</strong>
+            <span>转发 1,280 次，评论 642 条，点赞 8,730 次。</span>
+          </div>
+        </section>
+
+        <section class="push-panel" aria-label="输出渠道">
+          <div class="panel-title">输出与准进</div>
+          <div class="push-row"><span>回扫平台</span><strong>已生成准进单</strong></div>
+          <div class="push-row"><span>治理平台</span><strong>待人工确认</strong></div>
+          <div class="push-row"><span>风险沉淀</span><strong>案例库待入库</strong></div>
+          <div class="actions">
+            <button class="action-btn primary" type="button">确认准进</button>
+            <button class="action-btn" type="button">调整等级</button>
+            <button class="action-btn" type="button">标记非风险</button>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </body>
+</html>

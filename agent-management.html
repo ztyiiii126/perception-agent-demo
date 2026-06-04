@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agent - 感知Agent</title>
+    <style>
+      :root {
+        --panel: #ffffff;
+        --panel-soft: #f3f6fa;
+        --text: #20242a;
+        --muted: #737d8c;
+        --line: #dde5ec;
+        --accent: #3b6ef6;
+        --accent-soft: #e8efff;
+        --green: #20a779;
+        --orange: #e9971c;
+        --shadow: 0 22px 60px rgba(32, 44, 62, 0.11);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 62% 0%, rgba(255, 255, 255, 0.94) 0 18%, transparent 42%),
+          linear-gradient(135deg, #f3f6fa 0%, #fbfcfd 50%, #edf7f3 100%);
+        color: var(--text);
+        font-family:
+          Inter, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+      }
+
+      button,
+      textarea {
+        font: inherit;
+      }
+
+      .app {
+        display: grid;
+        grid-template-columns: 282px minmax(0, 1fr);
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        padding: 22px 16px;
+        border-right: 1px solid rgba(223, 216, 203, 0.78);
+        background: rgba(244, 247, 249, 0.86);
+        backdrop-filter: blur(18px);
+      }
+
+      .brand {
+        padding: 6px 10px 10px;
+        font-size: 22px;
+        font-weight: 840;
+        line-height: 1.15;
+      }
+
+      .new-task {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        height: 46px;
+        border: 0;
+        border-radius: 14px;
+        background: #171717;
+        color: #fff;
+        cursor: pointer;
+        font-weight: 650;
+        box-shadow: 0 12px 26px rgba(23, 23, 23, 0.16);
+      }
+
+      .primary-menu,
+      .nav-stack,
+      .task-stack {
+        display: grid;
+        gap: 8px;
+      }
+
+      .primary-menu-button {
+        display: flex;
+        align-items: center;
+        min-height: 40px;
+        padding: 0 12px;
+        border: 0;
+        border-radius: 12px;
+        background: transparent;
+        color: #4c5563;
+        cursor: pointer;
+        font-weight: 760;
+        font-size: 14px;
+        text-align: left;
+      }
+
+      .primary-menu-button.active {
+        background: rgba(255, 255, 255, 0.72);
+        color: #20242a;
+      }
+
+      .agent-nav {
+        margin-left: 12px;
+        padding-left: 10px;
+        border-left: 1px solid var(--line);
+      }
+
+      .nav-button,
+      .task-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 42px;
+        width: 100%;
+        border: 0;
+        border-radius: 12px;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .nav-button {
+        padding: 0 12px;
+        font-weight: 650;
+      }
+
+      .nav-icon {
+        display: grid;
+        flex: 0 0 auto;
+        width: 26px;
+        height: 26px;
+        place-items: center;
+        border-radius: 9px;
+        background: var(--panel-soft);
+        color: #504b44;
+      }
+
+      .tasks {
+        display: flex;
+        min-height: 0;
+        margin-top: 14px;
+        flex: 1;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .section-title {
+        display: block;
+        padding: 0 10px;
+        color: #9a9285;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .task-item {
+        padding: 10px;
+      }
+
+      .task-name {
+        overflow: hidden;
+        color: #38342e;
+        font-size: 14px;
+        font-weight: 650;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      main {
+        min-width: 0;
+        padding: 38px 44px 34px;
+      }
+
+      .topbar,
+      .workspace {
+        width: min(100%, 1180px);
+        margin: 0 auto;
+      }
+
+      .topbar {
+        margin-bottom: 28px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .page-head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(22px, 2.1vw, 28px);
+        line-height: 1.15;
+      }
+
+      .page-desc {
+        margin-top: 10px;
+        max-width: 760px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .create-agent {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 38px;
+        padding: 0 15px;
+        border: 1px solid rgba(59, 110, 246, 0.18);
+        border-radius: 12px;
+        background: var(--accent);
+        color: #fff;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 760;
+        white-space: nowrap;
+        box-shadow: 0 12px 26px rgba(59, 110, 246, 0.18);
+      }
+
+      .agent-layout {
+        display: grid;
+        grid-template-columns: 360px minmax(0, 1fr);
+        gap: 16px;
+      }
+
+      .agent-list,
+      .detail-panel,
+      .sub-panel {
+        border: 1px solid rgba(218, 226, 231, 0.92);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.84);
+        box-shadow: var(--shadow);
+      }
+
+      .agent-list {
+        overflow: hidden;
+      }
+
+      .list-head,
+      .panel-head {
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .panel-title {
+        font-size: 16px;
+        font-weight: 820;
+      }
+
+      .panel-subtitle {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .agent-card {
+        display: grid;
+        gap: 8px;
+        width: 100%;
+        padding: 16px 18px;
+        border: 0;
+        border-bottom: 1px solid var(--line);
+        background: transparent;
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .agent-card.active {
+        background: #f5f8ff;
+      }
+
+      .agent-name {
+        color: #20242a;
+        font-size: 17px;
+        font-weight: 820;
+      }
+
+      .agent-desc {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .agent-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        height: 26px;
+        padding: 0 9px;
+        border-radius: 999px;
+        background: #f1f4f8;
+        color: #566273;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .tag.green {
+        background: #eaf8f1;
+        color: #13784f;
+      }
+
+      .detail-panel {
+        overflow: hidden;
+      }
+
+      .detail-hero {
+        padding: 20px;
+        border-bottom: 1px solid var(--line);
+        background:
+          radial-gradient(circle at 88% 8%, rgba(59, 110, 246, 0.12), transparent 34%),
+          #fff;
+      }
+
+      .detail-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .detail-name {
+        font-size: 24px;
+        font-weight: 860;
+        line-height: 1.2;
+      }
+
+      .detail-copy {
+        margin-top: 10px;
+        max-width: 720px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.65;
+      }
+
+      .detail-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .action-btn {
+        height: 34px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fff;
+        color: #4f5964;
+        cursor: pointer;
+        font-weight: 760;
+      }
+
+      .action-btn.primary {
+        border-color: rgba(59, 110, 246, 0.18);
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .metric-card {
+        min-height: 88px;
+        padding: 13px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--panel-soft);
+      }
+
+      .metric-label {
+        color: #6f7784;
+        font-size: 12px;
+        font-weight: 760;
+      }
+
+      .metric-value {
+        margin-top: 8px;
+        font-size: 24px;
+        font-weight: 840;
+      }
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        padding: 16px;
+      }
+
+      .sub-panel {
+        box-shadow: none;
+      }
+
+      .sub-body {
+        display: grid;
+        gap: 10px;
+        padding: 14px 16px 16px;
+      }
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 10px 0;
+        border-bottom: 1px solid #eef2f5;
+        color: #303844;
+        font-size: 13px;
+      }
+
+      .info-row:last-child {
+        border-bottom: 0;
+      }
+
+      .info-row strong {
+        color: #6f7784;
+        font-weight: 760;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .task-dialog {
+        width: min(960px, calc(100vw - 48px));
+        padding: 0;
+        border: 1px solid rgba(218, 226, 231, 0.92);
+        border-radius: 20px;
+        background: #fff;
+        color: var(--text);
+        box-shadow: 0 28px 80px rgba(32, 44, 62, 0.18);
+      }
+
+      .task-dialog::backdrop {
+        background: rgba(32, 40, 52, 0.24);
+        backdrop-filter: blur(8px);
+      }
+
+      .dialog-head,
+      .dialog-body,
+      .dialog-actions {
+        padding: 18px 20px;
+      }
+
+      .dialog-head {
+        border-bottom: 1px solid var(--line);
+      }
+
+      .dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        border-top: 1px solid var(--line);
+      }
+
+      .dialog-title {
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      .dialog-body textarea {
+        width: 100%;
+        min-height: 320px;
+        resize: vertical;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 14px;
+        outline: 0;
+        background: #fbfcfd;
+        color: var(--text);
+        line-height: 1.7;
+      }
+
+      .dialog-actions button {
+        height: 36px;
+        padding: 0 14px;
+        border-radius: 11px;
+        cursor: pointer;
+        font-weight: 760;
+      }
+
+      .dialog-cancel {
+        border: 1px solid var(--line);
+        background: #fff;
+        color: #59636e;
+      }
+
+      .dialog-submit {
+        border: 1px solid rgba(59, 110, 246, 0.18);
+        background: var(--accent);
+        color: #fff;
+      }
+
+      svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2;
+      }
+
+      @media (max-width: 1180px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .agent-layout,
+        .detail-grid,
+        .metric-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" aria-label="左侧导航">
+        <div class="brand">感知Agent</div>
+        <button class="new-task" type="button" onclick="location.href='new-task.html'">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+          新建任务
+        </button>
+        <nav class="primary-menu" aria-label="功能导航">
+          <button class="primary-menu-button active" type="button">Agent</button>
+          <div class="nav-stack agent-nav" aria-label="Agent功能">
+            <button class="nav-button" type="button" onclick="location.href='index.html'">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 11 2 2 4-5" /><path d="M20 12a8 8 0 1 1-3.1-6.3" /><path d="M18 4h3v3" /></svg>
+              </span>
+              巡检捉虫
+            </button>
+            <button class="nav-button" type="button" onclick="location.href='opinion.html'">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3 8 4-16 3 8h4" /></svg>
+              </span>
+              舆情分析
+            </button>
+          </div>
+          <button class="primary-menu-button" type="button" onclick="location.href='skill.html'">Skill</button>
+          <button class="primary-menu-button" type="button" onclick="location.href='tools.html'">工具集</button>
+          <button class="primary-menu-button" type="button" onclick="location.href='knowledge.html'">知识库</button>
+          <button class="primary-menu-button" type="button" onclick="location.href='effect-monitor.html'">效果监控</button>
+        </nav>
+        <section class="tasks" aria-label="任务列表">
+          <a class="section-title" href="task-list.html">任务列表</a>
+          <div class="task-stack">
+            <button class="task-item" type="button"><span class="task-name">榴莲虚假宣传直播间巡检</span></button>
+            <button class="task-item" type="button"><span class="task-name">AWLS社交平台舆情风险定级</span></button>
+            <button class="task-item" type="button"><span class="task-name">通用风险线索研判任务</span></button>
+          </div>
+        </section>
+      </aside>
+
+      <main>
+        <div class="topbar">Agent / 能力详情</div>
+        <section class="workspace" aria-labelledby="page-title">
+          <div class="page-head">
+            <div>
+              <h1 id="page-title">Agent</h1>
+              <div class="page-desc">查看平台内 Agent 的职责、关联 Skill、可调用工具和知识来源。</div>
+            </div>
+            <button class="create-agent" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+              新建 Agent
+            </button>
+          </div>
+
+          <section class="agent-layout" aria-label="Agent详情">
+            <aside class="agent-list" aria-label="Agent列表">
+              <div class="list-head">
+                <div class="panel-title">Agent 列表</div>
+                <div class="panel-subtitle">按业务场景组织</div>
+              </div>
+              <button class="agent-card active" type="button">
+                <div class="agent-name">巡检捉虫Agent</div>
+                <div class="agent-desc">负责直播间、榜单、商品等电商场景的风险巡检。</div>
+                <div class="agent-meta">
+                  <span class="tag green">运行中</span>
+                  <span class="tag">9 个 Skill</span>
+                  <span class="tag">6 个工具</span>
+                </div>
+              </button>
+              <button class="agent-card" type="button">
+                <div class="agent-name">舆情分析Agent</div>
+                <div class="agent-desc">接入媒体和社交平台舆情 URL，完成过滤、定级和流转。</div>
+                <div class="agent-meta">
+                  <span class="tag green">运行中</span>
+                  <span class="tag">3 个 Skill</span>
+                  <span class="tag">4 个工具</span>
+                </div>
+              </button>
+              <button class="agent-card" type="button">
+                <div class="agent-name">通用研判Agent</div>
+                <div class="agent-desc">处理自然语言提交的开放式风险线索和复盘任务。</div>
+                <div class="agent-meta">
+                  <span class="tag">灰度中</span>
+                  <span class="tag">知识库增强</span>
+                </div>
+              </button>
+            </aside>
+
+            <section class="detail-panel" aria-label="当前Agent详情">
+              <div class="detail-hero">
+                <div class="detail-top">
+                  <div>
+                    <div class="detail-name">巡检捉虫Agent</div>
+                    <div class="detail-copy">面向电商巡检场景，自动进入直播间、榜单和商品页，结合 OCR、ASR、商品信息和业务规则识别虚假宣传、低价引流、售卖假货、材质违规等风险。</div>
+                  </div>
+                  <div class="detail-actions">
+                    <button class="action-btn" type="button">配置</button>
+                  </div>
+                </div>
+
+                <div class="metric-grid" aria-label="Agent指标">
+                  <div class="metric-card">
+                    <div class="metric-label">任务数量</div>
+                    <div class="metric-value">326</div>
+                  </div>
+                  <div class="metric-card">
+                    <div class="metric-label">运行中任务</div>
+                    <div class="metric-value">12</div>
+                  </div>
+                  <div class="metric-card">
+                    <div class="metric-label">关联 Skill</div>
+                    <div class="metric-value">9</div>
+                  </div>
+                  <div class="metric-card">
+                    <div class="metric-label">可调用工具</div>
+                    <div class="metric-value">6</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="detail-grid">
+                <section class="sub-panel">
+                  <div class="panel-head">
+                    <div class="panel-title">关联 Skill</div>
+                    <div class="panel-subtitle">当前 Agent 可编排调用</div>
+                  </div>
+                  <div class="sub-body">
+                    <div class="chips">
+                      <span class="tag">生鲜直播间虚假宣传</span>
+                      <span class="tag">服装直播间材质违规</span>
+                      <span class="tag">服装直播间低价引流与虚假宣传</span>
+                      <span class="tag">空调直播间售卖假货</span>
+                      <span class="tag">玉石直播间低价引流</span>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="sub-panel">
+                  <div class="panel-head">
+                    <div class="panel-title">可调用工具</div>
+                    <div class="panel-subtitle">任务执行和证据补全</div>
+                  </div>
+                  <div class="sub-body">
+                    <div class="chips">
+                      <span class="tag">手机浏览</span>
+                      <span class="tag">商品查询</span>
+                      <span class="tag">直播间查询</span>
+                      <span class="tag">达人查询</span>
+                      <span class="tag">网页浏览</span>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="sub-panel">
+                  <div class="panel-head">
+                    <div class="panel-title">知识来源</div>
+                    <div class="panel-subtitle">用于规则理解和判定解释</div>
+                  </div>
+                  <div class="sub-body">
+                    <div class="info-row"><strong>规则文档</strong><span>23 篇</span></div>
+                    <div class="info-row"><strong>飞书文档</strong><span>12 篇已接入</span></div>
+                    <div class="info-row"><strong>风险案例</strong><span>486 条</span></div>
+                  </div>
+                </section>
+
+              </div>
+            </section>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <dialog class="task-dialog" id="newTaskDialog">
+      <form method="dialog">
+        <div class="dialog-head"><div class="dialog-title">新建任务</div></div>
+        <div class="dialog-body">
+          <textarea placeholder="直接描述你想完成的任务。平台会理解任务意图，并选择合适的 Agent、Skill、工具和知识库执行。"></textarea>
+        </div>
+        <div class="dialog-actions">
+          <button class="dialog-cancel" value="cancel" type="submit">取消</button>
+          <button class="dialog-submit" value="submit" type="submit">提交任务</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script>
+      const newTaskDialog = document.querySelector("#newTaskDialog");
+      document.querySelectorAll(".open-task-dialog").forEach((button) => {
+        button.addEventListener("click", () => newTaskDialog.showModal());
+      });
+    </script>
+  </body>
+</html>

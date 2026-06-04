@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>飞书助手任务提交 - 感知Agent</title>
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --panel: #ffffff;
+        --panel-soft: #f6f8fb;
+        --text: #20242a;
+        --muted: #737d8c;
+        --line: #dde5ec;
+        --accent: #3b6ef6;
+        --accent-soft: #e8efff;
+        --green: #20a779;
+        --shadow: 0 22px 60px rgba(32, 44, 62, 0.11);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 68% 8%, rgba(232, 239, 255, 0.9), transparent 34%),
+          linear-gradient(135deg, #f2f5f8 0%, #fbfcfd 58%, #eef7f4 100%);
+        color: var(--text);
+        font-family:
+          Inter, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      .page {
+        display: grid;
+        grid-template-columns: minmax(460px, 0.9fr) minmax(420px, 0.74fr);
+        gap: 16px;
+        min-height: 100vh;
+        padding: 18px;
+      }
+
+      .chat,
+      .card-panel {
+        min-width: 0;
+        border: 1px solid rgba(218, 228, 236, 0.9);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.84);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(16px);
+      }
+
+      .chat {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .chat-head,
+      .card-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .title {
+        font-size: 20px;
+        font-weight: 800;
+      }
+
+      .subtitle {
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        min-width: max-content;
+        height: 30px;
+        padding: 0 10px;
+        border-radius: 999px;
+        background: #ebf8f1;
+        color: #13784f;
+        font-size: 12px;
+        font-weight: 760;
+      }
+
+      .messages {
+        display: grid;
+        align-content: start;
+        gap: 14px;
+        flex: 1;
+        overflow: auto;
+        padding: 20px;
+      }
+
+      .message {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+      }
+
+      .message.user {
+        justify-content: flex-end;
+      }
+
+      .avatar {
+        display: grid;
+        flex: 0 0 auto;
+        width: 32px;
+        height: 32px;
+        place-items: center;
+        border-radius: 10px;
+        background: #edf2f7;
+        color: #4d5868;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .bubble {
+        max-width: 78%;
+        padding: 12px 14px;
+        border-radius: 16px;
+        background: var(--panel-soft);
+        color: #3a4350;
+        font-size: 14px;
+        line-height: 1.62;
+      }
+
+      .message.user .bubble {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .parse-card {
+        display: grid;
+        gap: 8px;
+        margin-top: 10px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: #fff;
+      }
+
+      .parse-row {
+        display: grid;
+        grid-template-columns: 86px minmax(0, 1fr);
+        gap: 10px;
+        font-size: 13px;
+      }
+
+      .parse-row strong {
+        color: #6f7784;
+        font-weight: 720;
+      }
+
+      .input-area {
+        display: grid;
+        gap: 10px;
+        padding: 16px 20px 20px;
+        border-top: 1px solid var(--line);
+        background: rgba(247, 249, 251, 0.7);
+      }
+
+      .nl-input {
+        min-height: 86px;
+        padding: 13px 14px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        outline: 0;
+        resize: vertical;
+        background: #fff;
+        color: #2f3742;
+        font-size: 14px;
+        line-height: 1.58;
+      }
+
+      .input-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .hint {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .send-btn,
+      .submit-btn,
+      .ghost-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 36px;
+        padding: 0 14px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 760;
+      }
+
+      .send-btn,
+      .submit-btn {
+        border: 0;
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .ghost-btn {
+        border: 1px solid var(--line);
+        background: #fff;
+        color: #4d5868;
+      }
+
+      .card-panel {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form {
+        display: grid;
+        gap: 16px;
+        padding: 20px;
+      }
+
+      .section {
+        display: grid;
+        gap: 10px;
+      }
+
+      .section-title {
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      .segmented {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .option {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+        color: #4d5868;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 720;
+      }
+
+      .option.active {
+        border-color: rgba(59, 110, 246, 0.28);
+        background: var(--accent-soft);
+        color: #214fce;
+      }
+
+      .field-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      label {
+        display: grid;
+        gap: 8px;
+        color: #5f6a78;
+        font-size: 13px;
+        font-weight: 720;
+      }
+
+      input,
+      select {
+        width: 100%;
+        height: 42px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        outline: 0;
+        background: #fff;
+        color: #2f3742;
+        font-size: 14px;
+      }
+
+      .schedule-fields {
+        display: none;
+      }
+
+      .schedule-fields.active {
+        display: grid;
+      }
+
+      .summary {
+        display: grid;
+        gap: 10px;
+        padding: 14px;
+        border: 1px solid rgba(59, 110, 246, 0.16);
+        border-radius: 16px;
+        background: #f5f8ff;
+      }
+
+      .summary-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        color: #5f6a78;
+        font-size: 13px;
+      }
+
+      .summary-row strong {
+        color: #20242a;
+      }
+
+      .card-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 16px 20px 20px;
+        border-top: 1px solid var(--line);
+      }
+
+      @media (max-width: 980px) {
+        .page {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .page {
+          padding: 12px;
+        }
+
+        .field-grid,
+        .segmented {
+          grid-template-columns: 1fr;
+        }
+
+        .bubble {
+          max-width: 88%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <section class="chat" aria-label="飞书助手自然语言提交">
+        <header class="chat-head">
+          <div>
+            <div class="title">飞书助手</div>
+            <div class="subtitle">支持自然语言发起任务，也可以补全右侧任务卡片后提交。</div>
+          </div>
+          <div class="status">可创建巡检任务</div>
+        </header>
+
+        <div class="messages">
+          <div class="message">
+            <div class="avatar">助</div>
+            <div class="bubble">
+              你可以直接说：“帮我每天上午10点跑男装榜巡检，使用主播不露脸 Skill，巡检 Top50 直播间。”
+            </div>
+          </div>
+          <div class="message user">
+            <div class="bubble">帮我创建一个男装榜巡检任务，每天上午10点跑，专项用直播间主播不露脸，巡检完Top50直播间结束。</div>
+          </div>
+          <div class="message">
+            <div class="avatar">助</div>
+            <div class="bubble">
+              已识别到任务要素，右侧卡片已自动填充，你可以检查后提交。
+              <div class="parse-card">
+                <div class="parse-row"><strong>任务类型</strong><span>榜单巡检</span></div>
+                <div class="parse-row"><strong>任务频次</strong><span>定时任务，每天 10:00</span></div>
+                <div class="parse-row"><strong>专项名称</strong><span>直播间主播不露脸 Skill</span></div>
+                <div class="parse-row"><strong>结束条件</strong><span>巡检数量：50 个直播间</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-area">
+          <textarea class="nl-input" id="nlInput">帮我创建一个男装榜巡检任务，每天上午10点跑，专项用直播间主播不露脸，巡检完Top50直播间结束。</textarea>
+          <div class="input-actions">
+            <div class="hint">自然语言会自动解析并填入右侧卡片。</div>
+            <button class="send-btn" id="parseBtn" type="button">解析并填卡片</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card-panel" aria-label="飞书任务卡片提交">
+        <header class="card-head">
+          <div>
+            <div class="title">任务创建卡片</div>
+            <div class="subtitle">必填项：任务类型、任务频次、专项名称、结束条件。</div>
+          </div>
+        </header>
+
+        <div class="form">
+          <section class="section">
+            <div class="section-title">任务类型</div>
+            <div class="segmented" data-group="taskType">
+              <button class="option" data-value="直播间关键词巡检" type="button">直播间关键词巡检</button>
+              <button class="option active" data-value="榜单巡检" type="button">榜单巡检</button>
+            </div>
+          </section>
+
+          <section class="section">
+            <div class="section-title">任务频次</div>
+            <div class="segmented" data-group="frequency">
+              <button class="option" data-value="单次任务" type="button">单次任务</button>
+              <button class="option active" data-value="定时任务" type="button">定时任务</button>
+            </div>
+          </section>
+
+          <section class="section schedule-fields active" id="scheduleFields">
+            <div class="section-title">定时任务</div>
+            <div class="field-grid">
+              <label>
+                执行周期
+                <select id="scheduleCycle">
+                  <option>每天</option>
+                  <option>每周</option>
+                  <option>每月</option>
+                </select>
+              </label>
+              <label>
+                执行时间
+                <input id="scheduleTime" type="time" value="10:00" />
+              </label>
+            </div>
+          </section>
+
+          <section class="section">
+            <div class="field-grid">
+              <label>
+                专项名称（Skill名称）
+                <select id="skillName">
+                  <option>直播间主播不露脸 Skill</option>
+                  <option>价格比对 Skill</option>
+                </select>
+              </label>
+              <label>
+                结束条件：巡检数量
+                <input id="inspectCount" type="number" min="1" value="50" />
+              </label>
+            </div>
+          </section>
+
+          <section class="summary" aria-label="任务摘要">
+            <div class="section-title">提交摘要</div>
+            <div class="summary-row"><span>任务类型</span><strong id="summaryType">榜单巡检</strong></div>
+            <div class="summary-row"><span>任务频次</span><strong id="summaryFrequency">定时任务 · 每天 10:00</strong></div>
+            <div class="summary-row"><span>专项名称</span><strong id="summarySkill">直播间主播不露脸 Skill</strong></div>
+            <div class="summary-row"><span>结束条件</span><strong id="summaryEnding">巡检 50 个对象</strong></div>
+          </section>
+        </div>
+
+        <div class="card-actions">
+          <button class="ghost-btn" type="button">保存草稿</button>
+          <button class="submit-btn" type="button">提交任务</button>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      const state = {
+        taskType: "榜单巡检",
+        frequency: "定时任务",
+      };
+
+      const scheduleFields = document.querySelector("#scheduleFields");
+      const scheduleCycle = document.querySelector("#scheduleCycle");
+      const scheduleTime = document.querySelector("#scheduleTime");
+      const skillName = document.querySelector("#skillName");
+      const inspectCount = document.querySelector("#inspectCount");
+
+      function updateSummary() {
+        document.querySelector("#summaryType").textContent = state.taskType;
+        document.querySelector("#summarySkill").textContent = skillName.value;
+        document.querySelector("#summaryEnding").textContent = `巡检 ${inspectCount.value || 0} 个对象`;
+        document.querySelector("#summaryFrequency").textContent =
+          state.frequency === "定时任务"
+            ? `定时任务 · ${scheduleCycle.value} ${scheduleTime.value}`
+            : "单次任务";
+        scheduleFields.classList.toggle("active", state.frequency === "定时任务");
+      }
+
+      document.querySelectorAll(".segmented").forEach((group) => {
+        group.querySelectorAll(".option").forEach((button) => {
+          button.addEventListener("click", () => {
+            group.querySelectorAll(".option").forEach((item) => item.classList.remove("active"));
+            button.classList.add("active");
+            state[group.dataset.group] = button.dataset.value;
+            updateSummary();
+          });
+        });
+      });
+
+      [scheduleCycle, scheduleTime, skillName, inspectCount].forEach((field) => {
+        field.addEventListener("input", updateSummary);
+        field.addEventListener("change", updateSummary);
+      });
+
+      document.querySelector("#parseBtn").addEventListener("click", () => {
+        document.querySelector('[data-group="taskType"] [data-value="榜单巡检"]').click();
+        document.querySelector('[data-group="frequency"] [data-value="定时任务"]').click();
+        scheduleCycle.value = "每天";
+        scheduleTime.value = "10:00";
+        skillName.value = "直播间主播不露脸 Skill";
+        inspectCount.value = "50";
+        updateSummary();
+      });
+    </script>
+  </body>
+</html>

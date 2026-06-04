@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>知识库 - 感知Agent</title>
+    <style>
+      :root {
+        --panel-soft: #f3f6fa;
+        --text: #20242a;
+        --muted: #737d8c;
+        --line: #dde5ec;
+        --accent: #3b6ef6;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 62% 0%, rgba(255, 255, 255, 0.94) 0 18%, transparent 42%),
+          linear-gradient(135deg, #f3f6fa 0%, #fbfcfd 50%, #edf7f3 100%);
+        color: var(--text);
+        font-family:
+          Inter, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .app {
+        display: grid;
+        grid-template-columns: 282px minmax(0, 1fr);
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        padding: 22px 16px;
+        border-right: 1px solid rgba(223, 216, 203, 0.78);
+        background: rgba(244, 247, 249, 0.86);
+        backdrop-filter: blur(18px);
+      }
+
+      .brand {
+        padding: 6px 10px 10px;
+        font-size: 22px;
+        font-weight: 840;
+        line-height: 1.15;
+      }
+
+      .new-task {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        height: 46px;
+        border: 0;
+        border-radius: 14px;
+        background: #171717;
+        color: #fff;
+        cursor: pointer;
+        font-weight: 650;
+        box-shadow: 0 12px 26px rgba(23, 23, 23, 0.16);
+      }
+
+      .task-stack {
+        display: grid;
+        gap: 8px;
+      }
+
+      .tasks {
+        display: flex;
+        min-height: 0;
+        margin-top: 14px;
+        flex: 1;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .section-title {
+        display: block;
+        padding: 0 10px;
+        color: #9a9285;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .task-item {
+        display: flex;
+        min-height: 42px;
+        width: 100%;
+        padding: 10px;
+        border: 0;
+        border-radius: 12px;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .task-name {
+        overflow: hidden;
+        color: #38342e;
+        font-size: 14px;
+        font-weight: 650;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .task-dialog {
+        width: min(960px, calc(100vw - 48px));
+        padding: 0;
+        border: 1px solid rgba(218, 226, 231, 0.92);
+        border-radius: 20px;
+        background: #fff;
+        color: var(--text);
+        box-shadow: 0 28px 80px rgba(32, 44, 62, 0.18);
+      }
+
+      .task-dialog::backdrop {
+        background: rgba(32, 40, 52, 0.24);
+        backdrop-filter: blur(8px);
+      }
+
+      .dialog-head,
+      .dialog-body,
+      .dialog-actions {
+        padding: 18px 20px;
+      }
+
+      .dialog-head {
+        border-bottom: 1px solid var(--line);
+      }
+
+      .dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        border-top: 1px solid var(--line);
+      }
+
+      .dialog-title {
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      .dialog-body textarea {
+        width: 100%;
+        min-height: 320px;
+        resize: vertical;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 14px;
+        outline: 0;
+        background: #fbfcfd;
+        color: var(--text);
+        line-height: 1.7;
+      }
+
+      .dialog-actions button {
+        height: 36px;
+        padding: 0 14px;
+        border-radius: 11px;
+        cursor: pointer;
+        font-weight: 760;
+      }
+
+      .dialog-cancel {
+        border: 1px solid var(--line);
+        background: #fff;
+        color: #59636e;
+      }
+
+      .dialog-submit {
+        border: 1px solid rgba(59, 110, 246, 0.18);
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .primary-menu,
+      .nav-stack {
+        display: grid;
+        gap: 8px;
+      }
+
+      .primary-menu-button {
+        display: flex;
+        align-items: center;
+        min-height: 40px;
+        padding: 0 12px;
+        border: 0;
+        border-radius: 12px;
+        background: transparent;
+        color: #4c5563;
+        cursor: pointer;
+        font-weight: 760;
+        font-size: 14px;
+        text-align: left;
+      }
+
+      .primary-menu-button.active {
+        background: rgba(255, 255, 255, 0.72);
+        color: #20242a;
+      }
+
+      .agent-nav {
+        margin-left: 12px;
+        padding-left: 10px;
+        border-left: 1px solid var(--line);
+      }
+
+      .nav-button {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 42px;
+        width: 100%;
+        padding: 0 12px;
+        border: 0;
+        border-radius: 12px;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        font-weight: 650;
+        text-align: left;
+      }
+
+      .nav-icon {
+        display: grid;
+        flex: 0 0 auto;
+        width: 26px;
+        height: 26px;
+        place-items: center;
+        border-radius: 9px;
+        background: var(--panel-soft);
+        color: #504b44;
+      }
+
+      main {
+        min-width: 0;
+        padding: 38px 44px 34px;
+      }
+
+      .workspace {
+        width: min(100%, 1120px);
+        margin: 0 auto;
+      }
+
+      .topbar {
+        width: min(100%, 1120px);
+        margin: 0 auto 28px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .page-head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(22px, 2.1vw, 28px);
+        line-height: 1.15;
+      }
+
+      .page-desc {
+        margin-top: 10px;
+        max-width: 760px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .import-wrap {
+        position: relative;
+        display: inline-flex;
+      }
+
+      .create-knowledge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 38px;
+        padding: 0 15px;
+        border: 1px solid rgba(59, 110, 246, 0.18);
+        border-radius: 12px;
+        background: var(--accent);
+        color: #fff;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 760;
+        white-space: nowrap;
+        box-shadow: 0 12px 26px rgba(59, 110, 246, 0.18);
+      }
+
+      .import-menu {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        z-index: 2;
+        display: none;
+        width: 220px;
+        padding: 8px;
+        border: 1px solid rgba(218, 226, 231, 0.92);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.96);
+        box-shadow: 0 18px 42px rgba(32, 44, 62, 0.14);
+      }
+
+      .import-wrap:hover .import-menu,
+      .import-wrap:focus-within .import-menu {
+        display: grid;
+        gap: 6px;
+      }
+
+      .import-option {
+        min-height: 40px;
+        padding: 0 11px;
+        border: 0;
+        border-radius: 10px;
+        background: transparent;
+        color: #303844;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 700;
+        text-align: left;
+      }
+
+      .import-option:hover {
+        background: var(--panel-soft);
+      }
+
+      .search-row {
+        margin-bottom: 16px;
+      }
+
+      .search-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 44px;
+        padding: 0 14px;
+        border: 1px solid rgba(218, 226, 231, 0.92);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.84);
+        box-shadow: 0 10px 26px rgba(32, 44, 62, 0.06);
+      }
+
+      .search-box svg {
+        flex: 0 0 auto;
+        width: 17px;
+        height: 17px;
+        color: #8c96a4;
+      }
+
+      .search-box input {
+        min-width: 0;
+        width: 100%;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: #303844;
+        font-size: 14px;
+      }
+
+      .search-box input::placeholder {
+        color: #9aa4b2;
+      }
+
+      .document-panel {
+        overflow: hidden;
+        border: 1px solid rgba(218, 226, 231, 0.92);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.84);
+        box-shadow: 0 22px 60px rgba(32, 44, 62, 0.11);
+      }
+
+      .document-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .document-title {
+        font-size: 16px;
+        font-weight: 820;
+      }
+
+      .document-subtitle {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .document-list {
+        display: grid;
+      }
+
+      .document-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 130px 72px;
+        gap: 14px;
+        align-items: center;
+        padding: 16px 18px;
+        border-top: 1px solid var(--line);
+      }
+
+      .document-row:first-child {
+        border-top: 0;
+      }
+
+      .doc-name {
+        overflow: hidden;
+        color: #214fce;
+        font-size: 15px;
+        font-weight: 760;
+        text-decoration: none;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .doc-name:hover {
+        text-decoration: underline;
+      }
+
+      .doc-meta {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .doc-delete {
+        justify-self: end;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 30px;
+        padding: 0 11px;
+        border: 1px solid rgba(230, 83, 83, 0.22);
+        border-radius: 10px;
+        background: #fff;
+        color: #c94444;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 760;
+      }
+
+      .doc-delete:hover {
+        background: #fff3f3;
+      }
+
+      svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" aria-label="左侧导航">
+        <div class="brand">感知Agent</div>
+        <button class="new-task" type="button" onclick="location.href='new-task.html'">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+          新建任务
+        </button>
+        <nav class="primary-menu" aria-label="功能导航">
+          <button class="primary-menu-button" type="button" onclick="location.href='agent-management.html'">Agent</button>
+          <div class="nav-stack agent-nav" aria-label="Agent功能">
+            <button class="nav-button" type="button" onclick="location.href='index.html'">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 11 2 2 4-5" /><path d="M20 12a8 8 0 1 1-3.1-6.3" /><path d="M18 4h3v3" /></svg>
+              </span>
+              巡检捉虫
+            </button>
+            <button class="nav-button" type="button" onclick="location.href='opinion.html'">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3 8 4-16 3 8h4" /></svg>
+              </span>
+              舆情分析
+            </button>
+          </div>
+          <button class="primary-menu-button" type="button" onclick="location.href='skill.html'">Skill</button>
+          <button class="primary-menu-button" type="button" onclick="location.href='tools.html'">工具集</button>
+          <button class="primary-menu-button active" type="button">知识库</button>
+          <button class="primary-menu-button" type="button" onclick="location.href='effect-monitor.html'">效果监控</button>
+        </nav>
+        <section class="tasks" aria-label="任务列表">
+          <a class="section-title" href="task-list.html">任务列表</a>
+          <div class="task-stack">
+            <button class="task-item" type="button"><span class="task-name">榴莲虚假宣传直播间巡检</span></button>
+            <button class="task-item" type="button"><span class="task-name">AWLS社交平台舆情风险定级</span></button>
+            <button class="task-item" type="button"><span class="task-name">通用风险线索研判任务</span></button>
+          </div>
+        </section>
+      </aside>
+
+      <main>
+        <div class="topbar">知识库 / Agent 可检索知识</div>
+        <section class="workspace" aria-labelledby="page-title">
+          <div class="page-head">
+            <div>
+              <h1 id="page-title">知识库</h1>
+              <div class="page-desc">知识库是供 Agent 检索查询的术语解释、案例、法规等，对齐专业知识。</div>
+            </div>
+            <div class="import-wrap">
+              <button class="create-knowledge" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12" /><path d="m7 10 5 5 5-5" /><path d="M5 21h14" /></svg>
+                导入文档
+              </button>
+              <div class="import-menu" aria-label="导入文档方式">
+                <button class="import-option" type="button">飞书文档导入</button>
+                <button class="import-option" type="button">本地文档导入</button>
+              </div>
+            </div>
+          </div>
+
+          <section class="search-row" aria-label="知识库查询">
+            <label class="search-box">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16.5 16.5 4 4" /></svg>
+              <input type="search" placeholder="搜索文档名称、术语、案例或法规" />
+            </label>
+          </section>
+
+          <section class="document-panel" aria-label="文档列表">
+            <div class="document-head">
+              <div>
+                <div class="document-title">文档列表</div>
+                <div class="document-subtitle">已导入并可被 Agent 检索的业务知识</div>
+              </div>
+            </div>
+            <div class="document-list">
+              <article class="document-row">
+                <a class="doc-name" href="#" aria-label="查看巡检黑样本发散">巡检黑样本发散</a>
+                <div class="doc-meta">飞书文档</div>
+                <button class="doc-delete" type="button">删除</button>
+              </article>
+              <article class="document-row">
+                <a class="doc-name" href="#" aria-label="查看G1材质词库和关联关系">G1材质词库和关联关系</a>
+                <div class="doc-meta">本地文档</div>
+                <button class="doc-delete" type="button">删除</button>
+              </article>
+              <article class="document-row">
+                <a class="doc-name" href="#" aria-label="查看舆情红线法规">舆情红线法规</a>
+                <div class="doc-meta">飞书文档</div>
+                <button class="doc-delete" type="button">删除</button>
+              </article>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

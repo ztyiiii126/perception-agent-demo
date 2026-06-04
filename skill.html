@@ -1,0 +1,940 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skill 能力库 - 感知Agent</title>
+    <style>
+      :root {
+        --bg: #f6f8fb;
+        --panel: #ffffff;
+        --panel-soft: #f3f6fa;
+        --text: #20242a;
+        --muted: #737d8c;
+        --line: #dde5ec;
+        --accent: #3b6ef6;
+        --accent-soft: #e8efff;
+        --green: #20a779;
+        --warning: #e9971c;
+        --shadow: 0 22px 60px rgba(32, 44, 62, 0.11);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 62% 0%, rgba(255, 255, 255, 0.94) 0 18%, transparent 42%),
+          linear-gradient(135deg, #f3f6fa 0%, #fbfcfd 50%, #edf7f3 100%);
+        color: var(--text);
+        font-family:
+          Inter, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .app {
+        display: grid;
+        grid-template-columns: 282px minmax(0, 1fr);
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        padding: 22px 16px;
+        border-right: 1px solid rgba(223, 216, 203, 0.78);
+        background: rgba(244, 247, 249, 0.86);
+        backdrop-filter: blur(18px);
+      }
+
+      .brand {
+        padding: 6px 10px 10px;
+        font-size: 22px;
+        font-weight: 840;
+        line-height: 1.15;
+      }
+
+      .new-task {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        height: 46px;
+        border: 0;
+        border-radius: 14px;
+        background: #171717;
+        color: #fff;
+        cursor: pointer;
+        font-weight: 650;
+        box-shadow: 0 12px 26px rgba(23, 23, 23, 0.16);
+      }
+
+      .task-dialog {
+        width: min(960px, calc(100vw - 48px));
+        padding: 0;
+        border: 1px solid rgba(218, 226, 231, 0.92);
+        border-radius: 20px;
+        background: #fff;
+        color: var(--text);
+        box-shadow: 0 28px 80px rgba(32, 44, 62, 0.18);
+      }
+
+      .task-dialog::backdrop {
+        background: rgba(32, 40, 52, 0.24);
+        backdrop-filter: blur(8px);
+      }
+
+      .dialog-head,
+      .dialog-body,
+      .dialog-actions {
+        padding: 18px 20px;
+      }
+
+      .dialog-head {
+        border-bottom: 1px solid var(--line);
+      }
+
+      .dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        border-top: 1px solid var(--line);
+      }
+
+      .dialog-title {
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      .dialog-body textarea {
+        width: 100%;
+        min-height: 320px;
+        resize: vertical;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 14px;
+        outline: 0;
+        background: #fbfcfd;
+        color: var(--text);
+        line-height: 1.7;
+      }
+
+      .dialog-actions button {
+        height: 36px;
+        padding: 0 14px;
+        border-radius: 11px;
+        cursor: pointer;
+        font-weight: 760;
+      }
+
+      .dialog-cancel {
+        border: 1px solid var(--line);
+        background: #fff;
+        color: #59636e;
+      }
+
+      .dialog-submit {
+        border: 1px solid rgba(59, 110, 246, 0.18);
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .skill-create-dialog {
+        width: min(860px, calc(100vw - 48px));
+      }
+
+      .skill-create-options {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .skill-create-card {
+        min-height: 210px;
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: #fbfcfd;
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .skill-create-card:hover {
+        border-color: rgba(59, 110, 246, 0.34);
+        background: #f5f8ff;
+      }
+
+      .skill-create-icon {
+        display: grid;
+        width: 38px;
+        height: 38px;
+        place-items: center;
+        border-radius: 12px;
+        background: var(--accent-soft);
+        color: #214fce;
+      }
+
+      .skill-create-title {
+        margin-top: 16px;
+        color: #20242a;
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      .skill-create-desc {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .skill-create-fields {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .skill-create-fields span {
+        display: inline-flex;
+        width: fit-content;
+        min-height: 26px;
+        align-items: center;
+        padding: 0 9px;
+        border-radius: 999px;
+        background: #f1f4f8;
+        color: #566273;
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .primary-menu,
+      .nav-stack,
+      .task-stack {
+        display: grid;
+        gap: 8px;
+      }
+
+      .primary-menu-button {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 40px;
+        padding: 0 12px;
+        border: 0;
+        border-radius: 12px;
+        background: transparent;
+        color: #4c5563;
+        cursor: pointer;
+        font-weight: 760;
+        font-size: 14px;
+        text-align: left;
+      }
+
+      .primary-menu-button.active {
+        background: rgba(255, 255, 255, 0.72);
+        color: #20242a;
+      }
+
+      .agent-nav {
+        margin-left: 12px;
+        padding-left: 10px;
+        border-left: 1px solid var(--line);
+      }
+
+      .nav-button,
+      .task-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 42px;
+        width: 100%;
+        border: 0;
+        border-radius: 12px;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .nav-button {
+        padding: 0 12px;
+        font-weight: 650;
+      }
+
+      .nav-icon,
+      .task-dot {
+        display: grid;
+        flex: 0 0 auto;
+        place-items: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 9px;
+        background: var(--panel-soft);
+        color: #504b44;
+      }
+
+      .tasks {
+        display: flex;
+        min-height: 0;
+        margin-top: 14px;
+        flex: 1;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .section-title {
+        display: block;
+        padding: 0 10px;
+        color: #9a9285;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .task-item {
+        align-items: flex-start;
+        padding: 10px;
+      }
+
+      .task-dot {
+        border-radius: 50%;
+        background: #fff;
+        color: var(--accent);
+        font-size: 13px;
+      }
+
+      .task-copy {
+        display: grid;
+        gap: 4px;
+        min-width: 0;
+      }
+
+      .task-name {
+        overflow: hidden;
+        color: #38342e;
+        font-size: 14px;
+        font-weight: 650;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .task-meta {
+        color: #a09a91;
+        font-size: 12px;
+      }
+
+      main {
+        min-width: 0;
+        padding: 38px 44px 34px;
+      }
+
+      .topbar {
+        width: min(100%, 1120px);
+        margin: 0 auto 28px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .workspace {
+        width: min(100%, 1120px);
+        margin: 0 auto;
+      }
+
+      .page-head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(22px, 2.1vw, 28px);
+        line-height: 1.15;
+      }
+
+      .page-desc {
+        margin-top: 10px;
+        max-width: 720px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .create-skill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 38px;
+        padding: 0 15px;
+        border: 1px solid rgba(59, 110, 246, 0.18);
+        border-radius: 12px;
+        background: var(--accent);
+        color: #fff;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 760;
+        white-space: nowrap;
+        box-shadow: 0 12px 26px rgba(59, 110, 246, 0.18);
+      }
+
+      .create-skill:hover {
+        background: #315fde;
+      }
+
+      .search-row {
+        margin-bottom: 16px;
+      }
+
+      .search-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 44px;
+        padding: 0 14px;
+        border: 1px solid rgba(218, 226, 231, 0.92);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.84);
+        box-shadow: 0 10px 26px rgba(32, 44, 62, 0.06);
+      }
+
+      .search-box svg {
+        flex: 0 0 auto;
+        width: 17px;
+        height: 17px;
+        color: #8c96a4;
+      }
+
+      .search-box input {
+        min-width: 0;
+        width: 100%;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: #303844;
+        font-size: 14px;
+      }
+
+      .search-box input::placeholder {
+        color: #9aa4b2;
+      }
+
+      .skill-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .skill-card {
+        overflow: hidden;
+        border: 1px solid rgba(218, 226, 231, 0.92);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.84);
+        box-shadow: var(--shadow);
+      }
+
+      .card-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 18px 18px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .skill-title {
+        font-size: 18px;
+        font-weight: 800;
+        line-height: 1.36;
+      }
+
+      .skill-subtitle {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .version {
+        display: inline-flex;
+        align-items: center;
+        height: 28px;
+        padding: 0 10px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: #214fce;
+        font-size: 12px;
+        font-weight: 760;
+        white-space: nowrap;
+      }
+
+      .skill-metrics {
+        display: grid;
+        flex: 0 0 auto;
+        justify-items: end;
+        gap: 8px;
+      }
+
+      .call-count {
+        display: inline-flex;
+        align-items: center;
+        height: 28px;
+        padding: 0 10px;
+        border-radius: 999px;
+        background: #ebf8f1;
+        color: #13784f;
+        font-size: 12px;
+        font-weight: 760;
+        white-space: nowrap;
+      }
+
+      .card-body {
+        display: grid;
+        gap: 14px;
+        padding: 16px 18px 18px;
+      }
+
+      .field-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .field {
+        min-height: 72px;
+        padding: 13px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--panel-soft);
+      }
+
+      .field-label {
+        color: #6f7784;
+        font-size: 12px;
+        font-weight: 760;
+      }
+
+      .field-value {
+        margin-top: 8px;
+        color: #303844;
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .rule-box {
+        padding: 14px;
+        border: 1px solid rgba(59, 110, 246, 0.16);
+        border-radius: 16px;
+        background: #f5f8ff;
+      }
+
+      .rule-title {
+        color: #214fce;
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .rule-list {
+        display: grid;
+        gap: 8px;
+        margin: 10px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .rule-list li {
+        color: #4d5868;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .rule-list li::before {
+        color: var(--accent);
+        content: "• ";
+      }
+
+      .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 0 9px;
+        border-radius: 999px;
+        background: #f1f4f8;
+        color: #566273;
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2;
+      }
+
+      @media (max-width: 980px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .tasks {
+          display: none;
+        }
+
+        .skill-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 560px) {
+        main {
+          padding: 28px 18px;
+        }
+
+        .page-head {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .field-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" aria-label="左侧导航">
+        <div class="brand">感知Agent</div>
+        <button class="new-task" type="button" onclick="location.href='new-task.html'">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+          新建任务
+        </button>
+        <nav class="primary-menu" aria-label="功能导航">
+          <button class="primary-menu-button" type="button" onclick="location.href='agent-management.html'">Agent</button>
+          <div class="nav-stack agent-nav" aria-label="Agent功能">
+            <button class="nav-button" type="button" onclick="location.href='index.html'">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 11 2 2 4-5" /><path d="M20 12a8 8 0 1 1-3.1-6.3" /><path d="M18 4h3v3" /></svg>
+              </span>
+              巡检捉虫
+            </button>
+            <button class="nav-button" type="button" onclick="location.href='opinion.html'">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3 8 4-16 3 8h4" /></svg>
+              </span>
+              舆情分析
+            </button>
+          </div>
+          <button class="primary-menu-button active" type="button">Skill</button>
+          <button class="primary-menu-button" type="button" onclick="location.href='tools.html'">工具集</button>
+          <button class="primary-menu-button" type="button" onclick="location.href='knowledge.html'">知识库</button>
+          <button class="primary-menu-button" type="button" onclick="location.href='effect-monitor.html'">效果监控</button>
+        </nav>
+        <section class="tasks" aria-label="任务列表">
+          <a class="section-title" href="task-list.html">任务列表</a>
+          <div class="task-stack">
+            <button class="task-item" type="button"><span class="task-copy"><span class="task-name">榴莲虚假宣传直播间巡检</span></span></button>
+            <button class="task-item" type="button"><span class="task-copy"><span class="task-name">AWLS社交平台舆情风险定级</span></span></button>
+            <button class="task-item" type="button"><span class="task-copy"><span class="task-name">通用风险线索研判任务</span></span></button>
+          </div>
+        </section>
+      </aside>
+
+      <main>
+        <div class="topbar">Skill / 规则能力库</div>
+        <section class="workspace" aria-labelledby="page-title">
+          <div class="page-head">
+            <div>
+              <h1 id="page-title">Skill 能力库</h1>
+              <div class="page-desc">Skill 是支持 Agent 调用编排的具体规则能力、执行逻辑。</div>
+            </div>
+            <button class="create-skill" id="createSkillButton" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+              新建 Skill
+            </button>
+          </div>
+
+          <section class="search-row" aria-label="Skill查询">
+            <label class="search-box">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16.5 16.5 4 4" /></svg>
+              <input type="search" placeholder="搜索 Skill 名称、适用 Agent 或规则能力" />
+            </label>
+          </section>
+
+          <section class="skill-grid" aria-label="Skill示例">
+            <article class="skill-card">
+              <div class="card-head">
+                <div>
+                  <div class="skill-title">空调直播间售卖假货</div>
+                  <div class="skill-subtitle">识别空调直播间中疑似假冒、冒牌、授权不明等售卖假货风险。</div>
+                </div>
+                <div class="skill-metrics">
+                  <div class="call-count">调用 128 次</div>
+                  <div class="version">已启用</div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="field-grid">
+                  <div class="field">
+                    <div class="field-label">适用范围</div>
+                    <div class="field-value">巡检捉虫 Agent</div>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="skill-card">
+              <div class="card-head">
+                <div>
+                  <div class="skill-title">空调直播间虚假宣传</div>
+                  <div class="skill-subtitle">识别空调直播间中功效夸大、参数误导、售后承诺不实等虚假宣传风险。</div>
+                </div>
+                <div class="skill-metrics">
+                  <div class="call-count">调用 216 次</div>
+                  <div class="version">已启用</div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="field-grid">
+                  <div class="field">
+                    <div class="field-label">适用范围</div>
+                    <div class="field-value">巡检捉虫 Agent</div>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="skill-card">
+              <div class="card-head">
+                <div>
+                  <div class="skill-title">空调扇直播间虚假宣传</div>
+                  <div class="skill-subtitle">识别空调扇直播间中降温效果、制冷能力、适用面积等不实宣传风险。</div>
+                </div>
+                <div class="skill-metrics">
+                  <div class="call-count">调用 94 次</div>
+                  <div class="version">已启用</div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="field-grid">
+                  <div class="field">
+                    <div class="field-label">适用范围</div>
+                    <div class="field-value">巡检捉虫 Agent</div>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="skill-card">
+              <div class="card-head">
+                <div>
+                  <div class="skill-title">风扇直播间虚假宣传</div>
+                  <div class="skill-subtitle">识别风扇直播间中功能夸大、节能效果夸大、适用场景误导等风险。</div>
+                </div>
+                <div class="skill-metrics">
+                  <div class="call-count">调用 87 次</div>
+                  <div class="version">已启用</div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="field-grid">
+                  <div class="field">
+                    <div class="field-label">适用范围</div>
+                    <div class="field-value">巡检捉虫 Agent</div>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="skill-card">
+              <div class="card-head">
+                <div>
+                  <div class="skill-title">服装直播间材质违规</div>
+                  <div class="skill-subtitle">识别蚕丝、纯棉、羊绒羊毛、天丝等材质服装直播间中的材质宣称违规风险。</div>
+                </div>
+                <div class="skill-metrics">
+                  <div class="call-count">调用 173 次</div>
+                  <div class="version">已启用</div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="field-grid">
+                  <div class="field">
+                    <div class="field-label">适用范围</div>
+                    <div class="field-value">巡检捉虫 Agent</div>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="skill-card">
+              <div class="card-head">
+                <div>
+                  <div class="skill-title">服装直播间低价引流与虚假宣传</div>
+                  <div class="skill-subtitle">识别女装套装、冰丝裤、连衣裙、牛仔长裤直播间中的低价引流与虚假宣传风险。</div>
+                </div>
+                <div class="skill-metrics">
+                  <div class="call-count">调用 241 次</div>
+                  <div class="version">已启用</div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="field-grid">
+                  <div class="field">
+                    <div class="field-label">适用范围</div>
+                    <div class="field-value">巡检捉虫 Agent</div>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="skill-card">
+              <div class="card-head">
+                <div>
+                  <div class="skill-title">生鲜直播间虚假宣传</div>
+                  <div class="skill-subtitle">识别蓝莓、榴莲等生鲜直播间中的产地、品质、售后承诺等虚假宣传风险。</div>
+                </div>
+                <div class="skill-metrics">
+                  <div class="call-count">调用 309 次</div>
+                  <div class="version">已启用</div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="field-grid">
+                  <div class="field">
+                    <div class="field-label">适用范围</div>
+                    <div class="field-value">巡检捉虫 Agent</div>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="skill-card">
+              <div class="card-head">
+                <div>
+                  <div class="skill-title">钱币/书画直播间虚假宣传</div>
+                  <div class="skill-subtitle">识别钱币、书画专项领域直播间中的收藏价值、稀缺性、鉴定承诺等虚假宣传风险。</div>
+                </div>
+                <div class="skill-metrics">
+                  <div class="call-count">调用 62 次</div>
+                  <div class="version">已启用</div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="field-grid">
+                  <div class="field">
+                    <div class="field-label">适用范围</div>
+                    <div class="field-value">巡检捉虫 Agent</div>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="skill-card">
+              <div class="card-head">
+                <div>
+                  <div class="skill-title">玉石直播间低价引流</div>
+                  <div class="skill-subtitle">识别玉石商品直播间中超低价噱头、福利价诱导、挂车商品不一致等低价引流风险。</div>
+                </div>
+                <div class="skill-metrics">
+                  <div class="call-count">调用 78 次</div>
+                  <div class="version">已启用</div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="field-grid">
+                  <div class="field">
+                    <div class="field-label">适用范围</div>
+                    <div class="field-value">巡检捉虫 Agent</div>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </section>
+        </section>
+      </main>
+    </div>
+    <dialog class="task-dialog" id="newTaskDialog">
+      <form method="dialog">
+        <div class="dialog-head"><div class="dialog-title">新建任务</div></div>
+        <div class="dialog-body">
+          <textarea placeholder="直接描述你想完成的任务。平台会理解任务意图，并选择合适的 Agent、Skill、工具和知识库执行。"></textarea>
+        </div>
+        <div class="dialog-actions">
+          <button class="dialog-cancel" value="cancel" type="submit">取消</button>
+          <button class="dialog-submit" value="submit" type="submit">提交任务</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog class="task-dialog skill-create-dialog" id="createSkillDialog">
+      <form method="dialog">
+        <div class="dialog-head"><div class="dialog-title">新建 Skill</div></div>
+        <div class="dialog-body">
+          <div class="skill-create-options">
+            <button class="skill-create-card" type="button">
+              <span class="skill-create-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12" /><path d="m7 10 5 5 5-5" /><path d="M5 21h14" /></svg>
+              </span>
+              <div class="skill-create-title">导入 Skill</div>
+              <div class="skill-create-desc">从规则文档、表格、历史配置或飞书文档中导入已有 Skill，自动解析适用范围、输入输出和判定逻辑。</div>
+              <div class="skill-create-fields">
+                <span>支持文档/表格/飞书链接</span>
+                <span>适合迁移已有规则</span>
+              </div>
+            </button>
+            <button class="skill-create-card" type="button">
+              <span class="skill-create-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16" /><path d="M6 16 17 5l2 2L8 18H6z" /></svg>
+              </span>
+              <div class="skill-create-title">编写 Skill</div>
+              <div class="skill-create-desc">从空白模板开始编写 Skill，填写名称、适用 Agent、输入输出、调用场景和核心判定逻辑。</div>
+              <div class="skill-create-fields">
+                <span>适合新增专项能力</span>
+                <span>支持自然语言描述规则</span>
+              </div>
+            </button>
+          </div>
+        </div>
+        <div class="dialog-actions">
+          <button class="dialog-cancel" value="cancel" type="submit">取消</button>
+        </div>
+      </form>
+    </dialog>
+    <script>
+      const newTaskDialog = document.querySelector("#newTaskDialog");
+      document.querySelectorAll(".open-task-dialog").forEach((button) => {
+        button.addEventListener("click", () => newTaskDialog.showModal());
+      });
+
+      const createSkillDialog = document.querySelector("#createSkillDialog");
+      document.querySelector("#createSkillButton").addEventListener("click", () => {
+        createSkillDialog.showModal();
+      });
+    </script>
+  </body>
+</html>

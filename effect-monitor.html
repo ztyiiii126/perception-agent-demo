@@ -1,0 +1,827 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>效果监控 - 感知Agent</title>
+    <style>
+      :root {
+        --bg: #f6f8fb;
+        --panel: #ffffff;
+        --panel-soft: #f3f6fa;
+        --text: #20242a;
+        --muted: #737d8c;
+        --line: #dde5ec;
+        --accent: #3b6ef6;
+        --accent-soft: #e8efff;
+        --green: #20a779;
+        --orange: #e9971c;
+        --red: #e65353;
+        --shadow: 0 22px 60px rgba(32, 44, 62, 0.11);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 62% 0%, rgba(255, 255, 255, 0.94) 0 18%, transparent 42%),
+          linear-gradient(135deg, #f3f6fa 0%, #fbfcfd 50%, #edf7f3 100%);
+        color: var(--text);
+        font-family:
+          Inter, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+      }
+
+      button,
+      select {
+        font: inherit;
+      }
+
+      .app {
+        display: grid;
+        grid-template-columns: 282px minmax(0, 1fr);
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        padding: 22px 16px;
+        border-right: 1px solid rgba(223, 216, 203, 0.78);
+        background: rgba(244, 247, 249, 0.86);
+        backdrop-filter: blur(18px);
+      }
+
+      .brand {
+        padding: 6px 10px 10px;
+        font-size: 22px;
+        font-weight: 840;
+        line-height: 1.15;
+      }
+
+      .new-task {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        height: 46px;
+        border: 0;
+        border-radius: 14px;
+        background: #171717;
+        color: #fff;
+        cursor: pointer;
+        font-weight: 650;
+        box-shadow: 0 12px 26px rgba(23, 23, 23, 0.16);
+      }
+
+      .primary-menu,
+      .nav-stack,
+      .task-stack {
+        display: grid;
+        gap: 8px;
+      }
+
+      .primary-menu-button {
+        display: flex;
+        align-items: center;
+        min-height: 40px;
+        padding: 0 12px;
+        border: 0;
+        border-radius: 12px;
+        background: transparent;
+        color: #4c5563;
+        cursor: pointer;
+        font-weight: 760;
+        font-size: 14px;
+        text-align: left;
+      }
+
+      .primary-menu-button.active {
+        background: rgba(255, 255, 255, 0.72);
+        color: #20242a;
+      }
+
+      .agent-nav {
+        margin-left: 12px;
+        padding-left: 10px;
+        border-left: 1px solid var(--line);
+      }
+
+      .nav-button,
+      .task-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 42px;
+        width: 100%;
+        border: 0;
+        border-radius: 12px;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .nav-button {
+        padding: 0 12px;
+        font-weight: 650;
+      }
+
+      .nav-icon {
+        display: grid;
+        flex: 0 0 auto;
+        width: 26px;
+        height: 26px;
+        place-items: center;
+        border-radius: 9px;
+        background: var(--panel-soft);
+        color: #504b44;
+      }
+
+      .tasks {
+        display: flex;
+        min-height: 0;
+        margin-top: 14px;
+        flex: 1;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .section-title {
+        display: block;
+        padding: 0 10px;
+        color: #9a9285;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .task-item {
+        padding: 10px;
+      }
+
+      .task-name {
+        overflow: hidden;
+        color: #38342e;
+        font-size: 14px;
+        font-weight: 650;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      main {
+        min-width: 0;
+        padding: 38px 44px 34px;
+      }
+
+      .topbar,
+      .workspace {
+        width: min(100%, 1180px);
+        margin: 0 auto;
+      }
+
+      .topbar {
+        margin-bottom: 28px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .page-head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(22px, 2.1vw, 28px);
+        line-height: 1.15;
+      }
+
+      .page-desc {
+        margin-top: 10px;
+        max-width: 760px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .filters {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .filter {
+        display: grid;
+        gap: 7px;
+      }
+
+      .filter label {
+        color: #6f7784;
+        font-size: 12px;
+        font-weight: 760;
+      }
+
+      .filter select {
+        height: 42px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        outline: 0;
+        background: rgba(255, 255, 255, 0.86);
+        color: #303844;
+      }
+
+      .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .metric-card,
+      .panel {
+        border: 1px solid rgba(218, 226, 231, 0.92);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.84);
+        box-shadow: var(--shadow);
+      }
+
+      .metric-card {
+        min-height: 108px;
+        padding: 16px;
+      }
+
+      .metric-label {
+        color: #6f7784;
+        font-size: 12px;
+        font-weight: 760;
+      }
+
+      .metric-value {
+        margin-top: 10px;
+        color: #20242a;
+        font-size: 30px;
+        font-weight: 820;
+      }
+
+      .metric-note {
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .main-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.25fr);
+        gap: 16px;
+      }
+
+      .panel {
+        overflow: hidden;
+      }
+
+      .panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .panel-title {
+        font-size: 16px;
+        font-weight: 820;
+      }
+
+      .panel-subtitle {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .trend-tabs {
+        display: inline-flex;
+        gap: 4px;
+        padding: 4px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--panel-soft);
+      }
+
+      .trend-tab {
+        height: 28px;
+        padding: 0 11px;
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        color: #66717f;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 760;
+      }
+
+      .trend-tab.active {
+        background: #fff;
+        color: #214fce;
+        box-shadow: 0 6px 14px rgba(32, 44, 62, 0.08);
+      }
+
+      .matrix {
+        display: grid;
+        grid-template-columns: 96px repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        padding: 18px;
+      }
+
+      .matrix-cell {
+        min-height: 92px;
+        padding: 14px;
+        border-radius: 14px;
+        background: var(--panel-soft);
+      }
+
+      .matrix-label {
+        color: #6f7784;
+        font-size: 12px;
+        font-weight: 760;
+      }
+
+      .matrix-value {
+        margin-top: 8px;
+        font-size: 26px;
+        font-weight: 820;
+      }
+
+      .tp {
+        background: #eaf8f1;
+        color: #13784f;
+      }
+
+      .fp,
+      .fn {
+        background: #fff3e4;
+        color: #a6600d;
+      }
+
+      .tn {
+        background: #eef3ff;
+        color: #315bd2;
+      }
+
+      .chart {
+        display: flex;
+        align-items: end;
+        gap: 14px;
+        height: 230px;
+        padding: 24px 18px 18px;
+      }
+
+      .bar {
+        display: grid;
+        flex: 1;
+        align-items: end;
+        gap: 8px;
+        height: 100%;
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+      }
+
+      .bar span {
+        display: block;
+        min-height: 18px;
+        border-radius: 10px 10px 4px 4px;
+        background: linear-gradient(180deg, #3b6ef6, #20a779);
+      }
+
+      .rank-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-top: 16px;
+      }
+
+      .rank-list {
+        display: grid;
+        gap: 10px;
+        padding: 16px 18px 18px;
+      }
+
+      .rank-item {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 72px 72px;
+        gap: 10px;
+        align-items: center;
+        padding: 10px;
+        border-radius: 12px;
+        background: var(--panel-soft);
+      }
+
+      .rank-name {
+        overflow: hidden;
+        font-size: 13px;
+        font-weight: 760;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .rank-score {
+        color: #315bd2;
+        font-size: 13px;
+        font-weight: 820;
+        text-align: right;
+      }
+
+      .sample-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .sample-table th,
+      .sample-table td {
+        padding: 14px 16px;
+        border-top: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+        font-size: 13px;
+      }
+
+      .sample-table th {
+        color: #6f7784;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        height: 26px;
+        padding: 0 9px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 760;
+      }
+
+      .tag.good {
+        background: #eaf8f1;
+        color: #13784f;
+      }
+
+      .tag.warn {
+        background: #fff3e4;
+        color: #a6600d;
+      }
+
+      .tag.bad {
+        background: #ffecec;
+        color: #c94444;
+      }
+
+      .task-dialog {
+        width: min(960px, calc(100vw - 48px));
+        padding: 0;
+        border: 1px solid rgba(218, 226, 231, 0.92);
+        border-radius: 20px;
+        background: #fff;
+        color: var(--text);
+        box-shadow: 0 28px 80px rgba(32, 44, 62, 0.18);
+      }
+
+      .task-dialog::backdrop {
+        background: rgba(32, 40, 52, 0.24);
+        backdrop-filter: blur(8px);
+      }
+
+      .dialog-head,
+      .dialog-body,
+      .dialog-actions {
+        padding: 18px 20px;
+      }
+
+      .dialog-head {
+        border-bottom: 1px solid var(--line);
+      }
+
+      .dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        border-top: 1px solid var(--line);
+      }
+
+      .dialog-title {
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      .dialog-body textarea {
+        width: 100%;
+        min-height: 320px;
+        resize: vertical;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 14px;
+        outline: 0;
+        background: #fbfcfd;
+        color: var(--text);
+        line-height: 1.7;
+      }
+
+      .dialog-actions button {
+        height: 36px;
+        padding: 0 14px;
+        border-radius: 11px;
+        cursor: pointer;
+        font-weight: 760;
+      }
+
+      .dialog-cancel {
+        border: 1px solid var(--line);
+        background: #fff;
+        color: #59636e;
+      }
+
+      .dialog-submit {
+        border: 1px solid rgba(59, 110, 246, 0.18);
+        background: var(--accent);
+        color: #fff;
+      }
+
+      svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2;
+      }
+
+      @media (max-width: 1180px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .filters,
+        .metric-grid,
+        .main-grid,
+        .rank-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" aria-label="左侧导航">
+        <div class="brand">感知Agent</div>
+        <button class="new-task" type="button" onclick="location.href='new-task.html'">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+          新建任务
+        </button>
+        <nav class="primary-menu" aria-label="功能导航">
+          <button class="primary-menu-button" type="button" onclick="location.href='agent-management.html'">Agent</button>
+          <div class="nav-stack agent-nav" aria-label="Agent功能">
+            <button class="nav-button" type="button" onclick="location.href='index.html'">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 11 2 2 4-5" /><path d="M20 12a8 8 0 1 1-3.1-6.3" /><path d="M18 4h3v3" /></svg>
+              </span>
+              巡检捉虫
+            </button>
+            <button class="nav-button" type="button" onclick="location.href='opinion.html'">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3 8 4-16 3 8h4" /></svg>
+              </span>
+              舆情分析
+            </button>
+          </div>
+          <button class="primary-menu-button" type="button" onclick="location.href='skill.html'">Skill</button>
+          <button class="primary-menu-button" type="button" onclick="location.href='tools.html'">工具集</button>
+          <button class="primary-menu-button" type="button" onclick="location.href='knowledge.html'">知识库</button>
+          <button class="primary-menu-button active" type="button">效果监控</button>
+        </nav>
+        <section class="tasks" aria-label="任务列表">
+          <a class="section-title" href="task-list.html">任务列表</a>
+          <div class="task-stack">
+            <button class="task-item" type="button"><span class="task-name">榴莲虚假宣传直播间巡检</span></button>
+            <button class="task-item" type="button"><span class="task-name">AWLS社交平台舆情风险定级</span></button>
+            <button class="task-item" type="button"><span class="task-name">通用风险线索研判任务</span></button>
+          </div>
+        </section>
+      </aside>
+
+      <main>
+        <div class="topbar">效果监控 / 标注样本评估</div>
+        <section class="workspace" aria-labelledby="page-title">
+          <div class="page-head">
+            <div>
+              <h1 id="page-title">效果监控</h1>
+              <div class="page-desc">研判治理回流数据，监控 Agent/Skill 的运行效果。</div>
+            </div>
+          </div>
+
+          <section class="filters" aria-label="效果监控筛选">
+            <div class="filter">
+              <label>Agent</label>
+              <select>
+                <option>全部 Agent</option>
+                <option>巡检捉虫Agent</option>
+                <option>舆情分析Agent</option>
+              </select>
+            </div>
+            <div class="filter">
+              <label>Skill</label>
+              <select>
+                <option>全部 Skill</option>
+                <option>生鲜直播间虚假宣传</option>
+                <option>服装直播间材质违规</option>
+                <option>空调直播间售卖假货</option>
+              </select>
+            </div>
+            <div class="filter">
+              <label>任务场景</label>
+              <select>
+                <option>全部场景</option>
+                <option>直播间巡检</option>
+                <option>榜单巡检</option>
+                <option>舆情研判</option>
+              </select>
+            </div>
+            <div class="filter">
+              <label>时间范围</label>
+              <select>
+                <option>近 7 天</option>
+                <option>近 30 天</option>
+                <option>本月</option>
+              </select>
+            </div>
+          </section>
+
+          <section class="metric-grid" aria-label="核心指标">
+            <div class="metric-card">
+              <div class="metric-label">标注样本</div>
+              <div class="metric-value">2,486</div>
+              <div class="metric-note">已完成复核样本</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">召回率 Recall</div>
+              <div class="metric-value">91.8%</div>
+              <div class="metric-note">TP / (TP + FN)</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">精确率 Precision</div>
+              <div class="metric-value">86.4%</div>
+              <div class="metric-note">TP / (TP + FP)</div>
+            </div>
+          </section>
+
+          <section class="main-grid">
+            <section class="panel" aria-label="混淆矩阵">
+              <div class="panel-head">
+                <div>
+                  <div class="panel-title">混淆矩阵</div>
+                  <div class="panel-subtitle">用于计算准召、误报和漏报</div>
+                </div>
+              </div>
+              <div class="matrix">
+                <div></div>
+                <div class="matrix-cell"><div class="matrix-label">标注为违规</div></div>
+                <div class="matrix-cell"><div class="matrix-label">标注为不违规</div></div>
+                <div class="matrix-cell"><div class="matrix-label">算法判违规</div></div>
+                <div class="matrix-cell tp"><div class="matrix-label">TP 命中</div><div class="matrix-value">1,284</div></div>
+                <div class="matrix-cell fp"><div class="matrix-label">FP 误报</div><div class="matrix-value">202</div></div>
+                <div class="matrix-cell"><div class="matrix-label">算法判不违规</div></div>
+                <div class="matrix-cell fn"><div class="matrix-label">FN 漏报</div><div class="matrix-value">115</div></div>
+                <div class="matrix-cell tn"><div class="matrix-label">TN 正确放过</div><div class="matrix-value">885</div></div>
+              </div>
+            </section>
+
+            <section class="panel" aria-label="准召趋势">
+              <div class="panel-head">
+                <div>
+                  <div class="panel-title">准召趋势</div>
+                  <div class="panel-subtitle">按标注完成时间统计</div>
+                </div>
+                <div class="trend-tabs" aria-label="趋势指标切换">
+                  <button class="trend-tab active" type="button" data-trend="precision">精确率</button>
+                  <button class="trend-tab" type="button" data-trend="recall">召回率</button>
+                </div>
+              </div>
+              <div class="chart">
+                <div class="bar"><span style="height: 78%" data-precision="78" data-recall="88"></span><div>05/28</div></div>
+                <div class="bar"><span style="height: 82%" data-precision="82" data-recall="90"></span><div>05/29</div></div>
+                <div class="bar"><span style="height: 80%" data-precision="80" data-recall="89"></span><div>05/30</div></div>
+                <div class="bar"><span style="height: 84%" data-precision="84" data-recall="92"></span><div>05/31</div></div>
+                <div class="bar"><span style="height: 87%" data-precision="87" data-recall="94"></span><div>06/01</div></div>
+                <div class="bar"><span style="height: 86%" data-precision="86" data-recall="91"></span><div>06/02</div></div>
+                <div class="bar"><span style="height: 89%" data-precision="89" data-recall="95"></span><div>06/03</div></div>
+              </div>
+            </section>
+          </section>
+
+          <section class="rank-grid" aria-label="Agent和Skill排行">
+            <section class="panel">
+              <div class="panel-head">
+                <div class="panel-title">Agent 效果</div>
+                <div class="panel-subtitle">按精确率排序</div>
+              </div>
+              <div class="rank-list">
+                <div class="rank-item"><div class="rank-name">规则复盘Agent</div><div class="rank-score">P 91.0%</div><div class="rank-score">R 83.2%</div></div>
+                <div class="rank-item"><div class="rank-name">巡检捉虫Agent</div><div class="rank-score">P 87.1%</div><div class="rank-score">R 92.4%</div></div>
+                <div class="rank-item"><div class="rank-name">舆情分析Agent</div><div class="rank-score">P 84.8%</div><div class="rank-score">R 89.6%</div></div>
+              </div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div class="panel-title">Skill 效果</div>
+                <div class="panel-subtitle">按精确率排序</div>
+              </div>
+              <div class="rank-list">
+                <div class="rank-item"><div class="rank-name">空调直播间售卖假货</div><div class="rank-score">P 90.4%</div><div class="rank-score">R 79.8%</div></div>
+                <div class="rank-item"><div class="rank-name">生鲜直播间虚假宣传</div><div class="rank-score">P 88.7%</div><div class="rank-score">R 94.1%</div></div>
+                <div class="rank-item"><div class="rank-name">服装直播间材质违规</div><div class="rank-score">P 82.2%</div><div class="rank-score">R 86.5%</div></div>
+              </div>
+            </section>
+          </section>
+
+          <section class="panel" style="margin-top: 16px" aria-label="badcase">
+            <div class="panel-head">
+              <div>
+                <div class="panel-title">badcase</div>
+                <div class="panel-subtitle">展示算法判断和人工标注不一致的样本，便于复盘规则和 Skill</div>
+              </div>
+            </div>
+            <table class="sample-table">
+              <thead>
+                <tr>
+                  <th>样本</th>
+                  <th>Agent / Skill</th>
+                  <th>算法判断</th>
+                  <th>标注结果</th>
+                  <th>类型</th>
+                  <th>备注</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>直播间 7645187296261966633</td>
+                  <td>巡检捉虫Agent / 生鲜直播间虚假宣传</td>
+                  <td><span class="tag good">违规</span></td>
+                  <td><span class="tag good">违规</span></td>
+                  <td><span class="tag good">TP</span></td>
+                  <td>ASR 命中售后承诺，截图证据完整。</td>
+                </tr>
+                <tr>
+                  <td>直播间 3805494227979338130</td>
+                  <td>巡检捉虫Agent / 服装直播间材质违规</td>
+                  <td><span class="tag good">违规</span></td>
+                  <td><span class="tag warn">不违规</span></td>
+                  <td><span class="tag warn">FP</span></td>
+                  <td>材质话术上下文缺失，规则阈值偏严。</td>
+                </tr>
+                <tr>
+                  <td>舆情 URL #A1928</td>
+                  <td>舆情分析Agent / 风险定级规则</td>
+                  <td><span class="tag warn">不违规</span></td>
+                  <td><span class="tag bad">违规</span></td>
+                  <td><span class="tag bad">FN</span></td>
+                  <td>历史事件新进展识别不足，需要补充回扫规则。</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const trendTabs = document.querySelectorAll(".trend-tab");
+      const trendBars = document.querySelectorAll(".chart .bar span");
+
+      trendTabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const trend = tab.dataset.trend;
+          trendTabs.forEach((item) => item.classList.toggle("active", item === tab));
+          trendBars.forEach((bar) => {
+            bar.style.height = `${bar.dataset[trend]}%`;
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>舆情分析Agent - 感知Agent</title>
+    <style>
+      :root {
+        --bg: #f6f8fb;
+        --panel: #ffffff;
+        --panel-soft: #f3f6fa;
+        --text: #20242a;
+        --muted: #737d8c;
+        --line: #dde5ec;
+        --accent: #3b6ef6;
+        --accent-soft: #e8efff;
+        --violet: #7c5cff;
+        --green: #20a779;
+        --shadow: 0 22px 60px rgba(32, 44, 62, 0.11);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 62% 0%, rgba(255, 255, 255, 0.94) 0 18%, transparent 42%),
+          linear-gradient(135deg, #f3f6fa 0%, #fbfcfd 50%, #f0f3ff 100%);
+        color: var(--text);
+        font-family:
+          Inter, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+      }
+
+      button,
+      textarea {
+        font: inherit;
+      }
+
+      .app {
+        display: grid;
+        grid-template-columns: 282px minmax(0, 1fr);
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        padding: 22px 16px;
+        border-right: 1px solid rgba(223, 216, 203, 0.78);
+        background: rgba(244, 247, 249, 0.86);
+        backdrop-filter: blur(18px);
+      }
+
+      .brand {
+        padding: 6px 10px 10px;
+        font-size: 22px;
+        font-weight: 840;
+        line-height: 1.15;
+      }
+
+      .new-task {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        height: 46px;
+        border: 0;
+        border-radius: 14px;
+        background: #171717;
+        color: #fff;
+        cursor: pointer;
+        font-weight: 650;
+        box-shadow: 0 12px 26px rgba(23, 23, 23, 0.16);
+      }
+
+      .task-dialog {
+        width: min(960px, calc(100vw - 48px));
+        padding: 0;
+        border: 1px solid rgba(218, 226, 231, 0.92);
+        border-radius: 20px;
+        background: #fff;
+        color: var(--text);
+        box-shadow: 0 28px 80px rgba(32, 44, 62, 0.18);
+      }
+
+      .task-dialog::backdrop {
+        background: rgba(32, 40, 52, 0.24);
+        backdrop-filter: blur(8px);
+      }
+
+      .dialog-head,
+      .dialog-body,
+      .dialog-actions {
+        padding: 18px 20px;
+      }
+
+      .dialog-head {
+        border-bottom: 1px solid var(--line);
+      }
+
+      .dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        border-top: 1px solid var(--line);
+      }
+
+      .dialog-title {
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      .dialog-body textarea {
+        width: 100%;
+        min-height: 320px;
+        resize: vertical;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 14px;
+        outline: 0;
+        background: #fbfcfd;
+        color: var(--text);
+        line-height: 1.7;
+      }
+
+      .dialog-actions button {
+        height: 36px;
+        padding: 0 14px;
+        border-radius: 11px;
+        cursor: pointer;
+        font-weight: 760;
+      }
+
+      .dialog-cancel {
+        border: 1px solid var(--line);
+        background: #fff;
+        color: #59636e;
+      }
+
+      .dialog-submit {
+        border: 1px solid rgba(59, 110, 246, 0.18);
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .nav-stack,
+      .task-stack {
+        display: grid;
+        gap: 8px;
+      }
+
+      .primary-menu {
+        display: grid;
+        gap: 8px;
+      }
+
+      .primary-menu-button {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 40px;
+        padding: 0 12px;
+        border: 0;
+        border-radius: 12px;
+        background: transparent;
+        color: #4c5563;
+        cursor: pointer;
+        font-weight: 760;
+        font-size: 14px;
+        text-align: left;
+      }
+
+      .primary-menu-button.active {
+        background: rgba(255, 255, 255, 0.72);
+        color: #20242a;
+      }
+
+      .agent-nav {
+        margin-left: 12px;
+        padding-left: 10px;
+        border-left: 1px solid var(--line);
+      }
+
+      .nav-button,
+      .task-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 42px;
+        width: 100%;
+        border: 0;
+        border-radius: 12px;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .nav-button {
+        padding: 0 12px;
+        font-weight: 650;
+      }
+
+      .nav-button.active {
+        background: #fff;
+        color: var(--text);
+        box-shadow: 0 10px 24px rgba(80, 72, 56, 0.08);
+      }
+
+      .nav-icon,
+      .task-dot {
+        display: grid;
+        flex: 0 0 auto;
+        place-items: center;
+      }
+
+      .nav-icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 9px;
+        background: var(--panel-soft);
+        color: #504b44;
+      }
+
+      .nav-button.active .nav-icon {
+        background: #f0ebff;
+        color: var(--violet);
+      }
+
+      .tasks {
+        display: flex;
+        margin-top: 14px;
+        flex: 1;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .section-title {
+        display: block;
+        padding: 0 10px;
+        color: #9a9285;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .task-item {
+        align-items: flex-start;
+        padding: 10px;
+      }
+
+      .task-dot {
+        width: 24px;
+        height: 24px;
+        margin-top: 1px;
+        border-radius: 50%;
+        background: #fff;
+        color: var(--accent);
+        font-size: 13px;
+      }
+
+      .task-copy {
+        display: grid;
+        gap: 4px;
+        min-width: 0;
+      }
+
+      .task-name {
+        overflow: hidden;
+        color: #38342e;
+        font-size: 14px;
+        font-weight: 650;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .task-meta {
+        color: #a09a91;
+        font-size: 12px;
+      }
+
+      main {
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        align-items: center;
+        padding: 38px 44px 34px;
+      }
+
+      .topbar {
+        width: min(100%, 1040px);
+        margin-bottom: 56px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .workspace {
+        width: min(100%, 1040px);
+      }
+
+      h1 {
+        margin: 0 0 26px;
+        text-align: center;
+        font-size: clamp(22px, 2.1vw, 28px);
+        line-height: 1.15;
+      }
+
+      .input-panel {
+        overflow: hidden;
+        border: 1px solid rgba(218, 226, 231, 0.92);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.82);
+        box-shadow: var(--shadow);
+      }
+
+      .prompt-area {
+        display: flex;
+        min-height: 300px;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 30px 34px 26px;
+      }
+
+      .prompt-copy {
+        display: flex;
+        max-width: 880px;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px 8px;
+        color: #3f4650;
+        text-align: left;
+        font-size: 18px;
+        font-weight: 400;
+        line-height: 1.8;
+      }
+
+      .prompt-text {
+        display: inline-flex;
+        align-items: center;
+        min-height: 36px;
+      }
+
+      .prompt-chip {
+        display: inline-flex;
+        align-items: center;
+        min-height: 38px;
+        max-width: min(100%, 520px);
+        padding: 7px 12px;
+        border: 1px solid rgba(124, 92, 255, 0.17);
+        border-radius: 11px;
+        background: linear-gradient(180deg, #f1edff 0%, #e9e7ff 100%);
+        color: #654be0;
+        font-size: 15px;
+        font-weight: 650;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.74);
+        line-height: 1.45;
+        text-align: left;
+      }
+
+      .chip-label {
+        flex: 0 0 auto;
+        margin-right: 7px;
+        color: #8a78ea;
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .url-box {
+        width: 100%;
+        min-height: 92px;
+        margin-top: 24px;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        outline: 0;
+        resize: vertical;
+        background: #fbfcfd;
+        color: #2f3742;
+        font-size: 14px;
+        line-height: 1.58;
+      }
+
+      .manual-import {
+        display: none;
+      }
+
+      .manual-import.active {
+        display: block;
+      }
+
+      .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin-top: 20px;
+      }
+
+      .source-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .source-tab {
+        min-height: 38px;
+        padding: 0 14px;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        background: #f5f7fa;
+        color: #5d6674;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 680;
+      }
+
+      .source-tab.active {
+        border-color: rgba(124, 92, 255, 0.25);
+        background: #f1edff;
+        color: #654be0;
+      }
+
+      .run-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        border: 0;
+        border-radius: 50%;
+        background: #b9caff;
+        color: #fff;
+        cursor: pointer;
+      }
+
+      .frequent {
+        margin-top: 30px;
+      }
+
+      .frequent-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 13px;
+      }
+
+      .frequent-title {
+        font-size: 15px;
+        font-weight: 760;
+      }
+
+      .frequent-note {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .quick-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .quick-card {
+        min-height: 86px;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.68);
+        color: #343b46;
+        cursor: pointer;
+        text-align: left;
+        transition:
+          transform 160ms ease,
+          border-color 160ms ease,
+          background 160ms ease;
+      }
+
+      .quick-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(124, 92, 255, 0.3);
+        background: rgba(255, 255, 255, 0.92);
+      }
+
+      .quick-name {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 15px;
+        font-weight: 760;
+      }
+
+      .quick-desc {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2;
+      }
+
+      @media (max-width: 980px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .tasks {
+          display: none;
+        }
+
+        .quick-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 560px) {
+        main {
+          padding: 28px 18px;
+        }
+
+        .prompt-area {
+          padding: 22px 18px;
+        }
+
+        .prompt-copy {
+          justify-content: flex-start;
+          text-align: left;
+          font-size: 16px;
+        }
+
+        .prompt-chip {
+          width: 100%;
+          max-width: 100%;
+        }
+
+        .quick-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" aria-label="左侧导航">
+        <div class="brand">感知Agent</div>
+        <button class="new-task" type="button" onclick="location.href='new-task.html'">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+          新建任务
+        </button>
+        <nav class="primary-menu" aria-label="功能导航">
+          <button class="primary-menu-button active" type="button" onclick="location.href='agent-management.html'">Agent</button>
+          <div class="nav-stack agent-nav" aria-label="Agent功能">
+            <button class="nav-button" type="button" onclick="location.href='index.html'">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 11 2 2 4-5" /><path d="M20 12a8 8 0 1 1-3.1-6.3" /><path d="M18 4h3v3" /></svg>
+              </span>
+              巡检捉虫
+            </button>
+            <button class="nav-button active" type="button">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3 8 4-16 3 8h4" /></svg>
+              </span>
+              舆情分析
+            </button>
+          </div>
+          <button class="primary-menu-button" type="button" onclick="location.href='skill.html'">Skill</button>
+          <button class="primary-menu-button" type="button" onclick="location.href='tools.html'">工具集</button>
+          <button class="primary-menu-button" type="button" onclick="location.href='knowledge.html'">知识库</button>
+          <button class="primary-menu-button" type="button" onclick="location.href='effect-monitor.html'">效果监控</button>
+        </nav>
+        <section class="tasks" aria-label="任务列表">
+          <a class="section-title" href="task-list.html">任务列表</a>
+          <div class="task-stack">
+            <button class="task-item" type="button">
+              <span class="task-copy">
+                <span class="task-name">榴莲虚假宣传直播间巡检</span>
+              </span>
+            </button>
+            <button class="task-item" type="button">
+              <span class="task-copy">
+                <span class="task-name">AWLS社交平台舆情风险定级</span>
+              </span>
+            </button>
+            <button class="task-item" type="button">
+              <span class="task-copy">
+                <span class="task-name">通用风险线索研判任务</span>
+              </span>
+            </button>
+          </div>
+        </section>
+      </aside>
+
+      <main>
+        <div class="topbar">舆情分析 / 新研判任务</div>
+        <section class="workspace" aria-labelledby="page-title">
+          <h1 id="page-title">舆情分析Agent</h1>
+          <section class="input-panel" aria-label="舆情研判输入">
+            <div class="prompt-area">
+              <div>
+                <div class="prompt-copy">
+                  <span class="prompt-text">请接入</span>
+                  <span class="prompt-chip"><span class="chip-label">数据来源</span>媒体数据 / 社交平台数据</span>
+                  <span class="prompt-text">中的舆情 URL，先完成</span>
+                  <span class="prompt-chip"><span class="chip-label">舆情过滤</span>是否其他规则需要预警、是否重复、是否是历史事件的新进展</span>
+                  <span class="prompt-text">再依据</span>
+                  <span class="prompt-chip"><span class="chip-label">定级规则</span>S / A / B / C / D / P0 / P1 / P2 / P3</span>
+                  <span class="prompt-text">进行风险研判，之后再依据</span>
+                  <span class="prompt-chip"><span class="chip-label">研判规则</span>推送研判平台或回扫平台规则</span>
+                  <span class="prompt-text">完成分发。</span>
+                </div>
+                <div class="manual-import" id="manualImport">
+                  <textarea class="url-box" aria-label="人工导入舆情URL">https://news.example.com/report/consumer-complaint-001
+https://social.example.com/post/brand-risk-927
+https://video.example.com/feed/fake-product-review</textarea>
+                </div>
+              </div>
+              <div class="toolbar">
+                <div class="source-tabs" aria-label="舆情数据来源">
+                  <button class="source-tab active" data-source="api" type="button">采买数据接口</button>
+                  <button class="source-tab" data-source="api" type="button">AWLS 数据接口</button>
+                  <button class="source-tab" data-source="manual" type="button">人工导入</button>
+                </div>
+                <button class="run-button" type="button" aria-label="开始研判" onclick="location.href='opinion-task.html'">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <section class="frequent" aria-labelledby="frequent-title">
+            <div class="frequent-head">
+              <div class="frequent-title" id="frequent-title">高频使用</div>
+              <div class="frequent-note">一键带入常用舆情任务</div>
+            </div>
+            <div class="quick-grid">
+              <button class="quick-card" data-source-name="采买数据接口" type="button">
+                <span class="quick-name">采买数据舆情过滤</span>
+                <span class="quick-desc">接入采买数据接口，完成过滤、去重与风险定级</span>
+              </button>
+              <button class="quick-card" data-source-name="AWLS 数据接口" type="button">
+                <span class="quick-name">AWLS 社交平台舆情</span>
+                <span class="quick-desc">处理社交平台舆情，识别传播风险与回扫路径</span>
+              </button>
+              <button class="quick-card" data-source-name="采买数据接口" type="button">
+                <span class="quick-name">历史事件新进展</span>
+                <span class="quick-desc">判断是否为历史事件的新进展，并更新事件风险</span>
+              </button>
+              <button class="quick-card" data-source-name="人工导入" type="button">
+                <span class="quick-name">人工导入研判</span>
+                <span class="quick-desc">粘贴舆情 URL，手动发起过滤与风险定级任务</span>
+              </button>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <dialog class="task-dialog" id="newTaskDialog">
+      <form method="dialog">
+        <div class="dialog-head">
+          <div class="dialog-title">新建任务</div>
+        </div>
+        <div class="dialog-body">
+          <textarea placeholder="直接描述你想完成的任务。平台会理解任务意图，并选择合适的 Agent、Skill、工具和知识库执行。"></textarea>
+        </div>
+        <div class="dialog-actions">
+          <button class="dialog-cancel" value="cancel" type="submit">取消</button>
+          <button class="dialog-submit" value="submit" type="submit">提交任务</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script>
+      const newTaskDialog = document.querySelector("#newTaskDialog");
+
+      document.querySelectorAll(".open-task-dialog").forEach((button) => {
+        button.addEventListener("click", () => newTaskDialog.showModal());
+      });
+
+      document.querySelectorAll(".source-tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          document.querySelectorAll(".source-tab").forEach((item) => item.classList.remove("active"));
+          tab.classList.add("active");
+          document.querySelector("#manualImport").classList.toggle("active", tab.dataset.source === "manual");
+        });
+      });
+
+      document.querySelectorAll(".quick-card").forEach((card) => {
+        card.addEventListener("click", () => {
+          const target = Array.from(document.querySelectorAll(".source-tab")).find(
+            (tab) => tab.textContent.trim() === card.dataset.sourceName,
+          );
+          if (target) target.click();
+        });
+      });
+    </script>
+  </body>
+</html>
