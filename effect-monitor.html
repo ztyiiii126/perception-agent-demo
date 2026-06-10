@@ -13,7 +13,7 @@
         --muted: #737d8c;
         --line: #dde5ec;
         --accent: #171717;
-        --accent-soft: #e8efff;
+        --accent-soft: #f1f2f4;
         --green: #20a779;
         --orange: #e9971c;
         --red: #e65353;
@@ -290,19 +290,17 @@
 
       main {
         min-width: 0;
-        padding: 38px 44px 34px;
+        padding: 34px 44px 44px;
       }
 
       .topbar,
       .workspace {
-        width: min(100%, 1180px);
+        width: min(100%, 1320px);
         margin: 0 auto;
       }
 
       .topbar {
-        margin-bottom: 28px;
-        color: var(--muted);
-        font-size: 14px;
+        display: none;
       }
 
       .page-head {
@@ -315,11 +313,14 @@
 
       h1 {
         margin: 0;
-        font-size: clamp(22px, 2.1vw, 28px);
-        line-height: 1.15;
+        color: #24272c;
+        font-size: 28px;
+        font-weight: 760;
+        line-height: 1.18;
       }
 
       .page-desc {
+        display: none;
         margin-top: 10px;
         max-width: 760px;
         color: var(--muted);
@@ -446,7 +447,7 @@
 
       .trend-tab.active {
         background: #fff;
-        color: #214fce;
+        color: #303844;
         box-shadow: 0 6px 14px rgba(32, 44, 62, 0.08);
       }
 
@@ -488,7 +489,7 @@
       }
 
       .tn {
-        background: #eef3ff;
+        background: #f1f3f5;
         color: #315bd2;
       }
 
@@ -515,7 +516,7 @@
         display: block;
         min-height: 18px;
         border-radius: 10px 10px 4px 4px;
-        background: linear-gradient(180deg, #3b6ef6, #20a779);
+        background: linear-gradient(180deg, #303844, #20a779);
       }
 
       .rank-grid {
@@ -972,7 +973,6 @@
       </aside>
 
       <main>
-        <div class="topbar">效果监控 / 标注样本评估</div>
         <section class="workspace" aria-labelledby="page-title">
           <div class="page-head">
             <div>
@@ -1155,7 +1155,7 @@
       </main>
     </div>
 
-    <script src="sidebar-lock.js?v=4"></script>
+    <script src="sidebar-lock.js?v=8"></script>
     <script>
       const trendTabs = document.querySelectorAll(".trend-tab");
       const trendBars = document.querySelectorAll(".chart .bar span");

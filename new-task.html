@@ -689,6 +689,561 @@
         }
       }
 
+      /* Form task creation */
+      main {
+        min-width: 0;
+        padding: 30px 42px 48px;
+      }
+
+      .form-page {
+        width: min(1120px, 100%);
+        margin: 0 auto;
+      }
+
+      .form-head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 24px;
+      }
+
+      .form-head h1 {
+        margin: 5px 0 0;
+        font-size: 26px;
+        line-height: 1.2;
+      }
+
+      .form-head p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .draft-state {
+        color: #737d8c;
+        font-size: 12px;
+      }
+
+      .stepper {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        margin-bottom: 20px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.72);
+        overflow: hidden;
+      }
+
+      .step-tab {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+        padding: 15px 18px;
+        border: 0;
+        border-right: 1px solid var(--line);
+        background: transparent;
+        color: #8a939f;
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .step-tab:last-child {
+        border-right: 0;
+      }
+
+      .step-tab.active {
+        background: #171717;
+        color: #fff;
+      }
+
+      .step-tab.complete {
+        color: #303844;
+      }
+
+      .step-number {
+        display: grid;
+        flex: 0 0 24px;
+        width: 24px;
+        height: 24px;
+        place-items: center;
+        border: 1px solid currentColor;
+        border-radius: 50%;
+        font-size: 11px;
+        font-weight: 760;
+      }
+
+      .step-label {
+        overflow: hidden;
+        font-size: 13px;
+        font-weight: 720;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .form-shell {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.86);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .form-step {
+        display: none;
+        min-height: 470px;
+        padding: 28px 30px;
+      }
+
+      .form-step.active {
+        display: block;
+      }
+
+      .step-heading {
+        margin-bottom: 24px;
+      }
+
+      .step-heading h2 {
+        margin: 0;
+        font-size: 18px;
+      }
+
+      .step-heading p {
+        margin: 7px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .choice-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .choice-card {
+        position: relative;
+        display: block;
+        min-height: 138px;
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: #fff;
+        cursor: pointer;
+        transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+      }
+
+      .choice-card:hover {
+        border-color: #aeb7c2;
+      }
+
+      .choice-card.selected {
+        border-color: #171717;
+        background: #f6f7f8;
+        box-shadow: 0 0 0 1px #171717;
+      }
+
+      .choice-card input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .choice-check {
+        position: absolute;
+        top: 17px;
+        right: 17px;
+        display: grid;
+        width: 20px;
+        height: 20px;
+        place-items: center;
+        border: 1px solid #cbd3dc;
+        border-radius: 50%;
+        color: transparent;
+        font-size: 12px;
+      }
+
+      .choice-card.selected .choice-check {
+        border-color: #171717;
+        background: #171717;
+        color: #fff;
+      }
+
+      .choice-title {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 16px;
+        font-weight: 760;
+      }
+
+      .choice-desc {
+        display: block;
+        max-width: 90%;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.65;
+      }
+
+      .field-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px 20px;
+      }
+
+      .field {
+        display: grid;
+        gap: 8px;
+        min-width: 0;
+      }
+
+      .field.full {
+        grid-column: 1 / -1;
+      }
+
+      .field-label {
+        color: #343a43;
+        font-size: 13px;
+        font-weight: 720;
+      }
+
+      .required {
+        margin-left: 3px;
+        color: #d74c43;
+      }
+
+      .field input,
+      .field select,
+      .field textarea {
+        width: 100%;
+        min-height: 42px;
+        padding: 0 12px;
+        border: 1px solid #d8e0e7;
+        border-radius: 10px;
+        outline: 0;
+        background: #fff;
+        color: #303844;
+        font: inherit;
+        font-size: 13px;
+      }
+
+      .field textarea {
+        min-height: 92px;
+        padding: 11px 12px;
+        resize: vertical;
+      }
+
+      .field input:focus,
+      .field select:focus,
+      .field textarea:focus {
+        border-color: #737d8c;
+        box-shadow: 0 0 0 3px rgba(23, 23, 23, 0.06);
+      }
+
+      .condition-row {
+        display: grid;
+        grid-template-columns: 1.3fr 0.8fr 1fr;
+        gap: 10px;
+      }
+
+      .source-panel {
+        display: none;
+      }
+
+      .source-panel.active {
+        display: block;
+      }
+
+      .source-note {
+        margin-bottom: 18px;
+        padding: 12px 14px;
+        border: 1px solid #e1e6eb;
+        border-radius: 10px;
+        background: #f7f8f9;
+        color: #66717f;
+        font-size: 12px;
+      }
+
+      .segment {
+        display: inline-flex;
+        gap: 3px;
+        padding: 3px;
+        border: 1px solid #d8e0e7;
+        border-radius: 10px;
+        background: #f4f6f8;
+      }
+
+      .segment label {
+        cursor: pointer;
+      }
+
+      .segment input {
+        position: absolute;
+        opacity: 0;
+      }
+
+      .segment span {
+        display: block;
+        padding: 8px 15px;
+        border-radius: 7px;
+        color: #697481;
+        font-size: 13px;
+        font-weight: 650;
+      }
+
+      .segment input:checked + span {
+        background: #171717;
+        color: #fff;
+      }
+
+      .inline-field {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .inline-field input[type="number"] {
+        width: 96px;
+      }
+
+      .inline-field select {
+        width: 92px;
+        min-height: 42px;
+        padding: 0 10px;
+        border: 1px solid #dce3ec;
+        border-radius: 6px;
+        outline: 0;
+        background: #fff;
+        color: #48566b;
+        font: inherit;
+        font-size: 13px;
+      }
+
+      .inline-field select:focus {
+        border-color: var(--form-blue);
+        box-shadow: 0 0 0 2px rgba(23, 25, 28, 0.08);
+      }
+
+      .scheduled-config {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-top: 12px;
+        padding: 14px 16px;
+        border: 1px solid #dfe3e7;
+        border-radius: 6px;
+        background: #f7f8f9;
+      }
+
+      .scheduled-config::before {
+        position: absolute;
+        top: -7px;
+        left: 34px;
+        width: 12px;
+        height: 12px;
+        border-top: 1px solid #dfe3e7;
+        border-left: 1px solid #dfe3e7;
+        background: #f7f8f9;
+        transform: rotate(45deg);
+        content: "";
+      }
+
+      .frequency-segment {
+        display: flex;
+        width: fit-content;
+        gap: 10px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+      }
+
+      .frequency-segment label {
+        position: relative;
+      }
+
+      .frequency-segment span {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 9px;
+        width: 112px;
+        min-width: 112px;
+        min-height: 42px;
+        padding: 0 13px;
+        border: 1px solid #dce3ec;
+        border-radius: 6px;
+        background: #fff;
+        color: #66758a;
+        text-align: left;
+        box-shadow: none;
+      }
+
+      .frequency-segment span::before {
+        flex: 0 0 15px;
+        width: 15px;
+        height: 15px;
+        border: 1px solid #b9c7d9;
+        border-radius: 50%;
+        background: #fff;
+        content: "";
+      }
+
+      .frequency-segment label:hover span {
+        border-color: #aeb5bd;
+        color: #3f4854;
+      }
+
+      .frequency-segment input:checked + span {
+        border-color: var(--form-blue);
+        background: #f6f7f8;
+        color: #3f4854;
+        box-shadow: none;
+      }
+
+      .frequency-segment input:checked + span::before {
+        border: 4px solid var(--form-blue);
+      }
+
+      .scheduled-config-title {
+        flex: 0 0 auto;
+        padding-right: 18px;
+        border-right: 1px solid #e2e5e9;
+        color: #59616c;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .scheduled-config-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+      }
+
+      .scheduled-config[hidden] {
+        display: none;
+      }
+
+      .inline-unit {
+        flex: 0 0 auto;
+        color: var(--muted);
+        font-size: 13px;
+        white-space: nowrap;
+      }
+
+      .switch-line {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 50px;
+        padding: 0 14px;
+        border: 1px solid #d8e0e7;
+        border-radius: 10px;
+        background: #fff;
+      }
+
+      .switch-line span {
+        font-size: 13px;
+        font-weight: 650;
+      }
+
+      .switch-line input {
+        width: 38px;
+        height: 20px;
+        accent-color: #171717;
+      }
+
+      .summary-list {
+        display: grid;
+        gap: 0;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .summary-row {
+        display: grid;
+        grid-template-columns: 150px minmax(0, 1fr);
+        gap: 20px;
+        padding: 14px 16px;
+        border-top: 1px solid var(--line);
+        background: #fff;
+        font-size: 13px;
+      }
+
+      .summary-row:first-child {
+        border-top: 0;
+      }
+
+      .summary-label {
+        color: #7a8490;
+      }
+
+      .summary-value {
+        color: #303844;
+        font-weight: 650;
+      }
+
+      .form-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 16px 20px;
+        border-top: 1px solid var(--line);
+        background: #fafbfc;
+      }
+
+      .form-actions-right {
+        display: flex;
+        gap: 10px;
+      }
+
+      .form-button {
+        min-height: 40px;
+        padding: 0 18px;
+        border: 1px solid #d8e0e7;
+        border-radius: 10px;
+        background: #fff;
+        color: #4c5563;
+        cursor: pointer;
+        font-weight: 700;
+      }
+
+      .form-button.primary {
+        border-color: #171717;
+        background: #171717;
+        color: #fff;
+      }
+
+      .form-button[hidden] {
+        display: none;
+      }
+
+      @media (max-width: 900px) {
+        main {
+          padding: 22px;
+        }
+
+        .step-label {
+          display: none;
+        }
+
+        .step-tab {
+          justify-content: center;
+        }
+
+        .choice-grid,
+        .field-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .field.full {
+          grid-column: auto;
+        }
+      }
+
       /* __SIDEBAR_OVERRIDE_START__ */
 
       /* Unified sidebar lock: keep the left navigation identical on every page. */
@@ -918,6 +1473,1501 @@
       }
 
       /* __SIDEBAR_OVERRIDE_END__ */
+
+      /* Premium form visual system */
+      :root {
+        --page-bg: #f5f6f7;
+        --surface: #ffffff;
+        --surface-subtle: #f8f9fa;
+        --surface-muted: #f1f3f5;
+        --text: #17191c;
+        --text-secondary: #59616c;
+        --muted: #858d98;
+        --line: #e2e5e9;
+        --line-strong: #cfd4da;
+        --accent: #17191c;
+        --danger: #c93f36;
+        --success: #16845b;
+        --shadow: 0 18px 48px rgba(25, 31, 38, 0.07);
+        --shadow-small: 0 8px 22px rgba(25, 31, 38, 0.06);
+      }
+
+      body {
+        background: var(--page-bg);
+        color: var(--text);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        letter-spacing: 0;
+      }
+
+      main {
+        padding: 42px 52px 60px;
+        background: var(--page-bg);
+      }
+
+      .form-page {
+        width: min(1080px, 100%);
+      }
+
+      .form-head {
+        align-items: flex-start;
+        margin-bottom: 28px;
+      }
+
+      .topbar {
+        margin-bottom: 8px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 680;
+      }
+
+      .form-head h1 {
+        margin: 0;
+        color: var(--text);
+        font-size: 28px;
+        font-weight: 760;
+        line-height: 1.22;
+      }
+
+      .form-head p {
+        max-width: 600px;
+        margin-top: 10px;
+        color: var(--text-secondary);
+        font-size: 14px;
+        line-height: 1.65;
+      }
+
+      .draft-state {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-top: 4px;
+        padding: 7px 10px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.74);
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 620;
+      }
+
+      .draft-state::before {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--success);
+        content: "";
+      }
+
+      .stepper {
+        position: relative;
+        gap: 0;
+        margin-bottom: 18px;
+        padding: 5px;
+        border-color: var(--line);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.78);
+        box-shadow: 0 1px 2px rgba(25, 31, 38, 0.02);
+      }
+
+      .step-tab {
+        min-height: 54px;
+        padding: 10px 14px;
+        border-right: 0;
+        border-radius: 8px;
+        color: var(--muted);
+        transition:
+          background-color 160ms ease,
+          color 160ms ease,
+          box-shadow 160ms ease;
+      }
+
+      .step-tab:hover {
+        background: var(--surface-subtle);
+        color: var(--text-secondary);
+      }
+
+      .step-tab.active {
+        background: var(--surface-muted);
+        color: var(--text);
+        box-shadow: inset 0 0 0 1px rgba(23, 25, 28, 0.04);
+      }
+
+      .step-tab.complete {
+        color: var(--text-secondary);
+      }
+
+      .step-number {
+        width: 25px;
+        height: 25px;
+        border-color: var(--line-strong);
+        background: var(--surface);
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 760;
+      }
+
+      .step-tab.active .step-number {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .step-tab.complete .step-number {
+        border-color: #9fa6ae;
+        color: var(--text-secondary);
+      }
+
+      .step-label {
+        font-size: 13px;
+        font-weight: 680;
+      }
+
+      .form-shell {
+        border-color: var(--line);
+        border-radius: 16px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .form-step {
+        min-height: 500px;
+        padding: 34px 38px 40px;
+      }
+
+      .step-heading {
+        margin-bottom: 28px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .step-heading h2 {
+        color: var(--text);
+        font-size: 19px;
+        font-weight: 740;
+        line-height: 1.3;
+      }
+
+      .step-heading p {
+        margin-top: 7px;
+        color: var(--text-secondary);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .choice-grid {
+        gap: 16px;
+      }
+
+      .choice-card {
+        min-height: 148px;
+        padding: 22px 46px 22px 22px;
+        border-color: var(--line);
+        border-radius: 12px;
+        background: var(--surface);
+        box-shadow: 0 1px 2px rgba(25, 31, 38, 0.025);
+        transition:
+          transform 160ms ease,
+          border-color 160ms ease,
+          background-color 160ms ease,
+          box-shadow 160ms ease;
+      }
+
+      .choice-card:hover {
+        transform: translateY(-1px);
+        border-color: #b9bec5;
+        box-shadow: var(--shadow-small);
+      }
+
+      .choice-card.selected {
+        border-color: var(--accent);
+        background: var(--surface-subtle);
+        box-shadow: inset 0 0 0 1px var(--accent);
+      }
+
+      .choice-card:focus-within {
+        outline: 3px solid rgba(23, 25, 28, 0.1);
+        outline-offset: 2px;
+      }
+
+      .choice-check {
+        top: 20px;
+        right: 20px;
+        width: 21px;
+        height: 21px;
+        border-color: var(--line-strong);
+        background: var(--surface);
+        font-size: 11px;
+      }
+
+      .choice-card.selected .choice-check {
+        border-color: var(--accent);
+        background: var(--accent);
+      }
+
+      .choice-title {
+        margin-bottom: 8px;
+        color: var(--text);
+        font-size: 15px;
+        font-weight: 720;
+      }
+
+      .choice-desc {
+        max-width: 96%;
+        color: var(--text-secondary);
+        font-size: 13px;
+        line-height: 1.7;
+      }
+
+      .field-grid {
+        gap: 22px 24px;
+      }
+
+      .field {
+        gap: 9px;
+      }
+
+      .field-label {
+        color: #343940;
+        font-size: 13px;
+        font-weight: 680;
+      }
+
+      .required {
+        color: var(--danger);
+      }
+
+      .field input,
+      .field select,
+      .field textarea {
+        min-height: 44px;
+        padding: 0 13px;
+        border-color: var(--line-strong);
+        border-radius: 9px;
+        background: var(--surface);
+        color: var(--text);
+        font-size: 13px;
+        transition:
+          border-color 150ms ease,
+          box-shadow 150ms ease,
+          background-color 150ms ease;
+      }
+
+      .field input:hover,
+      .field select:hover,
+      .field textarea:hover {
+        border-color: #abb2bb;
+      }
+
+      .field input:focus,
+      .field select:focus,
+      .field textarea:focus {
+        border-color: var(--accent);
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(23, 25, 28, 0.09);
+      }
+
+      .field input[readonly] {
+        border-color: var(--line);
+        background: var(--surface-muted);
+        color: var(--text-secondary);
+      }
+
+      .condition-row {
+        gap: 12px;
+      }
+
+      .source-note {
+        margin-bottom: 24px;
+        padding: 11px 13px;
+        border-color: var(--line);
+        border-radius: 8px;
+        background: var(--surface-muted);
+        color: var(--text-secondary);
+        font-size: 12px;
+        font-weight: 620;
+      }
+
+      .segment {
+        gap: 4px;
+        padding: 4px;
+        border-color: var(--line-strong);
+        border-radius: 9px;
+        background: var(--surface-muted);
+      }
+
+      .segment span {
+        min-width: 112px;
+        padding: 8px 14px;
+        border-radius: 6px;
+        color: var(--text-secondary);
+        text-align: center;
+        transition: background-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
+      }
+
+      .segment label:hover span {
+        color: var(--text);
+      }
+
+      .segment input:checked + span {
+        background: var(--surface);
+        color: var(--text);
+        box-shadow: 0 1px 4px rgba(25, 31, 38, 0.12);
+      }
+
+      .switch-line {
+        min-height: 54px;
+        padding: 0 15px;
+        border-color: var(--line-strong);
+        border-radius: 9px;
+        transition: border-color 150ms ease, background-color 150ms ease;
+      }
+
+      .switch-line:hover {
+        border-color: #abb2bb;
+        background: var(--surface-subtle);
+      }
+
+      .switch-line input {
+        width: 40px;
+        height: 22px;
+        accent-color: var(--accent);
+        cursor: pointer;
+      }
+
+      .summary-list {
+        border-color: var(--line);
+        border-radius: 10px;
+      }
+
+      .summary-row {
+        grid-template-columns: 140px minmax(0, 1fr);
+        gap: 24px;
+        padding: 13px 15px;
+        border-top-color: var(--line);
+        background: var(--surface);
+      }
+
+      .summary-row:nth-child(even) {
+        background: var(--surface-subtle);
+      }
+
+      .summary-label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 620;
+      }
+
+      .summary-value {
+        color: var(--text);
+        font-size: 13px;
+        font-weight: 620;
+      }
+
+      .form-actions {
+        position: sticky;
+        bottom: 0;
+        z-index: 2;
+        padding: 15px 20px;
+        border-top-color: var(--line);
+        background: rgba(250, 251, 252, 0.94);
+        backdrop-filter: blur(14px);
+      }
+
+      .form-button {
+        min-height: 40px;
+        padding: 0 17px;
+        border-color: var(--line-strong);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--text-secondary);
+        font-size: 13px;
+        font-weight: 680;
+        transition:
+          transform 150ms ease,
+          border-color 150ms ease,
+          background-color 150ms ease,
+          color 150ms ease,
+          box-shadow 150ms ease;
+      }
+
+      .form-button:hover {
+        border-color: #aeb5bd;
+        background: var(--surface-muted);
+        color: var(--text);
+      }
+
+      .form-button:active {
+        transform: translateY(1px);
+      }
+
+      .form-button:focus-visible,
+      .step-tab:focus-visible {
+        outline: 3px solid rgba(23, 25, 28, 0.12);
+        outline-offset: 2px;
+      }
+
+      .form-button.primary {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: #fff;
+        box-shadow: 0 6px 14px rgba(23, 25, 28, 0.14);
+      }
+
+      .form-button.primary:hover {
+        border-color: #30343a;
+        background: #30343a;
+        color: #fff;
+        box-shadow: 0 8px 18px rgba(23, 25, 28, 0.18);
+      }
+
+      @media (max-width: 1100px) {
+        main {
+          padding: 34px 28px 48px;
+        }
+
+        .form-step {
+          padding: 30px 28px 36px;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .app {
+          display: block !important;
+          min-height: 100vh !important;
+        }
+
+        .sidebar {
+          position: static !important;
+          display: block !important;
+          width: 100% !important;
+          min-width: 0 !important;
+          max-width: none !important;
+          height: auto !important;
+          padding: 14px !important;
+          border-right: 0 !important;
+          border-bottom: 1px solid var(--line) !important;
+          overflow: visible !important;
+        }
+
+        .sidebar .brand,
+        .sidebar .tasks {
+          display: none !important;
+        }
+
+        .sidebar .new-task {
+          height: 42px !important;
+          margin-bottom: 10px;
+        }
+
+        .sidebar .primary-menu {
+          display: flex !important;
+          gap: 6px !important;
+          overflow-x: auto;
+          scrollbar-width: none;
+        }
+
+        .sidebar .primary-menu::-webkit-scrollbar {
+          display: none;
+        }
+
+        .sidebar .primary-menu-button,
+        .sidebar .nav-button {
+          flex: 0 0 auto;
+          width: auto !important;
+          min-height: 36px !important;
+          padding: 0 10px !important;
+        }
+
+        .sidebar .agent-nav {
+          display: flex !important;
+          gap: 6px !important;
+          margin-left: 0 !important;
+          padding-left: 0 !important;
+          border-left: 0 !important;
+        }
+
+        main {
+          padding: 24px 14px 36px;
+        }
+
+        .form-head {
+          gap: 12px;
+          margin-bottom: 22px;
+          flex-direction: column;
+        }
+
+        .form-head h1 {
+          font-size: 24px;
+        }
+
+        .draft-state {
+          margin-top: 0;
+        }
+
+        .stepper {
+          grid-template-columns: repeat(4, 1fr);
+        }
+
+        .step-tab {
+          min-height: 48px;
+          padding: 8px;
+        }
+
+        .step-label {
+          display: none;
+        }
+
+        .form-shell {
+          border-radius: 12px;
+        }
+
+        .form-step {
+          min-height: 0;
+          padding: 24px 18px 30px;
+        }
+
+        .step-heading {
+          margin-bottom: 22px;
+          padding-bottom: 17px;
+        }
+
+        .choice-grid,
+        .field-grid,
+        .condition-row {
+          grid-template-columns: 1fr;
+        }
+
+        .choice-card {
+          min-height: 132px;
+          padding: 19px 44px 19px 18px;
+        }
+
+        .segment {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .segment span {
+          min-width: 0;
+          padding: 8px 10px;
+        }
+
+        .summary-row {
+          grid-template-columns: 1fr;
+          gap: 4px;
+        }
+
+        .form-actions {
+          padding: 13px;
+        }
+
+        .form-actions-right {
+          gap: 7px;
+        }
+
+        .form-button {
+          padding: 0 13px;
+        }
+      }
+
+      /* Reference-inspired visual layer */
+      :root {
+        --form-blue: #20242a;
+        --form-blue-soft: #f1f3f5;
+        --form-blue-line: #cfd4da;
+      }
+
+      body,
+      main {
+        background: #fff;
+      }
+
+      main {
+        padding: 34px 44px 56px;
+        border-left: 0;
+      }
+
+      .form-page {
+        width: min(1180px, 100%);
+        margin: 0 auto;
+      }
+
+      .form-head {
+        width: 100%;
+        margin: 0 0 24px;
+      }
+
+      .form-head > div {
+        width: 100%;
+        margin: 0;
+      }
+
+      .topbar,
+      .draft-state {
+        display: none;
+      }
+
+      .form-head h1 {
+        margin: 0;
+        color: #24272c;
+        font-size: 28px;
+        font-weight: 760;
+        line-height: 1.18;
+      }
+
+      .form-head p {
+        max-width: 720px;
+        margin: 9px 0 0;
+        color: #8f989f;
+        font-size: 13px;
+      }
+
+      .stepper {
+        width: 100%;
+        margin: 0 0 26px;
+        padding: 24px 28px;
+        border: 1px solid #edf0f4;
+        border-radius: 10px;
+        background: #fafafa;
+        box-shadow: none;
+        overflow: visible;
+      }
+
+      .step-tab {
+        position: relative;
+        justify-content: flex-start;
+        gap: 10px;
+        min-height: 42px;
+        padding: 0 52px 0 18px;
+        border-radius: 0;
+        background: transparent;
+        color: #8792a2;
+        overflow: visible;
+      }
+
+      .step-tab:not(:last-child)::after {
+        position: absolute;
+        top: 50%;
+        right: 11px;
+        width: 29px;
+        border-top: 2px dashed var(--form-blue-line);
+        transform: translateY(-50%);
+        content: "";
+      }
+
+      .step-tab:not(:last-child)::before {
+        position: absolute;
+        z-index: 2;
+        top: 50%;
+        right: 10px;
+        width: 7px;
+        height: 7px;
+        border-top: 2px solid var(--form-blue-line);
+        border-right: 2px solid var(--form-blue-line);
+        transform: translateY(-50%) rotate(45deg);
+        content: "";
+      }
+
+      .step-tab:hover,
+      .step-tab.active {
+        background: transparent;
+        color: #42516a;
+        box-shadow: none;
+      }
+
+      .step-number {
+        flex: 0 0 34px;
+        width: 34px;
+        min-width: 34px;
+        max-width: 34px;
+        height: 34px;
+        min-height: 34px;
+        max-height: 34px;
+        aspect-ratio: 1;
+        border-color: #dce5f0;
+        border-radius: 50%;
+        background: #fff;
+        color: #53647b;
+        font-size: 13px;
+      }
+
+      .step-tab.active .step-number {
+        border-color: var(--form-blue);
+        background: var(--form-blue);
+        color: #fff;
+      }
+
+      .step-tab.complete .step-number {
+        border-color: var(--form-blue);
+        background: var(--form-blue-soft);
+        color: var(--form-blue);
+      }
+
+      .step-label {
+        position: relative;
+        z-index: 3;
+        font-size: 14px;
+        font-weight: 650;
+        white-space: nowrap;
+      }
+
+      .form-shell {
+        width: 100%;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #e7ebf0;
+        border-radius: 12px;
+        background: #f7f9fb;
+        box-shadow: none;
+        overflow: hidden;
+      }
+
+      .form-step {
+        width: min(880px, 100%);
+        min-height: 410px;
+        margin: 0 auto;
+        padding: 28px 30px 34px;
+        border: 1px solid #e5eaf0;
+        border-radius: 9px;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(45, 59, 75, 0.035);
+      }
+
+      .step-heading {
+        position: relative;
+        margin-bottom: 22px;
+        padding: 0 0 0 12px;
+        border-bottom: 0;
+      }
+
+      .step-heading::before {
+        position: absolute;
+        top: 3px;
+        bottom: 3px;
+        left: 0;
+        width: 3px;
+        border-radius: 2px;
+        background: var(--form-blue);
+        content: "";
+      }
+
+      .step-heading h2 {
+        color: #3b4759;
+        font-size: 15px;
+        font-weight: 680;
+      }
+
+      .step-heading p {
+        margin-top: 4px;
+        color: #98a2b1;
+        font-size: 12px;
+      }
+
+      .field-grid {
+        gap: 24px 20px;
+      }
+
+      .field {
+        gap: 7px;
+      }
+
+      .field-label {
+        color: #39465a;
+        font-size: 13px;
+        font-weight: 650;
+      }
+
+      .field input,
+      .field select,
+      .field textarea {
+        min-height: 42px;
+        border-color: #dce3ec;
+        border-radius: 6px;
+        color: #48566b;
+        box-shadow: none;
+      }
+
+      .field input:hover,
+      .field select:hover,
+      .field textarea:hover {
+        border-color: #b9c0c8;
+      }
+
+      .field input:focus,
+      .field select:focus,
+      .field textarea:focus {
+        border-color: var(--form-blue);
+        box-shadow: 0 0 0 2px rgba(23, 25, 28, 0.08);
+      }
+
+      .field input[readonly] {
+        background: #f8fafc;
+      }
+
+      .choice-grid {
+        gap: 12px;
+      }
+
+      .choice-card {
+        min-height: 92px;
+        padding: 14px 42px 14px 46px;
+        border-color: #dce3ec;
+        border-radius: 6px;
+        box-shadow: none;
+        transform: none;
+      }
+
+      .choice-card:hover {
+        transform: none;
+        border-color: #aeb5bd;
+        box-shadow: none;
+      }
+
+      .choice-card.selected {
+        border-color: var(--form-blue);
+        background: #fff;
+        box-shadow: none;
+      }
+
+      .choice-check {
+        top: 22px;
+        right: auto;
+        left: 13px;
+        width: 18px;
+        height: 18px;
+        border-color: #b7c6da;
+        background: #fff;
+        color: transparent;
+      }
+
+      .choice-card.selected .choice-check {
+        border: 5px solid var(--form-blue);
+        background: #fff;
+        color: transparent;
+      }
+
+      .choice-title {
+        margin-bottom: 3px;
+        color: #42516a;
+        font-size: 13px;
+        font-weight: 670;
+      }
+
+      .choice-desc {
+        color: #929dad;
+        font-size: 12px;
+        line-height: 1.55;
+      }
+
+      .source-note {
+        margin-bottom: 22px;
+        padding: 9px 12px;
+        border-color: #e6ebf1;
+        border-radius: 5px;
+        background: #f8fafc;
+        color: #738096;
+      }
+
+      .segment {
+        border-color: #dce3ec;
+        border-radius: 6px;
+        background: #f7f9fc;
+      }
+
+      .segment span {
+        border-radius: 4px;
+      }
+
+      .segment input:checked + span {
+        background: var(--form-blue);
+        color: #fff;
+        box-shadow: none;
+      }
+
+      .switch-line {
+        border-color: #dce3ec;
+        border-radius: 6px;
+      }
+
+      .switch-line input {
+        flex: 0 0 16px;
+        width: 16px;
+        height: 16px;
+        accent-color: var(--form-blue);
+      }
+
+      .summary-list {
+        border-color: #e2e8f0;
+        border-radius: 6px;
+      }
+
+      .summary-row,
+      .summary-row:nth-child(even) {
+        border-top-color: #edf0f4;
+        background: #fff;
+      }
+
+      .form-actions {
+        position: static;
+        justify-content: flex-end;
+        width: min(880px, 100%);
+        margin: 0 auto;
+        padding: 18px 0 2px;
+        border-top: 0;
+        background: transparent;
+        backdrop-filter: none;
+      }
+
+      .form-actions-right {
+        gap: 12px;
+      }
+
+      .form-button {
+        min-height: 38px;
+        padding: 0 18px;
+        border-color: #dce3ec;
+        border-radius: 5px;
+        color: #66758b;
+        box-shadow: none;
+      }
+
+      .form-button:hover {
+        border-color: #aeb5bd;
+        background: #f6f7f8;
+        color: var(--form-blue);
+      }
+
+      .form-button.primary,
+      .form-button.primary:hover {
+        border-color: var(--form-blue);
+        background: var(--form-blue);
+        color: #fff;
+        box-shadow: none;
+      }
+
+      @media (max-width: 900px) {
+        main {
+          padding: 24px 18px 40px;
+          border-left: 0;
+        }
+
+        .form-head,
+        .form-shell {
+          width: 100%;
+        }
+
+        .form-shell {
+          padding: 14px;
+        }
+
+        .stepper {
+          padding: 18px 8px;
+        }
+
+        .step-tab {
+          justify-content: center;
+          padding: 0 32px 0 4px;
+        }
+
+        .step-tab:not(:last-child)::after {
+          right: 4px;
+          width: 21px;
+        }
+
+        .step-tab:not(:last-child)::before {
+          right: 3px;
+        }
+
+        .form-step,
+        .form-actions,
+        .form-head > div {
+          width: 100%;
+        }
+
+        .form-step {
+          padding: 24px 20px 28px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .stepper {
+          padding: 14px 8px;
+        }
+
+        .step-tab:not(:last-child)::after,
+        .step-tab:not(:last-child)::before {
+          display: none;
+        }
+
+        .step-tab {
+          padding: 0;
+        }
+
+        .step-number {
+          flex-basis: 30px;
+          width: 30px;
+          min-width: 30px;
+          max-width: 30px;
+          height: 30px;
+          min-height: 30px;
+          max-height: 30px;
+        }
+
+        .choice-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Step page layout matching the provided reference */
+      main {
+        padding: 34px 44px 52px;
+        background: #fff;
+      }
+
+      .form-page {
+        width: 100%;
+        max-width: 1320px;
+        margin: 0 auto;
+      }
+
+      .form-head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 20px;
+        width: 100%;
+        margin: 0 0 22px;
+      }
+
+      .form-head h1 {
+        margin: 0;
+        color: #24272c;
+        font-size: 28px;
+        font-weight: 760;
+        line-height: 1.18;
+      }
+
+      .form-head p {
+        display: none;
+      }
+
+      .stepper {
+        width: 100%;
+        margin: 0 0 30px;
+        padding: 32px 70px;
+        border: 1px solid #e8edf3;
+        border-radius: 10px;
+        background: #fafafa;
+      }
+
+      .step-tab {
+        justify-content: flex-start;
+        gap: 10px;
+        min-height: 44px;
+        padding: 0;
+      }
+
+      .step-tab:not(:last-child)::after {
+        position: static;
+        flex: 1 1 auto;
+        width: auto;
+        min-width: 24px;
+        margin: 0 12px 0 16px;
+        border-top: 2px dashed #cfd4da;
+        transform: none;
+      }
+
+      .step-tab:not(:last-child)::before {
+        top: 50%;
+        right: 5px;
+        transform: translateY(-50%) rotate(45deg);
+      }
+
+      .step-number {
+        flex: 0 0 36px;
+        width: 36px;
+        min-width: 36px;
+        max-width: 36px;
+        height: 36px;
+        min-height: 36px;
+        max-height: 36px;
+      }
+
+      .step-label {
+        color: #758298;
+        font-size: 14px;
+      }
+
+      .step-tab.active .step-label {
+        color: #35445a;
+        font-weight: 680;
+      }
+
+      .form-shell {
+        width: min(760px, 100%);
+        margin: 0 auto;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        overflow: visible;
+      }
+
+      .form-step {
+        width: 100%;
+        min-height: 420px;
+        padding: 0 0 42px;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .step-heading {
+        margin-bottom: 24px;
+      }
+
+      .step-heading h2 {
+        color: #3f4d63;
+        font-size: 15px;
+      }
+
+      .choice-card {
+        min-height: 80px;
+      }
+
+      .form-actions {
+        width: 100%;
+        padding: 14px 0 0;
+      }
+
+      @media (max-width: 1050px) {
+        main {
+          padding: 28px 24px 44px;
+        }
+
+        .stepper {
+          padding: 26px 30px;
+        }
+
+        .step-tab {
+          padding-right: 0;
+        }
+
+        .step-tab:not(:last-child)::after {
+          min-width: 18px;
+          margin-right: 10px;
+          margin-left: 10px;
+        }
+      }
+
+      @media (max-width: 760px) {
+        main {
+          padding: 22px 14px 38px;
+        }
+
+        .stepper {
+          padding: 18px 12px;
+        }
+
+        .step-tab {
+          justify-content: center;
+          padding: 0;
+        }
+
+        .step-tab:not(:last-child)::after,
+        .step-tab:not(:last-child)::before {
+          display: none;
+        }
+      }
+
+      .smart-rule-stack {
+        display: grid;
+        gap: 16px;
+      }
+
+      .source-priority-section {
+        border-color: #cfd4da;
+        background: #f6f7f8;
+      }
+
+      .rule-section {
+        padding: 18px;
+        border: 1px solid #e3e9f0;
+        border-radius: 8px;
+        background: #fbfcfd;
+      }
+
+      .rule-section h3 {
+        margin: 0 0 16px;
+        color: #39475c;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .rule-section-desc {
+        margin: -8px 0 15px;
+        color: #8b96a5;
+        font-size: 12px;
+      }
+
+      .rule-section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 14px;
+      }
+
+      .rule-section-head h3 {
+        margin: 0;
+      }
+
+      .source-selector {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .source-selector label {
+        cursor: pointer;
+      }
+
+      .source-selector input {
+        position: absolute;
+        opacity: 0;
+      }
+
+      .source-selector span {
+        display: flex;
+        align-items: center;
+        min-height: 44px;
+        padding: 0 13px;
+        border: 1px solid #dce3ec;
+        border-radius: 6px;
+        background: #fff;
+        color: #68758a;
+        font-size: 13px;
+        font-weight: 650;
+        transition: border-color 150ms ease, background-color 150ms ease, color 150ms ease;
+      }
+
+      .source-selector label:hover span {
+        border-color: #bec9c4;
+        background: #f6f8f7;
+      }
+
+      .source-selector input:checked + span {
+        border-color: #aebeb7;
+        background: #eef3f0;
+        color: #4f655c;
+        box-shadow: inset 0 0 0 1px rgba(93, 119, 107, 0.08);
+      }
+
+      .source-selector input:checked + span::before {
+        display: grid;
+        flex: 0 0 16px;
+        width: 16px;
+        height: 16px;
+        margin-right: 8px;
+        place-items: center;
+        border-radius: 50%;
+        background: #728a7f;
+        color: #fff;
+        content: "✓";
+        font-size: 10px;
+        font-weight: 700;
+      }
+
+      .add-rule-button,
+      .remove-rule-button {
+        border: 1px solid #d8dde2;
+        border-radius: 5px;
+        background: #fff;
+        color: #3f4854;
+        cursor: pointer;
+        font: inherit;
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .add-rule-button {
+        height: 30px;
+        padding: 0 10px;
+      }
+
+      .add-rule-button:hover {
+        border-color: var(--form-blue);
+        background: #f5f6f7;
+      }
+
+      .dynamic-rule-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .dynamic-rule-empty {
+        padding: 18px;
+        border: 1px dashed #dce3ec;
+        border-radius: 6px;
+        color: #9aa4b1;
+        font-size: 12px;
+        text-align: center;
+      }
+
+      .dynamic-rule-row {
+        display: grid;
+        grid-template-columns: minmax(170px, 1.2fr) minmax(110px, 0.7fr) minmax(180px, 1.5fr) 32px;
+        gap: 8px;
+        align-items: center;
+        padding: 10px;
+        border: 1px solid #e4e9ef;
+        border-radius: 7px;
+        background: #fff;
+      }
+
+      .dynamic-rule-row select,
+      .dynamic-rule-row input {
+        width: 100%;
+        height: 38px;
+        padding: 0 9px;
+        border: 1px solid #dce3ec;
+        border-radius: 5px;
+        outline: 0;
+        background: #fff;
+        color: #4b596c;
+        font: inherit;
+        font-size: 12px;
+      }
+
+      .dynamic-rule-row input:focus,
+      .dynamic-rule-row select:focus {
+        border-color: var(--form-blue);
+      }
+
+      .remove-rule-button {
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        border-color: #e3e7ec;
+        color: #9a6670;
+      }
+
+      .remove-rule-button:hover {
+        border-color: #e0aab2;
+        background: #fff5f6;
+      }
+
+      .rule-group {
+        margin-top: 14px;
+        padding: 16px;
+        border: 1px solid #e6ebf1;
+        border-radius: 7px;
+        background: #fff;
+      }
+
+      .rule-group:first-of-type {
+        margin-top: 0;
+      }
+
+      .rule-group-title {
+        margin-bottom: 13px;
+        color: #647187;
+        font-size: 12px;
+        font-weight: 720;
+      }
+
+      .source-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .source-tags span {
+        display: inline-flex;
+        align-items: center;
+        min-height: 30px;
+        padding: 0 11px;
+        border: 1px solid #cfd4da;
+        border-radius: 5px;
+        background: #f5f6f7;
+        color: #3f4854;
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .date-range {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        gap: 8px;
+        align-items: center;
+      }
+
+      .date-range span {
+        color: #8b96a5;
+        font-size: 12px;
+      }
+
+      .rule-section .field textarea {
+        min-height: 70px;
+        padding: 10px 12px;
+      }
+
+      @media (max-width: 760px) {
+        .rule-section,
+        .rule-group {
+          padding: 14px;
+        }
+
+        .date-range {
+          grid-template-columns: 1fr;
+        }
+
+        .date-range span {
+          display: none;
+        }
+
+        .source-selector,
+        .dynamic-rule-row {
+          grid-template-columns: 1fr;
+        }
+
+        .remove-rule-button {
+          width: 100%;
+        }
+
+        .scheduled-config,
+        .scheduled-config-content {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .scheduled-config-title {
+          padding-right: 0;
+          padding-bottom: 8px;
+          border-right: 0;
+          border-bottom: 1px solid #e2e5e9;
+        }
+
+        .frequency-segment {
+          display: flex;
+          grid-template-columns: none;
+          width: 100%;
+        }
+
+        .frequency-segment label,
+        .frequency-segment span {
+          width: 100%;
+        }
+      }
     </style>
   </head>
   <body>
@@ -962,118 +3012,417 @@
       </aside>
 
       <main>
-        <div class="topbar">新建任务 / 通用入口</div>
-        <section class="workspace" aria-labelledby="page-title">
-          <h1 id="page-title">感知Agent</h1>
-          <section class="chat-panel" aria-label="通用任务输入">
-            <div class="prompt-area">
-              <textarea
-                class="prompt-input"
-                aria-label="任务描述"
-                placeholder="直接描述你想完成的任务。平台会理解任务意图，并选择合适的 Agent、Skill、工具和知识库执行。"
-              ></textarea>
-              <div class="prompt-toolbar">
-                <div class="config-tools" aria-label="任务调用配置">
-                  <details class="expand-menu">
-                    <summary>拓展 <span class="expand-count">49</span></summary>
-                    <div class="expand-panel">
-                      <button class="config-row" type="button">
-                        <span class="config-icon">
-                          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z" /><path d="M12 12l8-4.5" /><path d="M12 12v9" /><path d="M12 12 4 7.5" /></svg>
-                        </span>
-                        <span class="config-label">Skill</span>
-                        <span class="config-count">29</span>
-                        <span class="config-arrow">›</span>
-                      </button>
-                      <button class="config-row" type="button">
-                        <span class="config-icon">
-                          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.1 5.1l-5.3 5.3a2 2 0 0 0 2.8 2.8l5.3-5.3a4 4 0 0 0 5.1-5.1l-2.6 2.6-2.5-2.5z" /></svg>
-                        </span>
-                        <span class="config-label">工具</span>
-                        <span class="config-count">17</span>
-                        <span class="config-arrow">›</span>
-                      </button>
-                      <button class="config-row" type="button">
-                        <span class="config-icon">
-                          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z" /><path d="M4 5.5v16" /><path d="M8 7h8" /><path d="M8 11h6" /></svg>
-                        </span>
-                        <span class="config-label">知识库</span>
-                        <span class="config-count">3</span>
-                        <span class="config-arrow">›</span>
-                      </button>
-                      <div class="config-summary">已选择：49/100</div>
-                    </div>
-                  </details>
+        <section class="form-page" aria-labelledby="page-title">
+          <header class="form-head">
+            <div>
+              <div class="topbar">新建任务</div>
+              <h1 id="page-title">创建感知任务</h1>
+              <p>按照配置流程创建任务，Agent 将基于规则持续发现并上报风险。</p>
+            </div>
+            <span class="draft-state">配置自动保存</span>
+          </header>
+
+          <nav class="stepper" aria-label="创建任务步骤">
+            <button class="step-tab active" type="button" data-step-target="1">
+              <span class="step-number">1</span><span class="step-label">感知 Agent</span>
+            </button>
+            <button class="step-tab" type="button" data-step-target="2">
+              <span class="step-number">2</span><span class="step-label">数据源</span>
+            </button>
+            <button class="step-tab" type="button" data-step-target="3">
+              <span class="step-number">3</span><span class="step-label">治理动作</span>
+            </button>
+            <button class="step-tab" type="button" data-step-target="4">
+              <span class="step-number">4</span><span class="step-label">任务时间</span>
+            </button>
+          </nav>
+
+          <section class="form-shell">
+            <form id="taskForm">
+              <section class="form-step active" data-step="1">
+                <div class="step-heading">
+                  <h2>选择感知 Agent</h2>
+                  <p>选择负责执行本次风险发现任务的 Agent。</p>
                 </div>
-                <button class="run-button" type="button" aria-label="提交任务" onclick="location.href='task-list.html'">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
-                </button>
-              </div>
-            </div>
-          </section>
-          <section class="template-section" aria-label="常用模板">
-            <div class="template-bar">
-              <div class="template-tabs" aria-label="模板分类">
-                <button class="template-tab active" type="button">公开模板 3</button>
-                <button class="template-tab" type="button">我收藏的</button>
-                <button class="template-tab" type="button">我创建的</button>
-              </div>
-              <div class="template-actions">
-                <label class="template-search">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16.5 16.5 4 4" /></svg>
-                  <input type="search" placeholder="搜索模板" aria-label="搜索模板" />
-                </label>
-                <button class="template-sort" type="button">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h11" /><path d="M4 12h8" /><path d="M4 17h5" /><path d="M18 5v14" /><path d="m15 16 3 3 3-3" /></svg>
-                  推荐排序
-                </button>
-              </div>
-            </div>
-            <div class="template-grid">
-              <button class="template-card" type="button" data-template="综合多信号源，研判某一主体的风险性">
-                <span>
-                  <span class="template-card-title">对象风险感知</span>
-                  <span class="template-card-desc">综合多信号源，研判某一主体的风险性。</span>
-                </span>
-                <span class="template-card-foot">
-                  <span class="template-tag">主体研判</span>
-                  <span class="template-arrow">→</span>
-                </span>
-              </button>
-              <button class="template-card" type="button" data-template="在某个或多个信号源和范围内查找风险case">
-                <span>
-                  <span class="template-card-title">信号源风险感知</span>
-                  <span class="template-card-desc">在某个或多个信号源和范围内查找风险 case。</span>
-                </span>
-                <span class="template-card-foot">
-                  <span class="template-tag">Case 发现</span>
-                  <span class="template-arrow">→</span>
-                </span>
-              </button>
-              <button class="template-card" type="button" data-template="综合多信号源，总结近期需要关注的风险趋势">
-                <span>
-                  <span class="template-card-title">风险趋势分析</span>
-                  <span class="template-card-desc">综合多信号源，总结近期需要关注的风险趋势。</span>
-                </span>
-                <span class="template-card-foot">
-                  <span class="template-tag">趋势洞察</span>
-                  <span class="template-arrow">→</span>
-                </span>
-              </button>
-            </div>
+                <div class="choice-grid">
+                  <label class="choice-card selected">
+                    <input type="radio" name="agent" value="inspection" checked />
+                    <span class="choice-check">✓</span>
+                    <span class="choice-title">巡检捉虫 Agent</span>
+                    <span class="choice-desc">通过 C 端页面巡检发现直播间、榜单等场景中的违规风险。</span>
+                  </label>
+                  <label class="choice-card">
+                    <input type="radio" name="agent" value="opinion" />
+                    <span class="choice-check">✓</span>
+                    <span class="choice-title">舆情分析 Agent</span>
+                    <span class="choice-desc">基于媒体与社交平台舆情数据，完成过滤、风险定级与研判推送。</span>
+                  </label>
+                  <label class="choice-card">
+                    <input type="radio" name="agent" value="smart" />
+                    <span class="choice-check">✓</span>
+                    <span class="choice-title">智能感知 Agent</span>
+                    <span class="choice-desc">综合多类信号源与规则能力，发现跨场景风险并持续输出研判线索。</span>
+                  </label>
+                </div>
+              </section>
+
+              <section class="form-step" data-step="2">
+                <div class="step-heading">
+                  <h2>配置数据源与命中规则</h2>
+                  <p>配置 Agent 的扫描范围、去重口径和需要关注的风险条件。</p>
+                </div>
+
+                <div class="source-panel active" data-source-panel="inspection">
+                  <div class="source-note">当前 Agent：巡检捉虫 Agent</div>
+                  <div class="field-grid">
+                    <label class="field">
+                      <span class="field-label">数据源名称</span>
+                      <input value="C端巡检" readonly />
+                    </label>
+                    <label class="field">
+                      <span class="field-label">圈选范围<span class="required">*</span></span>
+                      <select id="inspectionScope">
+                        <option>榴莲虚假宣传专项</option>
+                        <option>空调直播间虚假宣传专项</option>
+                        <option>服装直播间材质违规专项</option>
+                        <option>生鲜直播间虚假宣传专项</option>
+                      </select>
+                    </label>
+                    <label class="field full">
+                      <span class="field-label">去重口径<span class="required">*</span></span>
+                      <select id="inspectionDedupe">
+                        <option>相同直播间 ID 24 小时内仅命中一次</option>
+                        <option>相同直播间 ID 每次任务仅命中一次</option>
+                        <option>相同主播账号 24 小时内仅命中一次</option>
+                      </select>
+                    </label>
+                    <div class="field full">
+                      <span class="field-label">命中条件<span class="required">*</span></span>
+                      <div class="condition-row">
+                        <select id="inspectionMetric"><option>直播间举报数</option><option>风险商品数</option><option>算法风险分</option></select>
+                        <select id="inspectionOperator"><option>大于等于</option><option>大于</option><option>等于</option></select>
+                        <input id="inspectionThreshold" type="number" value="3" min="0" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="source-panel" data-source-panel="opinion">
+                  <div class="source-note">当前 Agent：舆情分析 Agent</div>
+                  <div class="field-grid">
+                    <label class="field">
+                      <span class="field-label">数据源名称</span>
+                      <input value="舆情数据" readonly />
+                    </label>
+                    <label class="field">
+                      <span class="field-label">圈选范围<span class="required">*</span></span>
+                      <select id="opinionScope">
+                        <option>OWLS</option>
+                        <option>采买数据</option>
+                        <option>OWLS + 采买数据</option>
+                      </select>
+                    </label>
+                    <label class="field full">
+                      <span class="field-label">去重口径<span class="required">*</span></span>
+                      <select id="opinionDedupe">
+                        <option>相同舆情 URL 仅命中一次</option>
+                        <option>相同事件 ID 24 小时内仅命中一次</option>
+                        <option>相同主体与事件类型每日仅命中一次</option>
+                      </select>
+                    </label>
+                    <div class="field full">
+                      <span class="field-label">命中条件<span class="required">*</span></span>
+                      <div class="condition-row">
+                        <select id="opinionMetric"><option>风险等级</option><option>传播量</option><option>负面情绪分</option></select>
+                        <select id="opinionOperator"><option>大于等于</option><option>等于</option><option>大于</option></select>
+                        <select id="opinionThreshold"><option>B</option><option>A</option><option>S</option><option>C</option></select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="source-panel" data-source-panel="smart">
+                  <div class="source-note">当前 Agent：智能感知 Agent</div>
+                  <div class="smart-rule-stack">
+                    <section class="rule-section source-priority-section">
+                      <h3>数据源选择<span class="required">*</span></h3>
+                      <p class="rule-section-desc">优先选择本次任务使用的数据源，后续条件字段将根据数据源自动关联。</p>
+                      <div class="source-selector" id="smartSourceSelector">
+                        <label><input type="checkbox" value="penalty" checked /><span>违规处罚</span></label>
+                        <label><input type="checkbox" value="order" checked /><span>订单</span></label>
+                        <label><input type="checkbox" value="afterSale" checked /><span>售后</span></label>
+                      </div>
+                    </section>
+
+                    <section class="rule-section">
+                      <h3>圈选范围</h3>
+                      <div class="field-grid">
+                        <div class="field">
+                          <span class="field-label">时间范围<span class="required">*</span></span>
+                          <div class="date-range">
+                            <input id="smartStartDate" type="date" value="2026-06-01" />
+                            <span>至</span>
+                            <input id="smartEndDate" type="date" value="2026-06-10" />
+                          </div>
+                        </div>
+                        <label class="field">
+                          <span class="field-label">聚合方式</span>
+                          <select id="smartAggregation"><option>按达人聚合</option></select>
+                        </label>
+                      </div>
+                    </section>
+
+                    <section class="rule-section">
+                      <div class="rule-section-head">
+                        <h3>命中条件</h3>
+                        <button class="add-rule-button" type="button" data-add-smart-rule="hit">+ 新增条件</button>
+                      </div>
+                      <div class="dynamic-rule-list" id="smartHitRules"></div>
+                    </section>
+
+                    <section class="rule-section">
+                      <div class="rule-section-head">
+                        <h3>排除条件</h3>
+                        <button class="add-rule-button" type="button" data-add-smart-rule="exclude">+ 新增条件</button>
+                      </div>
+                      <div class="dynamic-rule-list" id="smartExcludeRules"></div>
+                    </section>
+
+                    <section class="rule-section">
+                      <h3>去重口径</h3>
+                      <label class="field full">
+                        <select id="smartDedupe"><option>达人 + 店铺去重</option></select>
+                      </label>
+                    </section>
+                  </div>
+                </div>
+              </section>
+
+              <section class="form-step" data-step="3">
+                <div class="step-heading">
+                  <h2>选择治理动作</h2>
+                  <p>配置命中风险后需要自动触发的治理动作。</p>
+                </div>
+                <div class="choice-grid">
+                  <label class="choice-card selected">
+                    <input type="checkbox" checked />
+                    <span class="choice-check">✓</span>
+                    <span class="choice-title">上报研判</span>
+                    <span class="choice-desc">将命中的风险对象、判断依据和相关证据推送至研判平台。</span>
+                  </label>
+                </div>
+              </section>
+
+              <section class="form-step" data-step="4">
+                <div class="step-heading">
+                  <h2>配置任务时间</h2>
+                  <p>配置任务运行频率、截止时间和节假日执行策略。</p>
+                </div>
+                <div class="field-grid">
+                  <div class="field full">
+                    <span class="field-label">任务频率<span class="required">*</span></span>
+                    <div class="segment frequency-segment">
+                      <label><input type="radio" name="frequency" value="interval" checked /><span>定时</span></label>
+                      <label><input type="radio" name="frequency" value="realtime" /><span>实时</span></label>
+                    </div>
+                    <div class="scheduled-config" id="intervalField">
+                      <span class="scheduled-config-title">定时配置</span>
+                      <div class="scheduled-config-content">
+                        <span class="field-label">发起间隔</span>
+                        <div class="inline-field">
+                          <input id="intervalMinutes" type="number" value="30" min="1" />
+                          <select id="intervalUnit" aria-label="间隔单位">
+                            <option value="minute">分钟</option>
+                            <option value="hour">小时</option>
+                            <option value="day">天</option>
+                          </select>
+                          <span class="inline-unit">发起一次</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <label class="field">
+                    <span class="field-label">开始时间<span class="required">*</span></span>
+                    <input id="startTime" type="datetime-local" value="2026-06-10T09:00" />
+                  </label>
+                  <label class="field">
+                    <span class="field-label">截止时间<span class="required">*</span></span>
+                    <input id="deadline" type="datetime-local" value="2026-06-30T23:59" />
+                  </label>
+                  <div class="field full">
+                    <span class="field-label">节假日是否创建</span>
+                    <label class="switch-line">
+                      <span>节假日正常创建任务</span>
+                      <input id="holidayEnabled" type="checkbox" checked />
+                    </label>
+                  </div>
+                </div>
+              </section>
+
+              <footer class="form-actions">
+                <div class="form-actions-right">
+                  <button class="form-button" type="button" onclick="location.href='task-list.html'">取消</button>
+                  <button class="form-button" id="prevStep" type="button" hidden>上一步</button>
+                  <button class="form-button primary" id="nextStep" type="button">下一步</button>
+                  <button class="form-button primary" id="createTask" type="button" hidden>创建任务</button>
+                </div>
+              </footer>
+            </form>
           </section>
         </section>
       </main>
     </div>
-    <script src="sidebar-lock.js?v=4"></script>
+    <script src="sidebar-lock.js?v=8"></script>
     <script>
-      const promptInput = document.querySelector(".prompt-input");
-      document.querySelectorAll(".template-card").forEach((button) => {
-        button.addEventListener("click", () => {
-          promptInput.value = button.dataset.template;
-          promptInput.focus();
+      let currentStep = 1;
+      const steps = document.querySelectorAll(".form-step");
+      const stepTabs = document.querySelectorAll(".step-tab");
+      const prevButton = document.querySelector("#prevStep");
+      const nextButton = document.querySelector("#nextStep");
+      const createButton = document.querySelector("#createTask");
+      const smartSourceInputs = document.querySelectorAll("#smartSourceSelector input");
+      const smartHitRules = document.querySelector("#smartHitRules");
+      const smartExcludeRules = document.querySelector("#smartExcludeRules");
+
+      const smartRuleFields = {
+        hit: {
+          penalty: [
+            { value: "fraudRuleIds", label: "欺诈清退条例 ID", operators: ["包含任一"], placeholder: "多个 ID 使用逗号或换行分隔" },
+          ],
+          order: [
+            { value: "primaryCategoryIds", label: "一级类目 ID", operators: ["包含任一"], placeholder: "多个 ID 使用逗号或换行分隔" },
+            { value: "secondaryCategoryIds", label: "二级类目 ID", operators: ["包含任一"], placeholder: "多个 ID 使用逗号或换行分隔" },
+            { value: "paidOrderCount", label: "支付订单数", operators: ["大于等于", "大于", "等于"], placeholder: "请输入数值" },
+          ],
+          afterSale: [
+            { value: "afterSaleCount", label: "售后单数", operators: ["大于等于", "大于", "等于"], placeholder: "请输入数值" },
+            { value: "refundRate", label: "退款率", operators: ["大于等于", "大于"], placeholder: "请输入百分比" },
+          ],
+        },
+        exclude: {
+          penalty: [
+            { value: "penaltyStatus", label: "罚单状态", operators: ["等于"], placeholder: "已撤销" },
+          ],
+          order: [
+            { value: "creatorIds", label: "达人 ID", operators: ["包含任一"], placeholder: "多个 ID 使用逗号或换行分隔" },
+          ],
+          afterSale: [
+            { value: "afterSaleStatus", label: "售后状态", operators: ["等于", "不等于"], placeholder: "请输入状态" },
+          ],
+        },
+      };
+
+      function selectedAgent() {
+        return document.querySelector('input[name="agent"]:checked').value;
+      }
+
+      function updateAgentCards() {
+        document.querySelectorAll('.choice-card input[name="agent"]').forEach((input) => {
+          input.closest(".choice-card").classList.toggle("selected", input.checked);
+        });
+        document.querySelectorAll("[data-source-panel]").forEach((panel) => {
+          panel.classList.toggle("active", panel.dataset.sourcePanel === selectedAgent());
+        });
+      }
+
+      function selectedSmartSources() {
+        return [...smartSourceInputs].filter((input) => input.checked).map((input) => input.value);
+      }
+
+      function availableSmartFields(type) {
+        return selectedSmartSources().flatMap((source) => smartRuleFields[type][source] || []);
+      }
+
+      function updateRuleOperator(row, type) {
+        const field = availableSmartFields(type).find((item) => item.value === row.querySelector(".dynamic-field").value);
+        if (!field) return;
+        row.querySelector(".dynamic-operator").innerHTML = field.operators.map((operator) => `<option>${operator}</option>`).join("");
+        row.querySelector(".dynamic-value").placeholder = field.placeholder;
+        if (field.value === "penaltyStatus") row.querySelector(".dynamic-value").value = "已撤销";
+      }
+
+      function addSmartRule(type) {
+        const fields = availableSmartFields(type);
+        if (!fields.length) return;
+        const list = type === "hit" ? smartHitRules : smartExcludeRules;
+        list.querySelector(".dynamic-rule-empty")?.remove();
+        const row = document.createElement("div");
+        row.className = "dynamic-rule-row";
+        row.dataset.ruleType = type;
+        row.innerHTML = `
+          <select class="dynamic-field">${fields.map((field) => `<option value="${field.value}">${field.label}</option>`).join("")}</select>
+          <select class="dynamic-operator"></select>
+          <input class="dynamic-value" type="text" />
+          <button class="remove-rule-button" type="button" aria-label="删除条件">×</button>
+        `;
+        row.querySelector(".dynamic-field").addEventListener("change", () => updateRuleOperator(row, type));
+        row.querySelector(".remove-rule-button").addEventListener("click", () => {
+          row.remove();
+          ensureRuleEmptyState(type);
+        });
+        list.appendChild(row);
+        updateRuleOperator(row, type);
+      }
+
+      function ensureRuleEmptyState(type) {
+        const list = type === "hit" ? smartHitRules : smartExcludeRules;
+        if (!list.querySelector(".dynamic-rule-row")) {
+          list.innerHTML = `<div class="dynamic-rule-empty">点击“新增条件”添加规则</div>`;
+        }
+      }
+
+      function refreshSmartRules() {
+        ["hit", "exclude"].forEach((type) => {
+          const fields = availableSmartFields(type);
+          const allowed = new Set(fields.map((field) => field.value));
+          const list = type === "hit" ? smartHitRules : smartExcludeRules;
+          list.querySelectorAll(".dynamic-rule-row").forEach((row) => {
+            const fieldSelect = row.querySelector(".dynamic-field");
+            const previousValue = fieldSelect.value;
+            fieldSelect.innerHTML = fields.map((field) => `<option value="${field.value}">${field.label}</option>`).join("");
+            if (allowed.has(previousValue)) fieldSelect.value = previousValue;
+            if (!fields.length) row.remove();
+            else updateRuleOperator(row, type);
+          });
+          ensureRuleEmptyState(type);
+        });
+      }
+
+      function showStep(step) {
+        currentStep = Math.max(1, Math.min(4, step));
+        steps.forEach((item) => item.classList.toggle("active", Number(item.dataset.step) === currentStep));
+        stepTabs.forEach((item) => {
+          const number = Number(item.dataset.stepTarget);
+          item.classList.toggle("active", number === currentStep);
+          item.classList.toggle("complete", number < currentStep);
+        });
+        prevButton.hidden = currentStep === 1;
+        nextButton.hidden = currentStep === 4;
+        createButton.hidden = currentStep !== 4;
+      }
+
+      document.querySelectorAll('input[name="agent"]').forEach((input) => {
+        input.addEventListener("change", updateAgentCards);
+      });
+      smartSourceInputs.forEach((input) => input.addEventListener("change", refreshSmartRules));
+      document.querySelectorAll("[data-add-smart-rule]").forEach((button) => {
+        button.addEventListener("click", () => addSmartRule(button.dataset.addSmartRule));
+      });
+      document.querySelectorAll('input[name="frequency"]').forEach((input) => {
+        input.addEventListener("change", () => {
+          const frequency = document.querySelector('input[name="frequency"]:checked').value;
+          document.querySelector("#intervalField").hidden = frequency !== "interval";
         });
       });
+      document.querySelectorAll(".step-tab").forEach((button) => {
+        button.addEventListener("click", () => showStep(Number(button.dataset.stepTarget)));
+      });
+      prevButton.addEventListener("click", () => showStep(currentStep - 1));
+      nextButton.addEventListener("click", () => showStep(currentStep + 1));
+      createButton.addEventListener("click", () => location.href = "task-list.html");
+      updateAgentCards();
+      ensureRuleEmptyState("hit");
+      ensureRuleEmptyState("exclude");
     </script>
   </body>
 </html>
