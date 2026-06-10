@@ -36,12 +36,8 @@
         <span class="primary-label">感知任务列表</span>
       `;
     }
-    const effectButton = [...document.querySelectorAll(".primary-menu-button")].find((button) => {
-      const label = button.querySelector(".primary-label")?.textContent.trim() || button.textContent.trim();
-      return label === "效果监控";
-    });
-    if (primaryMenu && tasks && effectButton && tasks.parentElement !== primaryMenu) {
-      primaryMenu.insertBefore(tasks, effectButton);
+    if (primaryMenu && tasks && tasks.parentElement !== primaryMenu) {
+      primaryMenu.appendChild(tasks);
     }
     if (tasks) {
       tasks.hidden = false;

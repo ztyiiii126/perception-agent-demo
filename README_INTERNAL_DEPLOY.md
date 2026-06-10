@@ -25,7 +25,6 @@ agent-management.html
 skill.html
 tools.html
 knowledge.html
-effect-monitor.html
 task-list.html
 task.html
 task-complete.html
