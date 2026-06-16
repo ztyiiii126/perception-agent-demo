@@ -2278,12 +2278,12 @@
         <section class="tasks" aria-label="任务列表">
           <a class="section-title" href="task-list.html">任务列表</a>
           <div class="task-stack">
-            <a class="task-item" href="task.html">
+            <a class="task-item active" href="task-product.html" aria-current="page">
               <span class="task-copy">
-                <span class="task-name">榴莲虚假宣传直播间巡检</span>
+                <span class="task-name">空调虚假宣传专项巡检</span>
               </span>
             </a>
-            <a class="task-item active" href="task-fresh.html" aria-current="page">
+            <a class="task-item" href="task-fresh.html">
               <span class="task-copy">
                 <span class="task-name">生鲜榜单直播间巡检</span>
               </span>
@@ -2303,8 +2303,8 @@
             <header class="dashboard-head">
               <div>
                 <a class="back-link" href="task-list.html">← 返回任务列表</a>
-                <div class="subtitle">任务 ID：INSPECT-20260529-024</div>
-                <h1 class="dashboard-title">生鲜榜单直播间巡检</h1>
+                <div class="subtitle">任务 ID：INSPECT-20260531-004</div>
+                <h1 class="dashboard-title">空调虚假宣传专项巡检</h1>
               </div>
               <div class="dashboard-actions">
                 <div class="status-live" id="taskRunStatus"><span class="pulse"></span><span class="status-text">运行中</span></div>
@@ -2334,7 +2334,7 @@
                 <div class="panel-head">
                   <div class="panel-title">巡检结果</div>
                   <div class="review-tools">
-                    <div class="filter-tabs" aria-label="直播间结果筛选">
+                    <div class="filter-tabs" aria-label="商品结果筛选">
                       <button class="filter-tab active" data-filter="all" type="button">全部</button>
                       <button class="filter-tab" data-filter="violate" type="button">治理问题</button>
                       <button class="filter-tab" data-filter="pass" type="button">非治理问题</button>
@@ -2354,21 +2354,15 @@
                   <article class="room-card" data-result="violate">
                     <div class="room-top">
                       <div>
-                        <label class="select-check"><input class="room-select" type="checkbox" />老张鲜肉直播间 #001</label>
+                        <label class="select-check"><input class="room-select" type="checkbox" />美的变频空调 1.5匹 #001</label>
                       </div>
                       <div class="result-status violate">治理问题</div>
                     </div>
                     <div class="room-fields">
-                      <div class="room-field"><strong>直播间 ID</strong><span><a href="#">7645187296261966633</a></span></div>
-                      <div class="room-field"><strong>违规时间点</strong><span>00:18</span></div>
-                      <div class="room-field"><strong>违规挂车商品</strong><span><a href="#">3821932098797830322</a></span></div>
-                      <div class="room-field">
-                        <strong>挂车商品</strong>
-                        <span class="link-list">
-                          <a class="product-link" href="#">3821932098797830322</a><a class="product-link" href="#">3805494227979338130</a><a class="product-link" href="#">3684615238411485398</a><a class="product-link" href="#">3817961515290592225</a><a class="product-link" href="#">3820602604463980698</a><a class="product-link" href="#">3821664949609038171</a><a class="product-link" href="#">3815042073615270006</a><a class="product-link" href="#">3821666163012796590</a>
-                        </span>
-                      </div>
-                      <div class="room-field"><strong>算法判断依据</strong><span>价格 13.2元/斤低于15元/斤判定阈值，同时命中限时促单话术和重复画面特征。</span></div>
+                      <div class="room-field"><strong>商品名称</strong><span>美的变频空调 1.5匹</span></div>
+                      <div class="room-field"><strong>商品编号</strong><span>第 1 个商品</span></div>
+                      <div class="room-field"><strong>商品id</strong><span><a href="#product-subject-analysis" title="查看商品主体分析">3821932098797830322</a></span></div>
+                      <div class="room-field"><strong>算法判断依据</strong><span>商品详情页宣称一级能效与全直流变频，但型号备案信息显示为三级能效，关键性能宣传与备案信息不一致。</span></div>
                     </div>
                     <div class="actions">
                       <button class="action-btn primary review-action" data-action="report" type="button">上报研判</button>
@@ -2379,21 +2373,15 @@
                   <article class="room-card" data-result="pass">
                     <div class="room-top">
                       <div>
-                        <label class="select-check"><input class="room-select" type="checkbox" />源头好货甄选 #014</label>
+                        <label class="select-check"><input class="room-select" type="checkbox" />格力新一级能效空调 1.5匹 #014</label>
                       </div>
                       <div class="result-status pass">非治理问题</div>
                     </div>
                     <div class="room-fields">
-                      <div class="room-field"><strong>直播间 ID</strong><span><a href="#">7382491057248105521</a></span></div>
-                      <div class="room-field"><strong>违规时间点</strong><span>无</span></div>
-                      <div class="room-field"><strong>违规挂车商品</strong><span>无</span></div>
-                      <div class="room-field">
-                        <strong>挂车商品</strong>
-                        <span class="link-list">
-                          <a class="product-link" href="#">3812049876201938401</a><a class="product-link" href="#">3812049876201938402</a><a class="product-link" href="#">3812049876201938403</a><a class="product-link" href="#">3812049876201938404</a><a class="product-link" href="#">3812049876201938405</a><a class="product-link" href="#">3812049876201938406</a><a class="product-link" href="#">3812049876201938407</a><a class="product-link" href="#">3812049876201938408</a>
-                        </span>
-                      </div>
-                      <div class="room-field"><strong>算法判断依据</strong><span>商品规格、主播话术与价格卡片一致，折算单价未低于当前规则阈值。</span></div>
+                      <div class="room-field"><strong>商品名称</strong><span>格力新一级能效空调 1.5匹</span></div>
+                      <div class="room-field"><strong>商品编号</strong><span>第 14 个商品</span></div>
+                      <div class="room-field"><strong>商品id</strong><span><a href="#product-subject-analysis" title="查看商品主体分析">3812049876201938401</a></span></div>
+                      <div class="room-field"><strong>算法判断依据</strong><span>商品标题、参数页、型号备案与能效标识信息一致，未发现虚假宣传或异常低价风险。</span></div>
                     </div>
                     <div class="actions">
                       <button class="action-btn primary review-action" data-action="report" type="button">上报研判</button>
@@ -2427,7 +2415,7 @@
           <section class="conversation" aria-label="Agent全页面对话">
             <header class="left-head">
               <div>
-                <h1>生鲜榜单直播间巡检</h1>
+                <h1>空调虚假宣传专项巡检</h1>
                 <div class="subtitle">进入第一个直播间前 · 全页面 Chatbot</div>
               </div>
               <div class="state-actions">
@@ -2441,7 +2429,7 @@
                 <div class="message-actions">
                   <span class="message-time">05.29 15:40</span>
                 </div>
-                <div class="user-task-card copy-content">启动「榜单名称 生鲜榜」榜单巡检，当「结束条件 巡检Top 50直播间」后，自动结束本次巡检。</div>
+                <div class="user-task-card copy-content">启动「专项名称 榴莲虚假宣传」直播间巡检，当「结束条件 巡检20个直播间」后，自动结束本次巡检。</div>
                 <button class="copy-message" type="button" aria-label="复制用户提示词">
                   <svg viewBox="0 0 24 24" aria-hidden="true">
                     <rect x="8" y="8" width="12" height="12" rx="2" />
@@ -2457,7 +2445,7 @@
                   </div>
                   <div class="robot-card copy-content">
                     [05.29 15:40:37]<br />
-                    任务初始化完成：已解析任务类型为直播间巡检，任务目标为“生鲜榜”，结束条件为巡检20个直播间。
+                    任务初始化完成：已解析任务类型为直播间巡检，专项名称为“榴莲虚假宣传”，结束条件为巡检20个直播间。
                   </div>
                   <button class="copy-message" type="button" aria-label="复制Agent输出">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -2493,7 +2481,7 @@
                   </div>
                   <div class="robot-card copy-content">
                     [05.29 15:41:12]<br />
-                    正在打开抖音首页并搜索“生鲜榜”关键词，准备进入直播列表。进入第一个直播间后，页面将切换为左侧对话 + 右侧巡检结果视图。
+                    正在打开抖音首页并搜索“榴莲虚假宣传”关键词，准备进入直播列表。进入第一个直播间后，页面将切换为左侧对话 + 右侧巡检结果视图。
                   </div>
                   <button class="copy-message" type="button" aria-label="复制Agent输出">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -2518,8 +2506,8 @@
           <section class="conversation" aria-label="Agent对话与任务进展">
         <header class="left-head">
           <div>
-            <h1>生鲜榜单直播间巡检</h1>
-            <div class="subtitle">任务 ID：INSPECT-20260529-024</div>
+            <h1>空调虚假宣传专项巡检</h1>
+            <div class="subtitle">任务 ID：INSPECT-20260531-004</div>
           </div>
           <div class="state-actions">
             <button class="state-link" data-chat-state-target="full" type="button">查看进入前状态</button>
@@ -2532,7 +2520,7 @@
             <div class="message-actions">
               <span class="message-time">05.29 15:40</span>
             </div>
-            <div class="user-task-card copy-content">启动「榜单名称 生鲜榜」榜单巡检，当「结束条件 巡检Top 50直播间」后，自动结束本次巡检。</div>
+            <div class="user-task-card copy-content">启动「专项名称 榴莲虚假宣传」直播间巡检，当「结束条件 巡检20个直播间」后，自动结束本次巡检。</div>
             <button class="copy-message" type="button" aria-label="复制用户提示词">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <rect x="8" y="8" width="12" height="12" rx="2" />
@@ -2576,7 +2564,7 @@
               </div>
               <div class="robot-card copy-content">
                 [05.29 15:41:33]<br />
-                起播入口动作完成：已通过抖音首页搜索“生鲜榜”关键词，切换到直播列表后成功进入第一个直播间，当前已处于直播间页面，直播画面加载中，可进入后续巡检审核流程。
+                起播入口动作完成：已通过抖音首页搜索“榴莲虚假宣传”关键词，切换到直播列表后成功进入第一个直播间，当前已处于直播间页面，直播画面加载中，可进入后续巡检审核流程。
               </div>
               <button class="copy-message" type="button" aria-label="复制Agent输出">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -2599,7 +2587,7 @@
               </div>
               <div class="robot-card copy-content">
                 [05.29 15:42:04]<br />
-                生鲜榜巡检前置筛选完成：当前直播间为榴莲带货直播间，未关播，主卖商品为榴莲，符合巡检目标类型，页面右下角可见分享按钮，已处于可审核状态，可进入后续违规判定流程。
+                榴莲巡检前置筛选完成：当前直播间为榴莲带货直播间，未关播，主卖商品为榴莲，符合巡检目标类型，页面右下角可见分享按钮，已处于可审核状态，可进入后续违规判定流程。
               </div>
               <button class="copy-message" type="button" aria-label="复制Agent输出">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -2645,9 +2633,9 @@
                 <span class="robot-time">15:43</span>
               </div>
               <div class="robot-card copy-content">
-                已完成第1个生鲜榜直播间巡检，继续处理剩余19个case。<br />
+                已完成第1个榴莲直播间巡检，继续处理剩余19个case。<br />
                 [05.29 15:43:20]<br />
-                已成功切换到下一个可审核的生鲜榜直播间：当前直播间为热带水果带货直播间，未关播，页面与商品卡加载正常，可进入后续违规判定流程。
+                已成功切换到下一个可审核的榴莲直播间：当前直播间为热带水果带货直播间，未关播，页面与商品卡加载正常，可进入后续违规判定流程。
               </div>
               <button class="copy-message" type="button" aria-label="复制Agent输出">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -2670,8 +2658,8 @@
       <section class="workbench" aria-label="具体巡检内容">
         <header class="right-head">
           <div>
-            <div class="panel-title">已巡检结束直播间结果</div>
-            <div class="subtitle">仅展示已完成巡检并产生判定结果的直播间</div>
+            <div class="panel-title">已巡检结束商品结果</div>
+            <div class="subtitle">仅展示已完成巡检并产生判定结果的商品</div>
           </div>
         </header>
 
@@ -2692,40 +2680,26 @@
 
         <div class="right-body">
           <div class="detail-column">
-            <section class="panel" aria-label="已巡检结束直播间结果">
+            <section class="panel" aria-label="已巡检结束商品结果">
               <div class="panel-head">
-                <div class="panel-title">直播间结果列表</div>
+                <div class="panel-title">商品结果列表</div>
                 <div class="panel-note">已完成 8 个</div>
               </div>
               <div class="result-list">
                 <article class="room-card">
                   <div class="room-top">
                     <div>
-                      <div class="room-name">源头生鲜优选</div>
+                      <div class="room-name">奥克斯智能空调 1.5匹</div>
                     </div>
                     <div class="result-status violate">治理问题</div>
                   </div>
                   <div class="room-fields">
-                    <div class="room-field"><strong>直播间名称</strong><span>源头生鲜优选</span></div>
-                    <div class="room-field"><strong>直播间 ID</strong><span><a href="#">7645187296261966633</a></span></div>
-                    <div class="room-field"><strong>违规时间点</strong><span>00:18</span></div>
-                    <div class="room-field"><strong>违规挂车商品</strong><span><a href="#">3821932098797830322</a></span></div>
-                    <div class="room-field">
-                      <strong>挂车商品</strong>
-                      <span class="link-list">
-                        <a class="product-link" href="#">3821932098797830322</a>
-                        <a class="product-link" href="#">3805494227979338130</a>
-                        <a class="product-link" href="#">3684615238411485398</a>
-                        <a class="product-link" href="#">3817961515290592225</a>
-                        <a class="product-link" href="#">3820602604463980698</a>
-                        <a class="product-link" href="#">3821664949609038171</a>
-                        <a class="product-link" href="#">3815042073615270006</a>
-                        <a class="product-link" href="#">3821666163012796590</a>
-                      </span>
+                      <div class="room-field"><strong>商品名称</strong><span>奥克斯智能空调 1.5匹</span></div>
+                      <div class="room-field"><strong>商品编号</strong><span>第 21 个商品</span></div>
+                      <div class="room-field"><strong>商品id</strong><span><a href="#product-subject-analysis" title="查看商品主体分析">3805494227979338130</a></span></div>
+                      <div class="room-field"><strong>算法判断依据</strong><span>商品宣称具备高温制冷能力，但商品参数与品牌备案资料未提供对应能力证明，存在夸大宣传风险。</span></div>
                     </div>
-                    <div class="room-field"><strong>算法判断依据</strong><span>ASR 命中产地与售后强承诺，OCR 未识别到商品卡产地字段和坏果包赔说明，话术与商品信息不一致。</span></div>
-                  </div>
-                  <div class="actions">
+                    <div class="actions">
                     <button class="action-btn primary review-action" data-action="report" type="button">上报研判</button>
                     <button class="action-btn review-action" data-action="pass" type="button">通过</button>
                   </div>
@@ -2734,31 +2708,17 @@
                 <article class="room-card">
                   <div class="room-top">
                     <div>
-                      <div class="room-name">鲜果榜单直播间</div>
+                      <div class="room-name">海尔壁挂式空调 1.5匹</div>
                     </div>
                     <div class="result-status pass">非治理问题</div>
                   </div>
                   <div class="room-fields">
-                    <div class="room-field"><strong>直播间名称</strong><span>鲜果榜单直播间</span></div>
-                    <div class="room-field"><strong>直播间 ID</strong><span><a href="#">7382491057248105521</a></span></div>
-                    <div class="room-field"><strong>违规时间点</strong><span>无</span></div>
-                    <div class="room-field"><strong>违规挂车商品</strong><span>无</span></div>
-                    <div class="room-field">
-                      <strong>挂车商品</strong>
-                      <span class="link-list">
-                        <a class="product-link" href="#">3812049876201938401</a>
-                        <a class="product-link" href="#">3812049876201938402</a>
-                        <a class="product-link" href="#">3812049876201938403</a>
-                        <a class="product-link" href="#">3812049876201938404</a>
-                        <a class="product-link" href="#">3812049876201938405</a>
-                        <a class="product-link" href="#">3812049876201938406</a>
-                        <a class="product-link" href="#">3812049876201938407</a>
-                        <a class="product-link" href="#">3812049876201938408</a>
-                      </span>
+                      <div class="room-field"><strong>商品名称</strong><span>海尔壁挂式空调 1.5匹</span></div>
+                      <div class="room-field"><strong>商品编号</strong><span>第 28 个商品</span></div>
+                      <div class="room-field"><strong>商品id</strong><span><a href="#product-subject-analysis" title="查看商品主体分析">3684615238411485398</a></span></div>
+                      <div class="room-field"><strong>算法判断依据</strong><span>商品名称、规格参数、能效信息与主体备案资料一致，未发现治理问题。</span></div>
                     </div>
-                    <div class="room-field"><strong>算法判断依据</strong><span>商品卡、主播话术、OCR 规格信息与售后描述一致，未发现虚假宣传或异常低价风险。</span></div>
-                  </div>
-                  <div class="actions">
+                    <div class="actions">
                     <button class="action-btn primary review-action" data-action="report" type="button">上报研判</button>
                     <button class="action-btn review-action" data-action="pass" type="button">通过</button>
                   </div>

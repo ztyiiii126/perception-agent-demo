@@ -162,6 +162,106 @@
         color: #fff;
       }
 
+      #configDialog {
+        width: min(900px, calc(100vw - 48px));
+        max-height: calc(100vh - 48px);
+      }
+
+      #configDialog .dialog-body {
+        max-height: calc(100vh - 170px);
+        overflow: auto;
+        background: #f7f8fa;
+      }
+
+      .config-overview {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+
+      .config-overview-item,
+      .config-step {
+        border: 1px solid #e1e5ea;
+        border-radius: 8px;
+        background: #fff;
+      }
+
+      .config-overview-item {
+        display: grid;
+        gap: 4px;
+        padding: 12px;
+      }
+
+      .config-overview-item span,
+      .config-item dt {
+        color: #89929e;
+        font-size: 11px;
+      }
+
+      .config-overview-item strong {
+        color: #303640;
+        font-size: 12px;
+      }
+
+      .config-steps {
+        display: grid;
+        gap: 12px;
+      }
+
+      .config-step-head {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 12px 14px;
+        border-bottom: 1px solid #e8ebef;
+        color: #303640;
+        font-size: 13px;
+        font-weight: 750;
+      }
+
+      .config-step-number {
+        display: grid;
+        width: 22px;
+        height: 22px;
+        place-items: center;
+        border-radius: 50%;
+        background: #252a31;
+        color: #fff;
+        font-size: 11px;
+      }
+
+      .config-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px 24px;
+        padding: 14px;
+      }
+
+      .config-item {
+        display: grid;
+        gap: 5px;
+        margin: 0;
+      }
+
+      .config-item dd {
+        margin: 0;
+        color: #3e4753;
+        font-size: 12px;
+        line-height: 1.65;
+      }
+
+      .config-item.full {
+        grid-column: 1 / -1;
+      }
+
+      @media (max-width: 700px) {
+        .config-overview,
+        .config-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
       .new-task span,
       .brand span,
       .primary-label,
@@ -711,8 +811,84 @@
         box-shadow: 0 0 0 3px rgba(23, 23, 23, 0.06);
       }
 
+      .query-field select[multiple] {
+        height: 72px;
+        padding: 5px 8px;
+      }
+
+      .query-multi {
+        position: relative;
+      }
+
+      .query-multi summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        height: 40px;
+        padding: 0 11px;
+        border: 1px solid #d8e0e7;
+        border-radius: 7px;
+        background: #fff;
+        color: #303844;
+        cursor: pointer;
+        font-size: 13px;
+        list-style: none;
+      }
+
+      .query-multi summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .query-multi summary::after {
+        color: #76818d;
+        content: "⌄";
+      }
+
+      .query-multi[open] summary {
+        border-color: #7f8b98;
+        box-shadow: 0 0 0 3px rgba(23, 23, 23, 0.06);
+      }
+
+      .query-multi-menu {
+        position: absolute;
+        z-index: 30;
+        top: calc(100% + 5px);
+        left: 0;
+        display: grid;
+        width: 100%;
+        padding: 6px;
+        border: 1px solid #d8e0e7;
+        border-radius: 7px;
+        background: #fff;
+        box-shadow: 0 12px 26px rgba(32, 40, 50, 0.12);
+      }
+
+      .query-multi-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 34px;
+        padding: 5px 7px;
+        border-radius: 5px;
+        color: #4f5b69;
+        cursor: pointer;
+        font-size: 12px;
+      }
+
+      .query-multi-option:hover {
+        background: #f4f6f8;
+      }
+
+      .query-multi-option input {
+        width: 14px;
+        height: 14px;
+        accent-color: #252a31;
+      }
+
       .query-actions {
         display: flex;
+        grid-column: -2 / -1;
         align-items: flex-end;
         justify-content: flex-end;
         gap: 9px;
@@ -820,6 +996,28 @@
         font-weight: 680;
       }
 
+      .time-cell {
+        display: grid;
+        gap: 3px;
+        color: #4c5868;
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      .time-cell span {
+        white-space: nowrap;
+      }
+
+      .task-detail-link {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .task-detail-link:hover {
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+
       .task-status,
       .review-status {
         display: inline-flex;
@@ -854,6 +1052,22 @@
       .review-status.completed {
         background: #eaf7f1;
         color: #168260;
+      }
+
+      .review-status.none {
+        background: #f1f3f5;
+        color: #68727c;
+      }
+
+      .governance-link {
+        color: #20242a;
+        font-weight: 700;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+
+      .governance-link:hover {
+        color: #606a76;
       }
 
       .creator-cell {
@@ -914,6 +1128,7 @@
         }
 
         .query-actions {
+          grid-column: auto;
           justify-content: flex-start;
         }
       }
@@ -1222,26 +1437,70 @@
             <h2 class="panel-title">搜索</h2>
             <div class="query-grid">
               <label class="query-field">
-                <span>任务信息</span>
-                <input id="taskSearch" type="search" placeholder="任务名称 / ID" />
+                <span>任务名称</span>
+                <input id="taskNameFilter" type="search" placeholder="请输入任务名称" />
               </label>
               <label class="query-field">
-                <span>任务状态</span>
-                <select id="statusFilter">
-                  <option value="">全部</option><option value="running">运行中</option><option value="completed">已完成</option><option value="terminated">已终止</option>
-                </select>
+                <span>任务 ID</span>
+                <input id="taskIdFilter" type="search" placeholder="请输入任务 ID" />
               </label>
-              <label class="query-field">
+              <div class="query-field">
+                <span title="已停止包含用户主动停止和 Agent 异常停止">任务状态</span>
+                <details class="query-multi" id="statusFilter" data-placeholder="全部">
+                  <summary>全部</summary><div class="query-multi-menu">
+                    <label class="query-multi-option"><input type="checkbox" value="running" />运行中</label>
+                    <label class="query-multi-option"><input type="checkbox" value="stopped" />已停止</label>
+                    <label class="query-multi-option"><input type="checkbox" value="completed" />已完成</label>
+                  </div>
+                </details>
+              </div>
+              <div class="query-field">
+                <span>感知场景</span>
+                <details class="query-multi" id="sceneFilter" data-placeholder="全部">
+                  <summary>全部</summary><div class="query-multi-menu">
+                    <label class="query-multi-option"><input type="checkbox" value="inspection" />巡检捉虫</label>
+                  </div>
+                </details>
+              </div>
+              <div class="query-field">
+                <span>感知对象</span>
+                <details class="query-multi" id="objectFilter" data-placeholder="全部">
+                  <summary>全部</summary><div class="query-multi-menu">
+                    <label class="query-multi-option"><input type="checkbox" value="live-room" />直播间</label>
+                    <label class="query-multi-option"><input type="checkbox" value="product" />商品</label>
+                  </div>
+                </details>
+              </div>
+              <div class="query-field">
+                <span>治理动作</span>
+                <details class="query-multi" id="governanceFilter" data-placeholder="全部">
+                  <summary>全部</summary><div class="query-multi-menu">
+                    <label class="query-multi-option"><input type="checkbox" value="report" />直接上报研判</label>
+                    <label class="query-multi-option"><input type="checkbox" value="manual" />人工复核</label>
+                  </div>
+                </details>
+              </div>
+              <div class="query-field">
                 <span>复核状态</span>
-                <select id="reviewFilter">
-                  <option value="">全部</option><option value="pending">未完成</option><option value="completed">已完成</option>
-                </select>
+                <details class="query-multi" id="reviewFilter" data-placeholder="全部">
+                  <summary>全部</summary><div class="query-multi-menu">
+                    <label class="query-multi-option"><input type="checkbox" value="pending" />未完成</label>
+                    <label class="query-multi-option"><input type="checkbox" value="completed" />已完成</label>
+                    <label class="query-multi-option"><input type="checkbox" value="none" />无需复核</label>
+                  </div>
+                </details>
+              </div>
+              <label class="query-field">
+                <span>发起间隔</span>
+                <input id="intervalFilter" type="search" placeholder="如 30分钟" />
               </label>
               <label class="query-field">
-                <span>Agent</span>
-                <select id="agentFilter">
-                  <option value="">全部</option><option>巡检捉虫 Agent</option><option>舆情分析 Agent</option><option>智能感知 Agent</option>
-                </select>
+                <span>开始时段</span>
+                <input id="timeWindowFilter" type="search" placeholder="如 09:00-18:00" />
+              </label>
+              <label class="query-field">
+                <span>截止时间</span>
+                <input id="deadlineFilter" type="search" placeholder="如 2026-06-30 / 永不截止" />
               </label>
               <label class="query-field">
                 <span>创建人</span>
@@ -1261,26 +1520,26 @@
             </div>
             <div class="table-scroll">
               <table class="task-table">
-                <colgroup><col style="width:120px"><col style="width:230px"><col style="width:90px"><col style="width:90px"><col style="width:170px"><col style="width:140px"><col style="width:210px"></colgroup>
-                <thead><tr><th>任务 ID</th><th>任务名称</th><th>任务状态</th><th>复核进展</th><th>创建信息</th><th>Agent</th><th>操作</th></tr></thead>
+                <colgroup><col style="width:130px"><col style="width:190px"><col style="width:85px"><col style="width:90px"><col style="width:85px"><col style="width:110px"><col style="width:90px"><col style="width:160px"><col style="width:155px"><col style="width:190px"></colgroup>
+                <thead><tr><th>任务 ID</th><th>任务名称</th><th>任务状态</th><th>感知场景</th><th>感知对象</th><th>治理动作</th><th>复核进展</th><th>任务时间</th><th>创建信息</th><th>操作</th></tr></thead>
                 <tbody id="taskTableBody">
-                  <tr data-status="running" data-review="pending" data-agent="巡检捉虫 Agent" data-creator="张天奕">
-                    <td class="task-id">TASK-20260601-001</td><td class="task-title-cell">榴莲虚假宣传直播间巡检</td><td><span class="task-status running">运行中</span></td><td><span class="review-status pending">未完成</span></td><td><span class="creator-cell"><span class="creator-name">张天奕</span><span class="creator-time">2026-06-01 15:40</span></span></td><td class="agent-name">巡检捉虫 Agent</td><td><div class="row-actions"><button class="row-action" data-view="task.html">查看</button><button class="row-action">修改</button><button class="row-action" data-stop>停用</button><button class="row-action danger" data-delete>删除</button></div></td>
+                  <tr data-status="running" data-review="pending" data-scene="inspection" data-object="live-room" data-governance="manual" data-interval="30分钟" data-window="09:00-18:00" data-deadline="2026-06-30" data-creator="张天奕">
+                    <td class="task-id">TASK-20260601-001</td><td class="task-title-cell">榴莲虚假宣传直播间巡检</td><td><span class="task-status running">运行中</span></td><td>巡检捉虫</td><td>直播间</td><td><a class="governance-link" href="task.html">人工复核</a></td><td><span class="review-status pending">未完成</span></td><td><span class="time-cell"><span>发起间隔：30分钟</span><span>开始时段：09:00-18:00</span><span>截止时间：2026-06-30</span></span></td><td><span class="creator-cell"><span class="creator-name">张天奕</span><span class="creator-time">2026-06-01 15:40</span></span></td><td><div class="row-actions"><button class="row-action" data-config>查看</button><button class="row-action" data-stop>停止</button><button class="row-action danger" data-delete>删除</button></div></td>
                   </tr>
-                  <tr data-status="running" data-review="completed" data-agent="舆情分析 Agent" data-creator="李明">
-                    <td class="task-id">TASK-20260601-002</td><td class="task-title-cell">AWLS 社交平台舆情风险定级</td><td><span class="task-status running">运行中</span></td><td><span class="review-status completed">已完成</span></td><td><span class="creator-cell"><span class="creator-name">李明</span><span class="creator-time">2026-06-01 14:10</span></span></td><td class="agent-name">舆情分析 Agent</td><td><div class="row-actions"><button class="row-action" data-view="task-fresh.html">查看</button><button class="row-action">修改</button><button class="row-action" data-stop>停用</button><button class="row-action danger" data-delete>删除</button></div></td>
+                  <tr data-status="running" data-review="none" data-scene="inspection" data-object="live-room" data-governance="report" data-interval="15分钟" data-window="00:00-23:59" data-deadline="永不截止" data-creator="李明">
+                    <td class="task-id">TASK-20260601-002</td><td class="task-title-cell">男装榜直播间巡检</td><td><span class="task-status running">运行中</span></td><td>巡检捉虫</td><td>直播间</td><td>直接上报研判</td><td><span class="review-status none">无需复核</span></td><td><span class="time-cell"><span>发起间隔：15分钟</span><span>开始时段：00:00-23:59</span><span>截止时间：永不截止</span></span></td><td><span class="creator-cell"><span class="creator-name">李明</span><span class="creator-time">2026-06-01 14:10</span></span></td><td><div class="row-actions"><button class="row-action" data-config>查看</button><button class="row-action" data-stop>停止</button><button class="row-action danger" data-delete>删除</button></div></td>
                   </tr>
-                  <tr data-status="completed" data-review="pending" data-agent="智能感知 Agent" data-creator="王悦">
-                    <td class="task-id">TASK-20260531-008</td><td class="task-title-cell">近期高风险线索汇总研判</td><td><span class="task-status completed">已完成</span></td><td><span class="review-status pending">未完成</span></td><td><span class="creator-cell"><span class="creator-name">王悦</span><span class="creator-time">2026-05-31 18:36</span></span></td><td class="agent-name">智能感知 Agent</td><td><div class="row-actions"><button class="row-action" data-view="task-host.html">查看</button><button class="row-action">修改</button><button class="row-action" disabled>停用</button><button class="row-action danger" data-delete>删除</button></div></td>
+                  <tr data-status="completed" data-review="completed" data-scene="inspection" data-object="live-room" data-governance="manual" data-interval="1小时" data-window="09:00-20:00" data-deadline="2026-06-15" data-creator="王悦">
+                    <td class="task-id">TASK-20260531-008</td><td class="task-title-cell">生鲜榜单直播间巡检</td><td><span class="task-status completed">已完成</span></td><td>巡检捉虫</td><td>直播间</td><td><a class="governance-link" href="task-fresh.html">人工复核</a></td><td><span class="review-status completed">已完成</span></td><td><span class="time-cell"><span>发起间隔：1小时</span><span>开始时段：09:00-20:00</span><span>截止时间：2026-06-15</span></span></td><td><span class="creator-cell"><span class="creator-name">王悦</span><span class="creator-time">2026-05-31 18:36</span></span></td><td><div class="row-actions"><button class="row-action" data-config>查看</button><button class="row-action danger" data-delete>删除</button></div></td>
                   </tr>
-                  <tr data-status="completed" data-review="completed" data-agent="巡检捉虫 Agent" data-creator="张天奕">
-                    <td class="task-id">TASK-20260531-004</td><td class="task-title-cell">蒜苔价格波动直播间巡检</td><td><span class="task-status completed">已完成</span></td><td><span class="review-status completed">已完成</span></td><td><span class="creator-cell"><span class="creator-name">张天奕</span><span class="creator-time">2026-05-31 10:24</span></span></td><td class="agent-name">巡检捉虫 Agent</td><td><div class="row-actions"><button class="row-action" data-view="task-complete.html">查看</button><button class="row-action">修改</button><button class="row-action" disabled>停用</button><button class="row-action danger" data-delete>删除</button></div></td>
+                  <tr data-status="completed" data-review="pending" data-scene="inspection" data-object="product" data-governance="manual" data-interval="30分钟" data-window="10:00-22:00" data-deadline="永不截止" data-creator="张天奕">
+                    <td class="task-id">TASK-20260531-004</td><td class="task-title-cell"><a class="task-detail-link" href="task-product.html">空调虚假宣传专项巡检</a></td><td><span class="task-status completed">已完成</span></td><td>巡检捉虫</td><td>商品</td><td><a class="governance-link" href="task-product.html">人工复核</a></td><td><span class="review-status pending">未完成</span></td><td><span class="time-cell"><span>发起间隔：30分钟</span><span>开始时段：10:00-22:00</span><span>截止时间：永不截止</span></span></td><td><span class="creator-cell"><span class="creator-name">张天奕</span><span class="creator-time">2026-05-31 10:24</span></span></td><td><div class="row-actions"><button class="row-action" data-config>查看</button><button class="row-action danger" data-delete>删除</button></div></td>
                   </tr>
-                  <tr data-status="terminated" data-review="pending" data-agent="巡检捉虫 Agent" data-creator="周宁">
-                    <td class="task-id">TASK-20260530-011</td><td class="task-title-cell">蓝莓虚假宣传专项巡检</td><td><span class="task-status terminated">已终止</span></td><td><span class="review-status pending">未完成</span></td><td><span class="creator-cell"><span class="creator-name">周宁</span><span class="creator-time">2026-05-30 16:02</span></span></td><td class="agent-name">巡检捉虫 Agent</td><td><div class="row-actions"><button class="row-action" data-view="task-complete.html">查看</button><button class="row-action">修改</button><button class="row-action" disabled>停用</button><button class="row-action danger" data-delete>删除</button></div></td>
+                  <tr data-status="stopped" data-review="pending" data-scene="inspection" data-object="live-room" data-governance="manual" data-interval="2小时" data-window="08:00-18:00" data-deadline="2026-06-10" data-creator="周宁">
+                    <td class="task-id">TASK-20260530-011</td><td class="task-title-cell">蓝莓虚假宣传专项巡检</td><td><span class="task-status terminated">已停止</span></td><td>巡检捉虫</td><td>直播间</td><td><a class="governance-link" href="task-host.html">人工复核</a></td><td><span class="review-status pending">未完成</span></td><td><span class="time-cell"><span>发起间隔：2小时</span><span>开始时段：08:00-18:00</span><span>截止时间：2026-06-10</span></span></td><td><span class="creator-cell"><span class="creator-name">周宁</span><span class="creator-time">2026-05-30 16:02</span></span></td><td><div class="row-actions"><button class="row-action" data-config>查看</button><button class="row-action" data-start>启动</button><button class="row-action danger" data-delete>删除</button></div></td>
                   </tr>
-                  <tr data-status="completed" data-review="pending" data-agent="舆情分析 Agent" data-creator="李明">
-                    <td class="task-id">TASK-20260529-006</td><td class="task-title-cell">采买媒体舆情过滤与风险分级</td><td><span class="task-status completed">已完成</span></td><td><span class="review-status pending">未完成</span></td><td><span class="creator-cell"><span class="creator-name">李明</span><span class="creator-time">2026-05-29 09:18</span></span></td><td class="agent-name">舆情分析 Agent</td><td><div class="row-actions"><button class="row-action" data-view="task-complete.html">查看</button><button class="row-action">修改</button><button class="row-action" disabled>停用</button><button class="row-action danger" data-delete>删除</button></div></td>
+                  <tr data-status="stopped" data-review="none" data-scene="inspection" data-object="live-room" data-governance="report" data-interval="30分钟" data-window="09:00-18:00" data-deadline="永不截止" data-creator="李明">
+                    <td class="task-id">TASK-20260529-006</td><td class="task-title-cell">女装榜直播间巡检</td><td><span class="task-status terminated">已停止</span></td><td>巡检捉虫</td><td>直播间</td><td>直接上报研判</td><td><span class="review-status none">无需复核</span></td><td><span class="time-cell"><span>发起间隔：30分钟</span><span>开始时段：09:00-18:00</span><span>截止时间：永不截止</span></span></td><td><span class="creator-cell"><span class="creator-name">李明</span><span class="creator-time">2026-05-29 09:18</span></span></td><td><div class="row-actions"><button class="row-action" data-config>查看</button><button class="row-action" data-start>启动</button><button class="row-action danger" data-delete>删除</button></div></td>
                   </tr>
                 </tbody>
               </table>
@@ -1313,6 +1572,14 @@
       </form>
     </dialog>
 
+    <dialog class="task-dialog" id="configDialog">
+      <form method="dialog">
+        <div class="dialog-head"><div class="dialog-title">任务配置</div></div>
+        <div class="dialog-body"><div id="configContent"></div></div>
+        <div class="dialog-actions"><button class="dialog-submit" value="close" type="submit">关闭</button></div>
+      </form>
+    </dialog>
+
     <script src="sidebar-lock.js?v=9"></script>
     <script>
       const appShell = document.querySelector("#appShell");
@@ -1322,28 +1589,75 @@
         button.addEventListener("click", () => newTaskDialog.showModal());
       });
 
-      const taskSearch = document.querySelector("#taskSearch");
+      const taskNameFilter = document.querySelector("#taskNameFilter");
+      const taskIdFilter = document.querySelector("#taskIdFilter");
       const statusFilter = document.querySelector("#statusFilter");
       const reviewFilter = document.querySelector("#reviewFilter");
-      const agentFilter = document.querySelector("#agentFilter");
+      const sceneFilter = document.querySelector("#sceneFilter");
+      const objectFilter = document.querySelector("#objectFilter");
+      const governanceFilter = document.querySelector("#governanceFilter");
+      const intervalFilter = document.querySelector("#intervalFilter");
+      const timeWindowFilter = document.querySelector("#timeWindowFilter");
+      const deadlineFilter = document.querySelector("#deadlineFilter");
       const creatorFilter = document.querySelector("#creatorFilter");
       const visibleCount = document.querySelector("#visibleCount");
       const emptyState = document.querySelector("#emptyState");
+      const configDialog = document.querySelector("#configDialog");
+      const configContent = document.querySelector("#configContent");
 
       function taskRows() {
         return [...document.querySelectorAll("#taskTableBody tr")];
       }
 
+      function selectedValues(select) {
+        return [...select.querySelectorAll('input[type="checkbox"]:checked')].map((input) => input.value);
+      }
+
+      function updateMultiFilter(filter) {
+        const selected = [...filter.querySelectorAll('input[type="checkbox"]:checked')];
+        filter.querySelector("summary").textContent = selected.length
+          ? selected.map((input) => input.parentElement.textContent.trim()).join("、")
+          : filter.dataset.placeholder;
+      }
+
+      function configItem(label, value, full = false) {
+        return `<dl class="config-item${full ? " full" : ""}"><dt>${label}</dt><dd>${value}</dd></dl>`;
+      }
+
+      function configStep(number, title, items) {
+        return `
+          <section class="config-step">
+            <div class="config-step-head"><span class="config-step-number">${number}</span>${title}</div>
+            <div class="config-grid">${items.join("")}</div>
+          </section>
+        `;
+      }
+
       function refreshList() {
-        const keyword = taskSearch.value.trim().toLowerCase();
+        const taskName = taskNameFilter.value.trim().toLowerCase();
+        const taskId = taskIdFilter.value.trim().toLowerCase();
         const creator = creatorFilter.value.trim().toLowerCase();
+        const statuses = selectedValues(statusFilter);
+        const reviews = selectedValues(reviewFilter);
+        const scenes = selectedValues(sceneFilter);
+        const objects = selectedValues(objectFilter);
+        const governance = selectedValues(governanceFilter);
+        const interval = intervalFilter.value.trim().toLowerCase();
+        const timeWindow = timeWindowFilter.value.trim().toLowerCase();
+        const deadline = deadlineFilter.value.trim().toLowerCase();
         let count = 0;
         taskRows().forEach((row) => {
           const matches =
-            (!keyword || row.textContent.toLowerCase().includes(keyword)) &&
-            (!statusFilter.value || row.dataset.status === statusFilter.value) &&
-            (!reviewFilter.value || row.dataset.review === reviewFilter.value) &&
-            (!agentFilter.value || row.dataset.agent === agentFilter.value) &&
+            (!taskName || row.querySelector(".task-title-cell").textContent.toLowerCase().includes(taskName)) &&
+            (!taskId || row.querySelector(".task-id").textContent.toLowerCase().includes(taskId)) &&
+            (!statuses.length || statuses.includes(row.dataset.status)) &&
+            (!reviews.length || reviews.includes(row.dataset.review)) &&
+            (!scenes.length || scenes.includes(row.dataset.scene)) &&
+            (!objects.length || objects.includes(row.dataset.object)) &&
+            (!governance.length || governance.includes(row.dataset.governance)) &&
+            (!interval || row.dataset.interval.toLowerCase().includes(interval)) &&
+            (!timeWindow || row.dataset.window.toLowerCase().includes(timeWindow)) &&
+            (!deadline || row.dataset.deadline.toLowerCase().includes(deadline)) &&
             (!creator || row.dataset.creator.toLowerCase().includes(creator));
           row.hidden = !matches;
           if (matches) count += 1;
@@ -1354,35 +1668,98 @@
 
       document.querySelector("#queryTasks").addEventListener("click", refreshList);
       document.querySelector("#resetQuery").addEventListener("click", () => {
-        taskSearch.value = "";
-        statusFilter.value = "";
-        reviewFilter.value = "";
-        agentFilter.value = "";
+        taskNameFilter.value = "";
+        taskIdFilter.value = "";
+        [statusFilter, reviewFilter, sceneFilter, objectFilter, governanceFilter].forEach((filter) => {
+          filter.querySelectorAll('input[type="checkbox"]').forEach((input) => input.checked = false);
+          updateMultiFilter(filter);
+        });
+        intervalFilter.value = "";
+        timeWindowFilter.value = "";
+        deadlineFilter.value = "";
         creatorFilter.value = "";
         refreshList();
       });
 
-      document.querySelectorAll("[data-view]").forEach((button) => {
-        button.addEventListener("click", () => location.href = button.dataset.view);
+      document.querySelectorAll(".query-multi").forEach((filter) => {
+        filter.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+          input.addEventListener("change", () => updateMultiFilter(filter));
+        });
       });
 
-      document.querySelectorAll("[data-stop]").forEach((button) => {
+      document.querySelectorAll("[data-config]").forEach((button) => {
         button.addEventListener("click", () => {
           const row = button.closest("tr");
-          row.dataset.status = "terminated";
-          const status = row.querySelector(".task-status");
-          status.className = "task-status terminated";
-          status.textContent = "已终止";
-          button.disabled = true;
-          refreshList();
+          const taskName = row.querySelector(".task-title-cell").textContent;
+          const taskId = row.querySelector(".task-id").textContent;
+          const isManual = row.dataset.governance === "manual";
+          const isRanking = taskName.includes("榜");
+          const inspectionName = isRanking ? taskName.replace("直播间巡检", "") : taskName.replace("巡检", "");
+          configContent.innerHTML = `
+            <div class="config-overview">
+              <div class="config-overview-item"><span>任务 ID</span><strong>${taskId}</strong></div>
+              <div class="config-overview-item"><span>任务状态</span><strong>${row.querySelector(".task-status").textContent}</strong></div>
+              <div class="config-overview-item"><span>创建信息</span><strong>${row.dataset.creator} · ${row.querySelector(".creator-time").textContent}</strong></div>
+            </div>
+            <div class="config-steps">
+              ${configStep(1, "感知场景", [
+                configItem("任务名称", taskName, true),
+                configItem("信号来源", "巡检捉虫"),
+                configItem("感知对象", row.dataset.object === "product" ? "商品" : "直播间"),
+                configItem("圈选规则", "1. 直播间违规罚单 不属于 重罚；2. 直播间举报数 大等于 25", true),
+                configItem("条件关系", "1且2"),
+                configItem("去重规则", "本任务开播期去重"),
+              ])}
+              ${configStep(2, "Agent 参数", [
+                configItem("巡检类别", isRanking ? "榜单巡检" : "专项巡检"),
+                configItem(isRanking ? "榜单名称" : "专项名称", inspectionName),
+                configItem(isRanking ? "Top 数" : "单次巡检数", isRanking ? "Top 50" : "20"),
+                configItem("输出范围", "治理问题、非治理问题"),
+              ])}
+              ${configStep(3, "治理动作", [
+                configItem("治理动作", isManual ? "人工复核" : "直接上报研判", true),
+              ])}
+              ${configStep(4, "任务时间", [
+                configItem("发起间隔", row.dataset.interval),
+                configItem("开始时段", row.dataset.window),
+                configItem("截止时间", row.dataset.deadline),
+              ])}
+            </div>
+          `;
+          configDialog.showModal();
         });
       });
 
-      document.querySelectorAll("[data-delete]").forEach((button) => {
-        button.addEventListener("click", () => {
+      document.querySelector("#taskTableBody").addEventListener("click", (event) => {
+        const button = event.target.closest("button");
+        if (!button) return;
+        if (button.matches("[data-stop]")) {
+          if (!confirm("确认停止该任务吗？停止后已产生的巡检结果会保留，后续可以再次启动。")) return;
+          const row = button.closest("tr");
+          row.dataset.status = "stopped";
+          const status = row.querySelector(".task-status");
+          status.className = "task-status terminated";
+          status.textContent = "已停止";
+          button.textContent = "启动";
+          button.removeAttribute("data-stop");
+          button.setAttribute("data-start", "");
+          refreshList();
+        } else if (button.matches("[data-start]")) {
+          if (!confirm("确认启动该任务吗？启动后任务将按照原配置恢复执行。")) return;
+          const row = button.closest("tr");
+          row.dataset.status = "running";
+          const status = row.querySelector(".task-status");
+          status.className = "task-status running";
+          status.textContent = "运行中";
+          button.textContent = "停止";
+          button.removeAttribute("data-start");
+          button.setAttribute("data-stop", "");
+          refreshList();
+        } else if (button.matches("[data-delete]")) {
+          if (!confirm("确认删除该任务吗？删除后任务配置和相关记录将无法恢复。")) return;
           button.closest("tr").remove();
           refreshList();
-        });
+        }
       });
     </script>
   </body>

@@ -454,7 +454,7 @@
 
       .inspection-workspace {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) clamp(320px, 30vw, 360px);
+        grid-template-columns: minmax(0, 1fr);
         gap: 14px;
         width: 100%;
         min-width: 0;
@@ -2302,30 +2302,30 @@
           <section class="dashboard-main">
             <header class="dashboard-head">
               <div>
+                <a class="back-link" href="task-list.html">← 返回任务列表</a>
                 <div class="subtitle">任务 ID：INSPECT-20260529-024</div>
                 <h1 class="dashboard-title">榴莲虚假宣传直播间巡检</h1>
               </div>
               <div class="dashboard-actions">
                 <div class="status-live" id="taskRunStatus"><span class="pulse"></span><span class="status-text">运行中</span></div>
-                <button class="stop-task-button" id="stopTaskButton" type="button">停止任务</button>
               </div>
             </header>
 
             <section class="dashboard-metrics" aria-label="任务指标">
               <div class="metric-card">
                 <div class="metric-label">巡检数量</div>
-                <div class="metric-value">28</div>
+                <div class="metric-value" data-metric="inspection-count">28</div>
                 <div class="metric-bar"><span style="width: 28%"></span></div>
               </div>
               <div class="metric-card warning">
-                <div class="metric-label">违规数量</div>
-                <div class="metric-value">7</div>
+                <div class="metric-label">治理问题数量</div>
+                <div class="metric-value" data-metric="governance-count">7</div>
                 <div class="metric-bar"><span style="width: 72%"></span></div>
               </div>
-              <div class="metric-card">
-                <div class="metric-label">成功率</div>
-                <div class="metric-value">96%</div>
-                <div class="metric-bar"><span style="width: 96%"></span></div>
+              <div class="metric-card" title="风险浓度 = 治理问题数量 / 巡检数量">
+                <div class="metric-label">风险浓度</div>
+                <div class="metric-value" data-metric="risk-density">25%</div>
+                <div class="metric-bar"><span data-metric-bar="risk-density" style="width: 25%"></span></div>
               </div>
             </section>
 
@@ -2336,9 +2336,8 @@
                   <div class="review-tools">
                     <div class="filter-tabs" aria-label="直播间结果筛选">
                       <button class="filter-tab active" data-filter="all" type="button">全部</button>
-                      <button class="filter-tab" data-filter="violate" type="button">违规</button>
-                      <button class="filter-tab" data-filter="pass" type="button">不违规</button>
-                      <button class="filter-tab" data-filter="skip" type="button">异常</button>
+                      <button class="filter-tab" data-filter="violate" type="button">治理问题</button>
+                      <button class="filter-tab" data-filter="pass" type="button">非治理问题</button>
                     </div>
                   </div>
                 </div>
@@ -2348,7 +2347,7 @@
                     <button class="select-link" data-select-scope="page" type="button">本页全选</button>
                     <button class="select-link" data-select-scope="all" type="button">全部全选</button>
                     <button class="action-btn primary bulk-action" data-bulk-action="report" type="button">批量上报研判</button>
-                    <button class="action-btn danger bulk-action" data-bulk-action="reject" type="button">批量驳回</button>
+                    <button class="action-btn bulk-action" data-bulk-action="pass" type="button">批量通过</button>
                   </div>
                 </div>
                 <div class="review-list">
@@ -2357,7 +2356,7 @@
                       <div>
                         <label class="select-check"><input class="room-select" type="checkbox" />老张鲜肉直播间 #001</label>
                       </div>
-                      <div class="result-status violate">违规</div>
+                      <div class="result-status violate">治理问题</div>
                     </div>
                     <div class="room-fields">
                       <div class="room-field"><strong>直播间 ID</strong><span><a href="#">7645187296261966633</a></span></div>
@@ -2373,7 +2372,7 @@
                     </div>
                     <div class="actions">
                       <button class="action-btn primary review-action" data-action="report" type="button">上报研判</button>
-                      <button class="action-btn danger review-action" data-action="reject" type="button">驳回</button>
+                      <button class="action-btn review-action" data-action="pass" type="button">通过</button>
                     </div>
                   </article>
 
@@ -2382,7 +2381,7 @@
                       <div>
                         <label class="select-check"><input class="room-select" type="checkbox" />源头好货甄选 #014</label>
                       </div>
-                      <div class="result-status pass">不违规</div>
+                      <div class="result-status pass">非治理问题</div>
                     </div>
                     <div class="room-fields">
                       <div class="room-field"><strong>直播间 ID</strong><span><a href="#">7382491057248105521</a></span></div>
@@ -2398,27 +2397,7 @@
                     </div>
                     <div class="actions">
                       <button class="action-btn primary review-action" data-action="report" type="button">上报研判</button>
-                      <button class="action-btn danger review-action" data-action="reject" type="button">驳回</button>
-                    </div>
-                  </article>
-
-                  <article class="room-card" data-result="skip">
-                    <div class="room-top">
-                      <div>
-                        <label class="select-check"><input class="room-select" type="checkbox" />鲜肉肉铺直播间 #028</label>
-                      </div>
-                      <div class="result-status skip">异常</div>
-                    </div>
-                    <div class="room-fields">
-                      <div class="room-field"><strong>直播间 ID</strong><span><a href="#">7195604381204459068</a></span></div>
-                      <div class="room-field"><strong>违规时间点</strong><span>00:09</span></div>
-                      <div class="room-field"><strong>违规挂车商品</strong><span>未获取</span></div>
-                      <div class="room-field"><strong>挂车商品</strong><span class="link-list"><a class="product-link" href="#">3830194827601293001</a><a class="product-link" href="#">3830194827601293002</a><a class="product-link" href="#">3830194827601293003</a></span></div>
-                      <div class="room-field"><strong>算法判断依据</strong><span>页面卡死导致 OCR、ASR 和挂车商品列表未完整采集，样本异常并等待回扫。</span></div>
-                    </div>
-                    <div class="actions">
-                      <button class="action-btn primary review-action" data-action="report" type="button">上报研判</button>
-                      <button class="action-btn danger review-action" data-action="reject" type="button">驳回</button>
+                      <button class="action-btn review-action" data-action="pass" type="button">通过</button>
                     </div>
                   </article>
                 </div>
@@ -2442,60 +2421,6 @@
               </section>
             </section>
           </section>
-
-          <aside class="simulator-panel" aria-label="巡检实时">
-            <div class="simulator-head">
-              <div>
-                <div class="panel-title">巡检实时</div>
-              </div>
-              <select class="device-select" aria-label="选择云手机">
-                <option>手机 1</option>
-                <option>手机 2</option>
-                <option>手机 3</option>
-                <option>手机 4</option>
-                <option>手机 5</option>
-                <option>手机 6</option>
-              </select>
-            </div>
-            <div class="phone-stage">
-              <div class="phone">
-                <div class="screen">
-                  <div class="live-room">
-                    <div class="live-top">
-                      <div class="host">
-                        <span class="host-avatar"></span>
-                        <span class="host-name">老张鲜肉...</span>
-                      </div>
-                      <span class="live-tag">LIVE #28</span>
-                    </div>
-                    <div class="product-stack">
-                      <div class="product-box">商品展示区</div>
-                      <div class="price-card">
-                        <div class="price-title">今日福利价</div>
-                        <div class="price-value">¥26.4 <small>2斤装</small></div>
-                      </div>
-                    </div>
-                    <div class="speech">最后100单，速拍速发，拍完就恢复原价。</div>
-                  </div>
-                  <div class="highlight-cursor"></div>
-                </div>
-              </div>
-            </div>
-            <section class="log-panel" aria-label="Agent思考日志">
-              <div class="log-list">
-                <div class="log-item"><span>搜索关键词：榴莲虚假宣传</span><span class="log-time">14:08:12</span></div>
-                <div class="log-item"><span>进入直播间 #28</span><span class="log-time">14:08:31</span></div>
-                <div class="log-item active"><span>OCR识别价格卡：榴莲 2斤装 26.4元</span><span class="log-time">14:08:46</span></div>
-                <div class="log-item active"><span>ASR识别话术：最后100单，拍完恢复原价</span><span class="log-time">14:08:49</span></div>
-                <div class="log-item"><span>发现“最后100单”促单话术</span><span class="log-time">14:08:52</span></div>
-                <div class="log-item"><span>计算单价：13.2元/斤</span><span class="log-time">14:08:55</span></div>
-                <div class="log-item alert"><span>判定违规：低于15元/斤阈值</span><span class="log-time">14:08:57</span></div>
-                <div class="log-item alert"><span>异常告警：疑似低价录播引流</span><span class="log-time">14:08:58</span></div>
-                <div class="log-item"><span>页面卡死，执行刷新恢复</span><span class="log-time">14:09:02</span></div>
-                <div class="log-item"><span>元素未找到，重新定位商品卡</span><span class="log-time">14:09:08</span></div>
-              </div>
-            </section>
-          </aside>
         </section>
 
         <section class="full-chat-stage" aria-label="进入直播间前的全页面对话">
@@ -2763,10 +2688,6 @@
             <div class="metric-label">已上报研判</div>
             <div class="metric-value">1</div>
           </div>
-          <div class="metric">
-            <div class="metric-label">异常样本</div>
-            <div class="metric-value">1</div>
-          </div>
         </section>
 
         <div class="right-body">
@@ -2782,7 +2703,7 @@
                     <div>
                       <div class="room-name">榴莲源头好货</div>
                     </div>
-                    <div class="result-status violate">违规</div>
+                    <div class="result-status violate">治理问题</div>
                   </div>
                   <div class="room-fields">
                     <div class="room-field"><strong>直播间名称</strong><span>榴莲源头好货</span></div>
@@ -2806,7 +2727,7 @@
                   </div>
                   <div class="actions">
                     <button class="action-btn primary review-action" data-action="report" type="button">上报研判</button>
-                    <button class="action-btn danger review-action" data-action="reject" type="button">驳回</button>
+                    <button class="action-btn review-action" data-action="pass" type="button">通过</button>
                   </div>
                 </article>
 
@@ -2815,7 +2736,7 @@
                     <div>
                       <div class="room-name">鲜果优选直播间</div>
                     </div>
-                    <div class="result-status pass">不违规</div>
+                    <div class="result-status pass">非治理问题</div>
                   </div>
                   <div class="room-fields">
                     <div class="room-field"><strong>直播间名称</strong><span>鲜果优选直播间</span></div>
@@ -2839,35 +2760,7 @@
                   </div>
                   <div class="actions">
                     <button class="action-btn primary review-action" data-action="report" type="button">上报研判</button>
-                    <button class="action-btn danger review-action" data-action="reject" type="button">驳回</button>
-                  </div>
-                </article>
-
-                <article class="room-card">
-                  <div class="room-top">
-                    <div>
-                      <div class="room-name">热带水果仓</div>
-                    </div>
-                    <div class="result-status skip">异常</div>
-                  </div>
-                  <div class="room-fields">
-                    <div class="room-field"><strong>直播间名称</strong><span>热带水果仓</span></div>
-                    <div class="room-field"><strong>直播间 ID</strong><span><a href="#">7195604381204459068</a></span></div>
-                    <div class="room-field"><strong>违规时间点</strong><span>00:09</span></div>
-                    <div class="room-field"><strong>违规挂车商品</strong><span>未获取</span></div>
-                    <div class="room-field">
-                      <strong>挂车商品</strong>
-                      <span class="link-list">
-                        <a class="product-link" href="#">3830194827601293001</a>
-                        <a class="product-link" href="#">3830194827601293002</a>
-                        <a class="product-link" href="#">3830194827601293003</a>
-                      </span>
-                    </div>
-                    <div class="room-field"><strong>算法判断依据</strong><span>页面卡死导致 OCR、ASR 和挂车商品列表未完整采集，样本异常并等待后续回扫。</span></div>
-                  </div>
-                  <div class="actions">
-                    <button class="action-btn primary review-action" data-action="report" type="button">上报研判</button>
-                    <button class="action-btn danger review-action" data-action="reject" type="button">驳回</button>
+                    <button class="action-btn review-action" data-action="pass" type="button">通过</button>
                   </div>
                 </article>
               </div>
@@ -2877,17 +2770,6 @@
           </section>
         </div>
       </main>
-    </div>
-
-    <div class="confirm-backdrop" id="stopTaskModal" role="dialog" aria-modal="true" aria-labelledby="stopTaskTitle" hidden>
-      <div class="confirm-dialog">
-        <h2 class="confirm-title" id="stopTaskTitle">确认停止当前巡检任务？</h2>
-        <p class="confirm-copy">停止后将不再继续进入新的直播间，已完成巡检结果仍可查看。</p>
-        <div class="confirm-actions">
-          <button class="cancel-stop" id="cancelStopTask" type="button">取消</button>
-          <button class="confirm-stop" id="confirmStopTask" type="button">确认停止</button>
-        </div>
-      </div>
     </div>
 
     <dialog class="task-dialog" id="newTaskDialog">
@@ -2909,6 +2791,15 @@
     <script>
       const appShell = document.querySelector("#appShell");
       const newTaskDialog = document.querySelector("#newTaskDialog");
+      const inspectionCount = Number(document.querySelector('[data-metric="inspection-count"]')?.textContent || 0);
+      const governanceCount = Number(document.querySelector('[data-metric="governance-count"]')?.textContent || 0);
+      const riskDensity = inspectionCount > 0 ? (governanceCount / inspectionCount) * 100 : 0;
+      const riskDensityText = `${Number.isInteger(riskDensity) ? riskDensity : riskDensity.toFixed(1)}%`;
+      const riskDensityValue = document.querySelector('[data-metric="risk-density"]');
+      const riskDensityBar = document.querySelector('[data-metric-bar="risk-density"]');
+
+      if (riskDensityValue) riskDensityValue.textContent = riskDensityText;
+      if (riskDensityBar) riskDensityBar.style.width = `${Math.min(riskDensity, 100)}%`;
 
       document.querySelectorAll(".open-task-dialog").forEach((button) => {
         button.addEventListener("click", () => newTaskDialog.showModal());
@@ -2951,20 +2842,20 @@
 
       document.querySelectorAll(".room-card").forEach((card) => {
         const reportButton = card.querySelector('[data-action="report"]');
-        const rejectButton = card.querySelector('[data-action="reject"]');
-        if (!reportButton || !rejectButton) return;
+        const passButton = card.querySelector('[data-action="pass"]');
+        if (!reportButton || !passButton) return;
 
         reportButton.addEventListener("click", () => {
           reportButton.textContent = "已上报研判";
           reportButton.classList.add("locked");
           reportButton.disabled = true;
-          rejectButton.disabled = true;
+          passButton.disabled = true;
         });
 
-        rejectButton.addEventListener("click", () => {
-          rejectButton.textContent = "已驳回";
-          rejectButton.classList.add("locked");
-          rejectButton.disabled = true;
+        passButton.addEventListener("click", () => {
+          passButton.textContent = "已通过";
+          passButton.classList.add("locked");
+          passButton.disabled = true;
           reportButton.disabled = true;
         });
       });
@@ -3016,42 +2907,6 @@
           });
           updateSelectedCount();
         });
-      });
-
-      const stopTaskButton = document.querySelector("#stopTaskButton");
-      const stopTaskModal = document.querySelector("#stopTaskModal");
-      const cancelStopTask = document.querySelector("#cancelStopTask");
-      const confirmStopTask = document.querySelector("#confirmStopTask");
-      const taskRunStatus = document.querySelector("#taskRunStatus");
-
-      function openStopTaskModal() {
-        stopTaskModal.hidden = false;
-        stopTaskModal.classList.add("open");
-        confirmStopTask.focus();
-      }
-
-      function closeStopTaskModal() {
-        stopTaskModal.classList.remove("open");
-        stopTaskModal.hidden = true;
-        if (!stopTaskButton.disabled) stopTaskButton.focus();
-      }
-
-      stopTaskButton?.addEventListener("click", openStopTaskModal);
-      cancelStopTask?.addEventListener("click", closeStopTaskModal);
-      stopTaskModal?.addEventListener("click", (event) => {
-        if (event.target === stopTaskModal) closeStopTaskModal();
-      });
-
-      confirmStopTask?.addEventListener("click", () => {
-        taskRunStatus.classList.add("stopped");
-        taskRunStatus.querySelector(".status-text").textContent = "已停止";
-        stopTaskButton.textContent = "任务已停止";
-        stopTaskButton.disabled = true;
-        closeStopTaskModal();
-      });
-
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape" && !stopTaskModal.hidden) closeStopTaskModal();
       });
     </script>
   </body>
