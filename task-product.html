@@ -1916,6 +1916,25 @@
         box-shadow: inset 0 0 0 1px rgba(32, 36, 42, 0.04);
       }
 
+      .auto-report-status {
+        display: inline-flex;
+        align-items: center;
+        min-height: 30px;
+        padding: 0 10px;
+        border: 1px solid rgba(23, 23, 23, 0.14);
+        border-radius: 10px;
+        background: #f3f4f6;
+        color: #303640;
+        font-size: 12px;
+        font-weight: 720;
+      }
+
+      .auto-report-status.muted {
+        color: #6b7280;
+        background: #fafafa;
+      }
+
+
       @keyframes pulseCursor {
         0%,
         100% {
@@ -2341,20 +2360,11 @@
                     </div>
                   </div>
                 </div>
-                <div class="review-select-bar">
-                  <div class="selection-summary">已选择 <span id="selectedCount">0</span> 项</div>
-                  <div class="selection-actions">
-                    <button class="select-link" data-select-scope="page" type="button">本页全选</button>
-                    <button class="select-link" data-select-scope="all" type="button">全部全选</button>
-                    <button class="action-btn primary bulk-action" data-bulk-action="report" type="button">批量上报研判</button>
-                    <button class="action-btn bulk-action" data-bulk-action="pass" type="button">批量通过</button>
-                  </div>
-                </div>
                 <div class="review-list">
                   <article class="room-card" data-result="violate">
                     <div class="room-top">
                       <div>
-                        <label class="select-check"><input class="room-select" type="checkbox" />美的变频空调 1.5匹 #001</label>
+                        <label class="select-check">美的变频空调 1.5匹 #001</label>
                       </div>
                       <div class="result-status violate">治理问题</div>
                     </div>
@@ -2365,15 +2375,14 @@
                       <div class="room-field"><strong>算法判断依据</strong><span>商品详情页宣称一级能效与全直流变频，但型号备案信息显示为三级能效，关键性能宣传与备案信息不一致。</span></div>
                     </div>
                     <div class="actions">
-                      <button class="action-btn primary review-action" data-action="report" type="button">上报研判</button>
-                      <button class="action-btn review-action" data-action="pass" type="button">通过</button>
+                      <span class="auto-report-status">已自动上报研判</span>
                     </div>
                   </article>
 
                   <article class="room-card" data-result="pass">
                     <div class="room-top">
                       <div>
-                        <label class="select-check"><input class="room-select" type="checkbox" />格力新一级能效空调 1.5匹 #014</label>
+                        <label class="select-check">格力新一级能效空调 1.5匹 #014</label>
                       </div>
                       <div class="result-status pass">非治理问题</div>
                     </div>
@@ -2384,8 +2393,7 @@
                       <div class="room-field"><strong>算法判断依据</strong><span>商品标题、参数页、型号备案与能效标识信息一致，未发现虚假宣传或异常低价风险。</span></div>
                     </div>
                     <div class="actions">
-                      <button class="action-btn primary review-action" data-action="report" type="button">上报研判</button>
-                      <button class="action-btn review-action" data-action="pass" type="button">通过</button>
+                      <span class="auto-report-status muted">无需上报</span>
                     </div>
                   </article>
                 </div>
@@ -2700,8 +2708,7 @@
                       <div class="room-field"><strong>算法判断依据</strong><span>商品宣称具备高温制冷能力，但商品参数与品牌备案资料未提供对应能力证明，存在夸大宣传风险。</span></div>
                     </div>
                     <div class="actions">
-                    <button class="action-btn primary review-action" data-action="report" type="button">上报研判</button>
-                    <button class="action-btn review-action" data-action="pass" type="button">通过</button>
+                      <span class="auto-report-status">已自动上报研判</span>
                   </div>
                 </article>
 
@@ -2719,8 +2726,7 @@
                       <div class="room-field"><strong>算法判断依据</strong><span>商品名称、规格参数、能效信息与主体备案资料一致，未发现治理问题。</span></div>
                     </div>
                     <div class="actions">
-                    <button class="action-btn primary review-action" data-action="report" type="button">上报研判</button>
-                    <button class="action-btn review-action" data-action="pass" type="button">通过</button>
+                      <span class="auto-report-status muted">无需上报</span>
                   </div>
                 </article>
               </div>
@@ -2799,35 +2805,8 @@
           }, 1200);
         });
       });
-
-      document.querySelectorAll(".room-card").forEach((card) => {
-        const reportButton = card.querySelector('[data-action="report"]');
-        const passButton = card.querySelector('[data-action="pass"]');
-        if (!reportButton || !passButton) return;
-
-        reportButton.addEventListener("click", () => {
-          reportButton.textContent = "已上报研判";
-          reportButton.classList.add("locked");
-          reportButton.disabled = true;
-          passButton.disabled = true;
-        });
-
-        passButton.addEventListener("click", () => {
-          passButton.textContent = "已通过";
-          passButton.classList.add("locked");
-          passButton.disabled = true;
-          reportButton.disabled = true;
-        });
-      });
-
       const filterTabs = document.querySelectorAll(".filter-tab");
       const reviewCards = document.querySelectorAll(".inspection-workspace .review-list .room-card");
-      const selectedCount = document.querySelector("#selectedCount");
-
-      function updateSelectedCount() {
-        const count = document.querySelectorAll(".inspection-workspace .room-select:checked").length;
-        selectedCount.textContent = String(count);
-      }
 
       filterTabs.forEach((tab) => {
         tab.addEventListener("click", () => {
@@ -2837,35 +2816,6 @@
           reviewCards.forEach((card) => {
             card.hidden = filter !== "all" && card.dataset.result !== filter;
           });
-        });
-      });
-
-      document.querySelectorAll(".inspection-workspace .room-select").forEach((checkbox) => {
-        checkbox.addEventListener("change", updateSelectedCount);
-      });
-
-      document.querySelectorAll("[data-select-scope]").forEach((button) => {
-        button.addEventListener("click", () => {
-          const scope = button.dataset.selectScope;
-          reviewCards.forEach((card) => {
-            if (scope === "page" && card.hidden) return;
-            const checkbox = card.querySelector(".room-select");
-            if (checkbox) checkbox.checked = true;
-          });
-          updateSelectedCount();
-        });
-      });
-
-      document.querySelectorAll(".bulk-action").forEach((button) => {
-        button.addEventListener("click", () => {
-          const action = button.dataset.bulkAction;
-          reviewCards.forEach((card) => {
-            const checkbox = card.querySelector(".room-select");
-            if (!checkbox?.checked) return;
-            const target = card.querySelector(`[data-action="${action}"]`);
-            if (target && !target.disabled) target.click();
-          });
-          updateSelectedCount();
         });
       });
     </script>

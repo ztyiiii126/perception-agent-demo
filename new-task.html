@@ -3006,8 +3006,15 @@
         margin-top: 7px;
       }
 
+      #inspectionTypeSelector {
+        display: flex;
+        gap: 28px;
+        margin-top: 7px;
+      }
+
       .form-step[data-step="2"] .source-selector span,
-      #perceptionObjectSelector span {
+      #perceptionObjectSelector span,
+      #inspectionTypeSelector span {
         min-height: 30px;
         padding: 0;
         border: 0;
@@ -3018,7 +3025,9 @@
       .form-step[data-step="2"] .source-selector label:hover span,
       .form-step[data-step="2"] .source-selector input:checked + span,
       #perceptionObjectSelector label:hover span,
-      #perceptionObjectSelector input:checked + span {
+      #perceptionObjectSelector input:checked + span,
+      #inspectionTypeSelector label:hover span,
+      #inspectionTypeSelector input:checked + span {
         border: 0;
         background: transparent;
         color: #252a31;
@@ -3026,7 +3035,8 @@
       }
 
       .form-step[data-step="2"] .source-selector span::before,
-      #perceptionObjectSelector span::before {
+      #perceptionObjectSelector span::before,
+      #inspectionTypeSelector span::before {
         display: grid;
         flex: 0 0 18px;
         width: 18px;
@@ -3041,7 +3051,8 @@
       }
 
       .form-step[data-step="2"] .source-selector input:checked + span::before,
-      #perceptionObjectSelector input:checked + span::before {
+      #perceptionObjectSelector input:checked + span::before,
+      #inspectionTypeSelector input:checked + span::before {
         border: 5px solid #252a31;
         background: #fff;
         color: transparent;
@@ -3052,29 +3063,37 @@
         gap: 22px 44px;
       }
 
-      .form-step[data-step="1"] .dynamic-rule-row {
+      .form-step[data-step="2"] .dynamic-rule-list {
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .form-step[data-step="2"] .dynamic-rule-row {
         border-color: #e3e6ea;
         border-radius: 6px;
         background: #fff;
         box-shadow: none;
       }
 
-      .form-step[data-step="1"] .add-rule-button-wide {
+      .form-step[data-step="2"] .add-rule-button-wide {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         width: 100%;
         height: 40px;
-        margin-top: 18px;
+        margin-top: 0;
         border: 1px dashed #9ca3ad;
         background: #fff;
         color: #353b44;
       }
 
-      .form-step[data-step="1"] .add-rule-button-wide:hover {
+      .form-step[data-step="2"] .add-rule-button-wide:hover {
         border-color: #252a31;
         background: #f7f7f7;
         color: #252a31;
       }
 
-      .form-step[data-step="1"] .switch-line {
+      .form-step[data-step="2"] .switch-line {
         justify-content: flex-start;
         gap: 10px;
         width: calc(50% - 22px);
@@ -3084,21 +3103,21 @@
         background: transparent;
       }
 
-      .form-step[data-step="1"] .switch-line input {
-        order: -1;
+      .form-step[data-step="2"] .switch-line input {
         flex: 0 0 18px;
         width: 18px;
         height: 18px;
         margin: 0;
-        border: 1px solid #9da5ae;
+        border: 1px solid #adb4bd;
         border-radius: 50%;
         appearance: none;
         background: #fff;
         box-sizing: border-box;
       }
 
-      .form-step[data-step="1"] .switch-line input:checked {
-        border: 5px solid #252a31;
+      .form-step[data-step="2"] .switch-line input:checked {
+        border: 4px solid #252a31;
+        background: #fff;
       }
 
       .form-step[data-step="4"] .field-grid {
@@ -3211,7 +3230,8 @@
       .radio-dot,
       .form-step[data-step="2"] .source-selector span::before,
       #perceptionObjectSelector span::before,
-      .form-step[data-step="1"] .switch-line input {
+      #inspectionTypeSelector span::before,
+      .form-step[data-step="2"] .switch-line input {
         box-sizing: border-box;
         flex: 0 0 14px;
         width: 14px;
@@ -3224,14 +3244,14 @@
       .radio-option input:checked + .radio-dot,
       .form-step[data-step="2"] .source-selector input:checked + span::before,
       #perceptionObjectSelector input:checked + span::before,
-      .form-step[data-step="1"] .switch-line input:checked {
+      #inspectionTypeSelector input:checked + span::before {
         border: 4px solid #252a31;
         background: #fff;
         color: transparent;
       }
 
       @media (max-width: 760px) {
-        .form-step[data-step="1"] .switch-line {
+        .form-step[data-step="2"] .switch-line {
           width: 100%;
         }
       }
@@ -3413,10 +3433,10 @@
 
           <nav class="stepper" aria-label="创建任务步骤">
             <button class="step-tab active" type="button" data-step-target="1">
-              <span class="step-number">1</span><span class="step-label">感知场景</span>
+              <span class="step-number">1</span><span class="step-label">数据源</span>
             </button>
             <button class="step-tab" type="button" data-step-target="2">
-              <span class="step-number">2</span><span class="step-label">Agent 参数</span>
+              <span class="step-number">2</span><span class="step-label">圈选去重</span>
             </button>
             <button class="step-tab" type="button" data-step-target="3">
               <span class="step-number">3</span><span class="step-label">治理动作</span>
@@ -3430,15 +3450,14 @@
             <form id="taskForm">
               <section class="form-step active" data-step="1">
                 <div class="step-heading">
-                  <h2>选择感知场景</h2>
-                  <p>选择本次风险感知任务的场景，并配置圈选与去重规则。</p>
+                  <h2>选择数据源</h2>
                 </div>
                 <label class="field full" style="margin-bottom: 24px;">
                   <span class="field-label">任务名称<span class="required">*</span></span>
                   <input id="taskName" type="text" placeholder="请输入任务名称" />
                 </label>
                 <label class="field full">
-                  <span class="field-label">信号来源<span class="required">*</span></span>
+                  <span class="field-label">感知场景<span class="required">*</span></span>
                   <select id="signalSource" name="signalSource">
                     <option value="inspection" selected>巡检捉虫</option>
                   </select>
@@ -3451,47 +3470,16 @@
                   </div>
                 </div>
 
+                <div class="field full" style="margin-top: 24px;">
+                  <span class="field-label">巡检类别<span class="required">*</span></span>
+                  <div class="source-selector" id="inspectionTypeSelector">
+                    <label><input type="radio" name="inspectionType" value="ranking" checked /><span>榜单巡检</span></label>
+                    <label><input type="radio" name="inspectionType" value="special" /><span>专项巡检</span></label>
+                  </div>
+                </div>
+
                 <div class="smart-rule-stack" style="margin-top: 24px;">
-                  <section class="rule-section">
-                    <div class="rule-section-head">
-                      <h3>圈选规则</h3>
-                    </div>
-                    <div class="dynamic-rule-list" id="hitRuleList"></div>
-                    <button class="add-rule-button add-rule-button-wide" id="addHitRule" type="button">＋ 添加条件</button>
-                    <label class="field full" style="margin-top: 18px;">
-                      <span class="field-label relation-label">
-                        条件关系
-                      </span>
-                      <input id="conditionRelation" placeholder="支持逻辑表达式与&amp;或|，如1&amp;(2|3)" />
-                    </label>
-                  </section>
-
-                  <section class="rule-section">
-                    <h3>去重规则</h3>
-                    <label class="switch-line">
-                      <span>本任务开播期去重</span>
-                      <input id="liveDedupeEnabled" type="checkbox" />
-                    </label>
-                  </section>
-                </div>
-              </section>
-
-              <section class="form-step" data-step="2">
-                <div class="step-heading">
-                  <h2>配置 Agent 参数</h2>
-                  <p>配置巡检类别及对应的榜单或专项巡检参数。</p>
-                </div>
-
-                <div class="smart-rule-stack">
-                  <section class="rule-section source-priority-section">
-                    <h3>巡检类别<span class="required">*</span></h3>
-                    <div class="source-selector" id="inspectionTypeSelector">
-                      <label><input type="radio" name="inspectionType" value="ranking" checked /><span>榜单巡检</span></label>
-                      <label><input type="radio" name="inspectionType" value="special" /><span>专项巡检</span></label>
-                    </div>
-                  </section>
-
-                  <section class="rule-section inspection-config-panel" data-inspection-config="ranking">
+                  <div class="inspection-config-panel" data-inspection-config="ranking">
                     <div class="field-grid">
                       <div class="field">
                         <span class="field-label">榜单名称<span class="required">*</span></span>
@@ -3512,9 +3500,9 @@
                         <input type="number" value="50" min="1" max="100" />
                       </label>
                     </div>
-                  </section>
+                  </div>
 
-                  <section class="rule-section inspection-config-panel" data-inspection-config="special" hidden>
+                  <div class="inspection-config-panel" data-inspection-config="special" hidden>
                     <div class="field-grid">
                       <div class="field">
                         <span class="field-label">专项名称<span class="required">*</span></span>
@@ -3534,23 +3522,44 @@
                         <input type="number" value="20" min="1" max="100" />
                       </label>
                     </div>
+                  </div>
+                </div>
+
+              </section>
+
+              <section class="form-step" data-step="2">
+                <div class="step-heading">
+                  <h2>配置圈选去重</h2>
+                </div>
+
+                <div class="smart-rule-stack">
+                  <section class="rule-section">
+                    <div class="rule-section-head">
+                      <h3>圈选规则</h3>
+                    </div>
+                    <div class="dynamic-rule-list" id="hitRuleList"></div>
+                    <button class="add-rule-button add-rule-button-wide" id="addHitRule" type="button">＋ 添加条件</button>
+                    <label class="field full" style="margin-top: 18px;">
+                      <span class="field-label relation-label">
+                        条件关系
+                      </span>
+                      <input id="conditionRelation" placeholder="支持逻辑表达式与&amp;或|，如1&amp;(2|3)" />
+                    </label>
                   </section>
 
                   <section class="rule-section">
-                    <h3>输出范围<span class="required">*</span></h3>
-                    <div class="source-selector">
-                      <label><input type="checkbox" name="outputScope" value="governance" checked /><span>治理问题</span></label>
-                      <label><input type="checkbox" name="outputScope" value="non-governance" checked /><span>非治理问题</span></label>
-                    </div>
+                    <h3>去重规则</h3>
+                    <label class="switch-line">
+                      <input id="liveDedupeEnabled" type="checkbox" />
+                      <span>本任务开播期去重</span>
+                    </label>
                   </section>
-
                 </div>
               </section>
 
               <section class="form-step" data-step="3">
                 <div class="step-heading">
                   <h2>选择治理动作</h2>
-                  <p>配置命中风险后需要自动触发的治理动作。</p>
                 </div>
                 <div class="choice-grid">
                   <label class="choice-card selected">
@@ -3559,19 +3568,12 @@
                     <span class="choice-title">自动上报研判</span>
                     <span class="choice-desc">将命中的风险对象自动推送至研判平台。</span>
                   </label>
-                  <label class="choice-card">
-                    <input type="radio" name="governance" value="manual-review" />
-                    <span class="choice-check">✓</span>
-                    <span class="choice-title">人工复核</span>
-                    <span class="choice-desc">将命中的风险对象输出详情供人工复核。</span>
-                  </label>
                 </div>
               </section>
 
               <section class="form-step" data-step="4">
                 <div class="step-heading">
                   <h2>配置任务时间</h2>
-                  <p>配置任务频率和截止时间。</p>
                 </div>
                 <div class="field-grid">
                   <div class="field full">
@@ -3643,13 +3645,6 @@
       const hitRuleList = document.querySelector("#hitRuleList");
 
       const hitRuleFields = [
-        {
-          value: "livePenalty",
-          label: "直播间违规罚单",
-          operators: ["属于", "不属于"],
-          type: "multiple",
-          options: ["重罚", "其他"],
-        },
         {
           value: "liveReportCount",
           label: "直播间举报数",
@@ -3811,7 +3806,6 @@
       document.querySelectorAll(".multi-dropdown").forEach(bindMultiDropdown);
       updateInspectionType();
       updateGovernanceCards();
-      addHitRule("livePenalty", "不属于", ["重罚"]);
       addHitRule("liveReportCount", "大等于", ["25"]);
     </script>
   </body>
