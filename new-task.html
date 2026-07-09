@@ -1725,6 +1725,104 @@
         line-height: 1.7;
       }
 
+      .governance-layout {
+        width: min(1080px, 100%);
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .governance-action-row {
+        display: grid;
+        grid-template-columns: minmax(300px, 0.8fr) minmax(420px, 1.2fr);
+        gap: 36px;
+        align-items: center;
+        padding: 18px 4px;
+      }
+
+      .governance-action-option {
+        position: relative;
+        display: grid;
+        grid-template-columns: 18px minmax(0, 1fr);
+        gap: 13px;
+        align-items: center;
+        padding: 0;
+        cursor: pointer;
+        transition: background-color 160ms ease;
+      }
+
+      .governance-action-option:hover {
+        opacity: 0.82;
+      }
+
+      .governance-action-option input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .governance-radio {
+        display: grid;
+        width: 16px;
+        height: 16px;
+        place-items: center;
+        border: 1px solid var(--line-strong);
+        border-radius: 50%;
+        background: var(--surface);
+      }
+
+      .governance-radio::after {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: transparent;
+        content: "";
+      }
+
+      .governance-action-option.selected .governance-radio {
+        border-color: var(--accent);
+      }
+
+      .governance-action-option.selected .governance-radio::after {
+        background: var(--accent);
+      }
+
+      .governance-copy {
+        display: grid;
+        gap: 4px;
+      }
+
+      .governance-copy strong {
+        color: var(--text);
+        font-size: 14px;
+        font-weight: 720;
+      }
+
+      .governance-copy span {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 12px;
+        line-height: 1.6;
+      }
+
+      .governance-inline-config {
+        display: grid;
+        grid-template-columns: max-content minmax(240px, 1fr);
+        gap: 14px;
+        align-items: center;
+      }
+
+      .governance-config {
+        width: 100%;
+      }
+
+      @media (max-width: 760px) {
+        .governance-action-row,
+        .governance-inline-config {
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+      }
+
       .field-grid {
         gap: 22px 24px;
       }
@@ -4632,7 +4730,6 @@
         }
       }
 
-      #ownerTeam,
       #dataSourceSelect {
         width: 100%;
         min-height: 42px;
@@ -4659,7 +4756,6 @@
         background-repeat: no-repeat;
       }
 
-      #ownerTeam:hover,
       #dataSourceSelect:hover {
         border-color: #b9c0c8;
         background-image:
@@ -4667,7 +4763,6 @@
           linear-gradient(135deg, #252a31 50%, transparent 50%);
       }
 
-      #ownerTeam:focus,
       #dataSourceSelect:focus {
         border-color: var(--form-blue);
         box-shadow: 0 0 0 2px rgba(23, 25, 28, 0.08);
@@ -4888,17 +4983,6 @@
                   <input id="taskName" type="text" maxlength="30" placeholder="请输入任务名称，最多30字" />
                 </label>
                 <label class="field full">
-                  <span class="field-label">归属团队<span class="required">*</span></span>
-                  <select id="ownerTeam" name="ownerTeam">
-                    <option value="g1-apparel" selected>G1-大服饰</option>
-                    <option value="g2-local-cross">G2-快消&amp;跨境</option>
-                    <option value="g3-durable-virtual">G3-耐消&amp;虚拟</option>
-                    <option value="g7-daily-fresh-food">G7-日用生鲜&amp;食品</option>
-                    <option value="g8-jewelry-luxury-medical">G8-珠宝二奢&amp;医疗</option>
-                    <option value="other">其他</option>
-                  </select>
-                </label>
-                <label class="field full" style="margin-top: 24px;">
                   <span class="field-label">数据源类型<span class="required">*</span></span>
                   <select id="dataSourceSelect" name="dataSource">
                     <option value="frontend-search" selected>前端搜索</option>
@@ -5133,14 +5217,31 @@
                 <div class="step-heading">
                   <h2>治理动作</h2>
                 </div>
-                <div class="field full">
-                  <div class="choice-grid">
-                    <label class="choice-card selected">
+                <div class="governance-layout">
+                  <div class="governance-action-row">
+                    <label class="governance-action-option selected">
                       <input type="radio" name="governance" value="auto-report" checked />
-                      <span class="choice-check">✓</span>
-                      <span class="choice-title">自动上报研判</span>
-                      <span class="choice-desc">将命中的风险对象自动推送至研判平台。</span>
+                      <span class="governance-radio" aria-hidden="true"></span>
+                      <span class="governance-copy">
+                        <strong>自动上报研判</strong>
+                        <span>将命中的风险对象自动推送至研判平台。</span>
+                      </span>
                     </label>
+                    <div class="governance-inline-config">
+                      <label class="field-label" for="reviewPlatformSelectionId">研判平台圈选 ID<span class="required">*</span></label>
+                      <div class="field governance-config">
+                        <input
+                        id="reviewPlatformSelectionId"
+                        name="reviewPlatformSelectionId"
+                        type="text"
+                        inputmode="numeric"
+                        maxlength="5"
+                        pattern="[0-9]{5}"
+                        placeholder="请输入 5 位数字"
+                        required
+                      />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </section>
@@ -5318,7 +5419,7 @@
 
       function updateGovernanceCards() {
         document.querySelectorAll('input[name="governance"]').forEach((input) => {
-          input.closest(".choice-card").classList.toggle("selected", input.checked);
+          input.closest(".governance-action-option").classList.toggle("selected", input.checked);
         });
       }
 
