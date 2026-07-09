@@ -169,15 +169,28 @@
 
       #configDialog .dialog-body {
         max-height: calc(100vh - 170px);
+        padding: 14px 16px;
         overflow: auto;
         background: #f7f8fa;
+      }
+
+      #configDialog .dialog-actions {
+        padding: 12px 16px;
+      }
+
+      #configDialog .dialog-submit {
+        height: 32px;
+        padding: 0 14px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
       }
 
       .config-overview {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 10px;
-        margin-bottom: 14px;
+        gap: 8px;
+        margin-bottom: 10px;
       }
 
       .config-overview-item,
@@ -189,8 +202,8 @@
 
       .config-overview-item {
         display: grid;
-        gap: 4px;
-        padding: 12px;
+        gap: 3px;
+        padding: 10px 12px;
       }
 
       .config-overview-item span,
@@ -206,14 +219,14 @@
 
       .config-steps {
         display: grid;
-        gap: 12px;
+        gap: 10px;
       }
 
       .config-step-head {
         display: flex;
         align-items: center;
         gap: 9px;
-        padding: 12px 14px;
+        padding: 10px 12px;
         border-bottom: 1px solid #e8ebef;
         color: #303640;
         font-size: 13px;
@@ -222,8 +235,8 @@
 
       .config-step-number {
         display: grid;
-        width: 22px;
-        height: 22px;
+        width: 20px;
+        height: 20px;
         place-items: center;
         border-radius: 50%;
         background: #252a31;
@@ -234,13 +247,13 @@
       .config-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 16px 24px;
-        padding: 14px;
+        gap: 10px 16px;
+        padding: 12px;
       }
 
       .config-item {
         display: grid;
-        gap: 5px;
+        gap: 3px;
         margin: 0;
       }
 
@@ -248,7 +261,7 @@
         margin: 0;
         color: #3e4753;
         font-size: 12px;
-        line-height: 1.65;
+        line-height: 1.45;
       }
 
       .config-item.full {
@@ -826,10 +839,20 @@
         justify-content: space-between;
         width: 100%;
         height: 40px;
-        padding: 0 11px;
+        padding: 0 36px 0 11px;
         border: 1px solid #d8e0e7;
         border-radius: 7px;
-        background: #fff;
+        background-color: #fff;
+        background-image:
+          linear-gradient(45deg, transparent 50%, #5f6b7a 50%),
+          linear-gradient(135deg, #5f6b7a 50%, transparent 50%);
+        background-position:
+          calc(100% - 18px) 50%,
+          calc(100% - 12px) 50%;
+        background-repeat: no-repeat;
+        background-size:
+          6px 6px,
+          6px 6px;
         color: #303844;
         cursor: pointer;
         font-size: 13px;
@@ -841,8 +864,7 @@
       }
 
       .query-multi summary::after {
-        color: #76818d;
-        content: "⌄";
+        content: none;
       }
 
       .query-multi[open] summary {
@@ -951,7 +973,7 @@
 
       .task-table {
         width: 100%;
-        min-width: 1120px;
+        min-width: 1256px;
         border-collapse: collapse;
         table-layout: fixed;
       }
@@ -1006,6 +1028,58 @@
 
       .time-cell span {
         white-space: nowrap;
+      }
+
+      .config-summary {
+        display: grid;
+        gap: 3px;
+        min-width: 0;
+      }
+
+      .config-summary strong {
+        color: #303844;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .config-summary small {
+        overflow: hidden;
+        color: #7a8491;
+        font-size: 11px;
+        line-height: 1.45;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .object-tag,
+      .skill-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 26px;
+        padding: 0 8px;
+        border-radius: 5px;
+        font-size: 11px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .object-tag.live-room {
+        background: #eaf7f1;
+        color: #168260;
+      }
+
+      .object-tag.product {
+        background: #eef4ff;
+        color: #2f5fa8;
+      }
+
+      .skill-pill {
+        max-width: 100%;
+        overflow: hidden;
+        background: #f1f3f5;
+        color: #4f5965;
+        text-overflow: ellipsis;
       }
 
       .task-detail-link {
@@ -1451,10 +1525,22 @@
                 </details>
               </div>
               <div class="query-field">
-                <span>感知场景</span>
-                <details class="query-multi" id="sceneFilter" data-placeholder="全部">
+                <span>归属团队</span>
+                <details class="query-multi" id="teamFilter" data-placeholder="全部">
                   <summary>全部</summary><div class="query-multi-menu">
-                    <label class="query-multi-option"><input type="checkbox" value="inspection" />巡检捉虫</label>
+                    <label class="query-multi-option"><input type="checkbox" value="G1-大服饰" />G1-大服饰</label>
+                    <label class="query-multi-option"><input type="checkbox" value="G2-快消&跨境" />G2-快消&amp;跨境</label>
+                    <label class="query-multi-option"><input type="checkbox" value="G3-耐消&虚拟" />G3-耐消&amp;虚拟</label>
+                    <label class="query-multi-option"><input type="checkbox" value="G7-日用生鲜&食品" />G7-日用生鲜&amp;食品</label>
+                    <label class="query-multi-option"><input type="checkbox" value="G8-珠宝二奢&医疗" />G8-珠宝二奢&amp;医疗</label>
+                  </div>
+                </details>
+              </div>
+              <div class="query-field">
+                <span>数据源类型</span>
+                <details class="query-multi" id="sourceFilter" data-placeholder="全部">
+                  <summary>全部</summary><div class="query-multi-menu">
+                    <label class="query-multi-option"><input type="checkbox" value="前端搜索" />前端搜索</label>
                   </div>
                 </details>
               </div>
@@ -1468,16 +1554,21 @@
                 </details>
               </div>
               <div class="query-field">
-                <span>治理动作</span>
-                <details class="query-multi" id="governanceFilter" data-placeholder="全部">
+                <span>技能名称</span>
+                <details class="query-multi" id="skillFilter" data-placeholder="全部">
                   <summary>全部</summary><div class="query-multi-menu">
-                    <label class="query-multi-option"><input type="checkbox" value="report" />自动上报研判</label>
+                    <label class="query-multi-option"><input type="checkbox" value="榴莲" />榴莲</label>
+                    <label class="query-multi-option"><input type="checkbox" value="水果" />水果</label>
+                    <label class="query-multi-option"><input type="checkbox" value="书画" />书画</label>
+                    <label class="query-multi-option"><input type="checkbox" value="夏凉电器-虚假宣传" />夏凉电器-虚假宣传</label>
+                    <label class="query-multi-option"><input type="checkbox" value="农药" />农药</label>
+                    <label class="query-multi-option"><input type="checkbox" value="植物种子苗" />植物种子苗</label>
                   </div>
                 </details>
               </div>
               <label class="query-field">
                 <span>创建人</span>
-                <input id="creatorFilter" type="search" placeholder="请输入创建人" />
+                <input id="creatorFilter" type="search" placeholder="姓名、拼音或邮箱查询" />
               </label>
               <div class="query-actions">
                 <button class="query-button primary" id="queryTasks" type="button">查询</button>
@@ -1493,26 +1584,26 @@
             </div>
             <div class="table-scroll">
               <table class="task-table">
-                <colgroup><col style="width:130px"><col style="width:220px"><col style="width:85px"><col style="width:95px"><col style="width:85px"><col style="width:125px"><col style="width:165px"><col style="width:190px"></colgroup>
-                <thead><tr><th>任务 ID</th><th>任务名称</th><th>任务状态</th><th>感知场景</th><th>感知对象</th><th>治理动作</th><th>创建信息</th><th>操作</th></tr></thead>
+                <colgroup><col style="width:136px"><col style="width:210px"><col style="width:84px"><col style="width:130px"><col style="width:76px"><col style="width:210px"><col style="width:150px"><col style="width:158px"><col style="width:186px"></colgroup>
+                <thead><tr><th>任务 ID</th><th>任务名称</th><th>任务状态</th><th>归属团队</th><th>感知对象</th><th>数据源</th><th>分析技能</th><th>创建信息</th><th>操作</th></tr></thead>
                 <tbody id="taskTableBody">
-                  <tr data-status="running" data-scene="inspection" data-object="live-room" data-governance="report" data-interval="30分钟" data-window="09:00-18:00" data-deadline="2026-06-30" data-creator="张天奕">
-                    <td class="task-id">TASK-20260601-001</td><td class="task-title-cell"><a class="task-detail-link" href="task.html">榴莲虚假宣传直播间巡检</a></td><td><span class="task-status running">运行中</span></td><td>巡检捉虫</td><td>直播间</td><td>自动上报研判</td><td><span class="creator-cell"><span class="creator-name">张天奕</span><span class="creator-time">2026-06-01 15:40</span></span></td><td><div class="row-actions"><button class="row-action" data-config>查看</button><button class="row-action" data-stop>停止</button><button class="row-action danger" data-delete>删除</button></div></td>
+                  <tr data-status="running" data-team="G7-日用生鲜&amp;食品" data-source="前端搜索" data-object="live-room" data-search-type="关键词搜索" data-skill="榴莲" data-keywords="榴莲,樱桃" data-search-count="100" data-ranking="" data-top="" data-rule="直播间举报数 大等于 25" data-relation="1" data-dedupe="本任务开播期去重" data-interval="30分钟" data-window="09:00-18:00" data-deadline="永不截止" data-creator="张天奕">
+                    <td class="task-id">TASK-20260708-001</td><td class="task-title-cell"><a class="task-detail-link" href="task.html">榴莲虚假宣传直播间巡检</a></td><td><span class="task-status running">运行中</span></td><td>G7-日用生鲜&amp;食品</td><td><span class="object-tag live-room">直播间</span></td><td><span class="config-summary"><strong>前端搜索</strong><small>关键词搜索：榴莲、樱桃</small></span></td><td><span class="skill-pill">榴莲</span></td><td><span class="creator-cell"><span class="creator-name">张天奕</span><span class="creator-time">2026-07-08 10:30</span></span></td><td><div class="row-actions"><button class="row-action" data-config>查看</button><button class="row-action" data-stop>停止</button><button class="row-action danger" data-delete>删除</button></div></td>
                   </tr>
-                  <tr data-status="running" data-scene="inspection" data-object="live-room" data-governance="report" data-interval="15分钟" data-window="00:00-23:59" data-deadline="永不截止" data-creator="李明">
-                    <td class="task-id">TASK-20260601-002</td><td class="task-title-cell">男装榜直播间巡检</td><td><span class="task-status running">运行中</span></td><td>巡检捉虫</td><td>直播间</td><td>自动上报研判</td><td><span class="creator-cell"><span class="creator-name">李明</span><span class="creator-time">2026-06-01 14:10</span></span></td><td><div class="row-actions"><button class="row-action" data-config>查看</button><button class="row-action" data-stop>停止</button><button class="row-action danger" data-delete>删除</button></div></td>
+                  <tr data-status="running" data-team="G1-大服饰" data-source="前端搜索" data-object="live-room" data-search-type="榜单搜索" data-skill="水果" data-keywords="" data-search-count="" data-ranking="生鲜榜" data-top="50" data-rule="直播间举报数 大等于 15" data-relation="1" data-dedupe="本任务开播期去重" data-interval="15分钟" data-window="00:00-23:59" data-deadline="永不截止" data-creator="李明">
+                    <td class="task-id">TASK-20260708-002</td><td class="task-title-cell">生鲜榜直播间巡检</td><td><span class="task-status running">运行中</span></td><td>G1-大服饰</td><td><span class="object-tag live-room">直播间</span></td><td><span class="config-summary"><strong>前端搜索</strong><small>榜单搜索：生鲜榜</small></span></td><td><span class="skill-pill">水果</span></td><td><span class="creator-cell"><span class="creator-name">李明</span><span class="creator-time">2026-07-08 09:18</span></span></td><td><div class="row-actions"><button class="row-action" data-config>查看</button><button class="row-action" data-stop>停止</button><button class="row-action danger" data-delete>删除</button></div></td>
                   </tr>
-                  <tr data-status="completed" data-scene="inspection" data-object="live-room" data-governance="report" data-interval="1小时" data-window="09:00-20:00" data-deadline="2026-06-15" data-creator="王悦">
-                    <td class="task-id">TASK-20260531-008</td><td class="task-title-cell"><a class="task-detail-link" href="task-fresh.html">生鲜榜单直播间巡检</a></td><td><span class="task-status completed">已完成</span></td><td>巡检捉虫</td><td>直播间</td><td>自动上报研判</td><td><span class="creator-cell"><span class="creator-name">王悦</span><span class="creator-time">2026-05-31 18:36</span></span></td><td><div class="row-actions"><button class="row-action" data-config>查看</button><button class="row-action danger" data-delete>删除</button></div></td>
+                  <tr data-status="completed" data-team="G8-珠宝二奢&amp;医疗" data-source="前端搜索" data-object="live-room" data-search-type="关键词搜索" data-skill="书画" data-keywords="名家背书,收藏价值" data-search-count="80" data-ranking="" data-top="" data-rule="直播间举报数 大等于 10" data-relation="1" data-dedupe="本任务开播期去重" data-interval="1小时" data-window="09:00-20:00" data-deadline="2026-07-15" data-creator="王悦">
+                    <td class="task-id">TASK-20260707-008</td><td class="task-title-cell"><a class="task-detail-link" href="task-fresh.html">书画直播间风险巡检</a></td><td><span class="task-status completed">已完成</span></td><td>G8-珠宝二奢&amp;医疗</td><td><span class="object-tag live-room">直播间</span></td><td><span class="config-summary"><strong>前端搜索</strong><small>关键词搜索：名家背书、收藏价值</small></span></td><td><span class="skill-pill">书画</span></td><td><span class="creator-cell"><span class="creator-name">王悦</span><span class="creator-time">2026-07-07 18:36</span></span></td><td><div class="row-actions"><button class="row-action" data-config>查看</button><button class="row-action danger" data-delete>删除</button></div></td>
                   </tr>
-                  <tr data-status="completed" data-scene="inspection" data-object="product" data-governance="report" data-interval="30分钟" data-window="10:00-22:00" data-deadline="永不截止" data-creator="张天奕">
-                    <td class="task-id">TASK-20260531-004</td><td class="task-title-cell"><a class="task-detail-link" href="task-product.html">空调虚假宣传专项巡检</a></td><td><span class="task-status completed">已完成</span></td><td>巡检捉虫</td><td>商品</td><td>自动上报研判</td><td><span class="creator-cell"><span class="creator-name">张天奕</span><span class="creator-time">2026-05-31 10:24</span></span></td><td><div class="row-actions"><button class="row-action" data-config>查看</button><button class="row-action danger" data-delete>删除</button></div></td>
+                  <tr data-status="completed" data-team="G3-耐消&amp;虚拟" data-source="前端搜索" data-object="product" data-search-type="关键词搜索" data-skill="夏凉电器-虚假宣传" data-keywords="空调扇,风扇降温" data-search-count="120" data-ranking="" data-top="" data-rule="-" data-relation="-" data-dedupe="-" data-interval="30分钟" data-window="10:00-22:00" data-deadline="永不截止" data-creator="张天奕">
+                    <td class="task-id">TASK-20260707-004</td><td class="task-title-cell"><a class="task-detail-link" href="task-product.html">夏凉电器虚假宣传商品巡检</a></td><td><span class="task-status completed">已完成</span></td><td>G3-耐消&amp;虚拟</td><td><span class="object-tag product">商品</span></td><td><span class="config-summary"><strong>前端搜索</strong><small>关键词搜索：空调扇、风扇降温</small></span></td><td><span class="skill-pill">夏凉电器-虚假宣传</span></td><td><span class="creator-cell"><span class="creator-name">张天奕</span><span class="creator-time">2026-07-07 10:24</span></span></td><td><div class="row-actions"><button class="row-action" data-config>查看</button><button class="row-action danger" data-delete>删除</button></div></td>
                   </tr>
-                  <tr data-status="stopped" data-scene="inspection" data-object="live-room" data-governance="report" data-interval="2小时" data-window="08:00-18:00" data-deadline="2026-06-10" data-creator="周宁">
-                    <td class="task-id">TASK-20260530-011</td><td class="task-title-cell"><a class="task-detail-link" href="task-host.html">蓝莓虚假宣传专项巡检</a></td><td><span class="task-status terminated">已停止</span></td><td>巡检捉虫</td><td>直播间</td><td>自动上报研判</td><td><span class="creator-cell"><span class="creator-name">周宁</span><span class="creator-time">2026-05-30 16:02</span></span></td><td><div class="row-actions"><button class="row-action" data-config>查看</button><button class="row-action" data-start>启动</button><button class="row-action danger" data-delete>删除</button></div></td>
+                  <tr data-status="stopped" data-team="G2-快消&amp;跨境" data-source="前端搜索" data-object="product" data-search-type="关键词搜索" data-skill="农药" data-keywords="农药登记证,禁限售" data-search-count="60" data-ranking="" data-top="" data-rule="-" data-relation="-" data-dedupe="-" data-interval="2小时" data-window="08:00-18:00" data-deadline="2026-07-20" data-creator="周宁">
+                    <td class="task-id">TASK-20260706-011</td><td class="task-title-cell"><a class="task-detail-link" href="task-host.html">农药商品合规巡检</a></td><td><span class="task-status terminated">已停止</span></td><td>G2-快消&amp;跨境</td><td><span class="object-tag product">商品</span></td><td><span class="config-summary"><strong>前端搜索</strong><small>关键词搜索：农药登记证、禁限售</small></span></td><td><span class="skill-pill">农药</span></td><td><span class="creator-cell"><span class="creator-name">周宁</span><span class="creator-time">2026-07-06 16:02</span></span></td><td><div class="row-actions"><button class="row-action" data-config>查看</button><button class="row-action" data-start>启动</button><button class="row-action danger" data-delete>删除</button></div></td>
                   </tr>
-                  <tr data-status="stopped" data-scene="inspection" data-object="live-room" data-governance="report" data-interval="30分钟" data-window="09:00-18:00" data-deadline="永不截止" data-creator="李明">
-                    <td class="task-id">TASK-20260529-006</td><td class="task-title-cell">女装榜直播间巡检</td><td><span class="task-status terminated">已停止</span></td><td>巡检捉虫</td><td>直播间</td><td>自动上报研判</td><td><span class="creator-cell"><span class="creator-name">李明</span><span class="creator-time">2026-05-29 09:18</span></span></td><td><div class="row-actions"><button class="row-action" data-config>查看</button><button class="row-action" data-start>启动</button><button class="row-action danger" data-delete>删除</button></div></td>
+                  <tr data-status="stopped" data-team="G7-日用生鲜&amp;食品" data-source="前端搜索" data-object="live-room" data-search-type="关键词搜索" data-skill="植物种子苗" data-keywords="种苗成活承诺,品种混淆" data-search-count="50" data-ranking="" data-top="" data-rule="直播间举报数 大等于 20" data-relation="1" data-dedupe="本任务开播期去重" data-interval="30分钟" data-window="09:00-18:00" data-deadline="永不截止" data-creator="李明">
+                    <td class="task-id">TASK-20260705-006</td><td class="task-title-cell">植物种子苗直播间巡检</td><td><span class="task-status terminated">已停止</span></td><td>G7-日用生鲜&amp;食品</td><td><span class="object-tag live-room">直播间</span></td><td><span class="config-summary"><strong>前端搜索</strong><small>关键词搜索：种苗成活承诺、品种混淆</small></span></td><td><span class="skill-pill">植物种子苗</span></td><td><span class="creator-cell"><span class="creator-name">李明</span><span class="creator-time">2026-07-05 09:18</span></span></td><td><div class="row-actions"><button class="row-action" data-config>查看</button><button class="row-action" data-start>启动</button><button class="row-action danger" data-delete>删除</button></div></td>
                   </tr>
                 </tbody>
               </table>
@@ -1547,7 +1638,7 @@
 
     <dialog class="task-dialog" id="configDialog">
       <form method="dialog">
-        <div class="dialog-head"><div class="dialog-title">任务配置</div></div>
+        <div class="dialog-head"><div class="dialog-title">任务配置信息</div></div>
         <div class="dialog-body"><div id="configContent"></div></div>
         <div class="dialog-actions"><button class="dialog-submit" value="close" type="submit">关闭</button></div>
       </form>
@@ -1564,9 +1655,10 @@
 
       const taskInfoFilter = document.querySelector("#taskInfoFilter");
       const statusFilter = document.querySelector("#statusFilter");
-      const sceneFilter = document.querySelector("#sceneFilter");
+      const teamFilter = document.querySelector("#teamFilter");
+      const sourceFilter = document.querySelector("#sourceFilter");
       const objectFilter = document.querySelector("#objectFilter");
-      const governanceFilter = document.querySelector("#governanceFilter");
+      const skillFilter = document.querySelector("#skillFilter");
       const creatorFilter = document.querySelector("#creatorFilter");
       const visibleCount = document.querySelector("#visibleCount");
       const emptyState = document.querySelector("#emptyState");
@@ -1605,9 +1697,10 @@
         const taskInfo = taskInfoFilter.value.trim().toLowerCase();
         const creator = creatorFilter.value.trim().toLowerCase();
         const statuses = selectedValues(statusFilter);
-        const scenes = selectedValues(sceneFilter);
+        const teams = selectedValues(teamFilter);
+        const sources = selectedValues(sourceFilter);
         const objects = selectedValues(objectFilter);
-        const governance = selectedValues(governanceFilter);
+        const skills = selectedValues(skillFilter);
         let count = 0;
         taskRows().forEach((row) => {
           const rowTaskName = row.querySelector(".task-title-cell").textContent.toLowerCase();
@@ -1615,9 +1708,10 @@
           const matches =
             (!taskInfo || rowTaskName.includes(taskInfo) || rowTaskId.includes(taskInfo)) &&
             (!statuses.length || statuses.includes(row.dataset.status)) &&
-            (!scenes.length || scenes.includes(row.dataset.scene)) &&
+            (!teams.length || teams.includes(row.dataset.team)) &&
+            (!sources.length || sources.includes(row.dataset.source)) &&
             (!objects.length || objects.includes(row.dataset.object)) &&
-            (!governance.length || governance.includes(row.dataset.governance)) &&
+            (!skills.length || skills.includes(row.dataset.skill)) &&
             (!creator || row.dataset.creator.toLowerCase().includes(creator));
           row.hidden = !matches;
           if (matches) count += 1;
@@ -1629,7 +1723,7 @@
       document.querySelector("#queryTasks").addEventListener("click", refreshList);
       document.querySelector("#resetQuery").addEventListener("click", () => {
         taskInfoFilter.value = "";
-        [statusFilter, sceneFilter, objectFilter, governanceFilter].forEach((filter) => {
+        [statusFilter, teamFilter, sourceFilter, objectFilter, skillFilter].forEach((filter) => {
           filter.querySelectorAll('input[type="checkbox"]').forEach((input) => input.checked = false);
           updateMultiFilter(filter);
         });
@@ -1648,8 +1742,8 @@
           const row = button.closest("tr");
           const taskName = row.querySelector(".task-title-cell").textContent;
           const taskId = row.querySelector(".task-id").textContent;
-          const isRanking = taskName.includes("榜");
-          const inspectionName = isRanking ? taskName.replace("直播间巡检", "") : taskName.replace("巡检", "");
+          const isRanking = row.dataset.searchType === "榜单搜索";
+          const isLiveRoom = row.dataset.object === "live-room";
           configContent.innerHTML = `
             <div class="config-overview">
               <div class="config-overview-item"><span>任务 ID</span><strong>${taskId}</strong></div>
@@ -1657,23 +1751,32 @@
               <div class="config-overview-item"><span>创建信息</span><strong>${row.dataset.creator} · ${row.querySelector(".creator-time").textContent}</strong></div>
             </div>
             <div class="config-steps">
-              ${configStep(1, "感知场景", [
+              ${configStep(1, "基础信息", [
                 configItem("任务名称", taskName, true),
-                configItem("感知场景", "巡检捉虫"),
-                configItem("感知对象", row.dataset.object === "product" ? "商品" : "直播间"),
-                configItem("巡检类别", isRanking ? "榜单巡检" : "专项巡检"),
-                configItem(isRanking ? "榜单名称" : "专项名称", inspectionName),
-                configItem(isRanking ? "Top 数" : "单次巡检数", isRanking ? "Top 50" : "20"),
+                configItem("归属团队", row.dataset.team),
+                configItem("数据源类型", row.dataset.source),
+                configItem("感知对象", isLiveRoom ? "直播间" : "商品"),
               ])}
-              ${configStep(2, "圈选去重", [
-                configItem("圈选规则", "1. 直播间举报数 大等于 25", true),
-                configItem("条件关系", "1"),
-                configItem("去重规则", "本任务开播期去重"),
+              ${configStep(2, "数据源", [
+                configItem("搜索类型", row.dataset.searchType),
+                isRanking
+                  ? configItem("榜单名称", row.dataset.ranking || "-", false)
+                  : configItem("关键词", row.dataset.keywords || "-"),
+                isRanking
+                  ? configItem("Top N", row.dataset.top ? `Top ${row.dataset.top}` : "-")
+                  : configItem("搜索对象数量", row.dataset.searchCount ? `${row.dataset.searchCount} 个` : "-"),
+                isLiveRoom ? configItem("圈选规则", row.dataset.rule || "未配置") : configItem("圈选规则", "商品任务不配置圈选规则"),
+                isLiveRoom ? configItem("逻辑表达式", row.dataset.relation || "-") : configItem("逻辑表达式", "-"),
+                isLiveRoom ? configItem("去重规则", row.dataset.dedupe || "-") : configItem("去重规则", "商品任务不配置去重规则"),
               ])}
-              ${configStep(3, "治理动作", [
+              ${configStep(3, "分析技能", [
+                configItem("技能名称", row.dataset.skill),
+                configItem("适用对象", isLiveRoom ? "直播间" : "商品"),
+              ])}
+              ${configStep(4, "治理动作", [
                 configItem("治理动作", "自动上报研判", true),
               ])}
-              ${configStep(4, "任务时间", [
+              ${configStep(5, "任务时间", [
                 configItem("发起间隔", row.dataset.interval),
                 configItem("开始时段", row.dataset.window),
                 configItem("截止时间", row.dataset.deadline),

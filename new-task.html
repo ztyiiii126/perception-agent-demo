@@ -2559,35 +2559,52 @@
       }
 
       .stepper {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
         width: 100%;
         margin: 0 0 30px;
-        padding: 32px 70px;
+        padding: 30px 54px;
         border: 1px solid #e8edf3;
         border-radius: 10px;
         background: #fafafa;
       }
 
       .step-tab {
+        position: relative;
+        display: flex;
+        align-items: center;
         justify-content: flex-start;
         gap: 10px;
+        min-width: 0;
         min-height: 44px;
-        padding: 0;
+        padding: 0 28px 0 0;
+        border: 0;
+        background: transparent;
       }
 
       .step-tab:not(:last-child)::after {
         position: static;
         flex: 1 1 auto;
         width: auto;
-        min-width: 24px;
-        margin: 0 12px 0 16px;
-        border-top: 2px dashed #cfd4da;
+        min-width: 40px;
+        height: 2px;
+        margin: 0 18px;
+        border-top: 2px dashed #d2d8e0;
         transform: none;
+        content: "";
       }
 
       .step-tab:not(:last-child)::before {
+        position: absolute;
+        z-index: 1;
         top: 50%;
-        right: 5px;
+        right: 26px;
+        width: 8px;
+        height: 8px;
+        border-top: 2px solid #d2d8e0;
+        border-right: 2px solid #d2d8e0;
         transform: translateY(-50%) rotate(45deg);
+        content: "";
       }
 
       .step-number {
@@ -2601,8 +2618,11 @@
       }
 
       .step-label {
+        overflow: hidden;
         color: #758298;
         font-size: 14px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       .step-tab.active .step-label {
@@ -2655,17 +2675,22 @@
         }
 
         .stepper {
-          padding: 26px 30px;
+          padding: 24px 24px;
         }
 
         .step-tab {
-          padding-right: 0;
+          gap: 8px;
+          padding-right: 18px;
         }
 
         .step-tab:not(:last-child)::after {
-          min-width: 18px;
-          margin-right: 10px;
+          min-width: 20px;
+          margin-right: 12px;
           margin-left: 10px;
+        }
+
+        .step-tab:not(:last-child)::before {
+          right: 16px;
         }
       }
 
@@ -2676,11 +2701,17 @@
 
         .stepper {
           padding: 18px 12px;
+          gap: 8px;
         }
 
         .step-tab {
           justify-content: center;
+          gap: 0;
           padding: 0;
+        }
+
+        .step-label {
+          display: none;
         }
 
         .step-tab:not(:last-child)::after,
@@ -2968,22 +2999,24 @@
       /* Flat enterprise form styling for data source and task time steps */
       .form-step[data-step="1"],
       .form-step[data-step="2"],
-      .form-step[data-step="4"] {
+      .form-step[data-step="3"],
+      .form-step[data-step="4"],
+      .form-step[data-step="5"] {
         width: min(920px, 100%);
       }
 
-      .form-step:is([data-step="1"], [data-step="2"]) .smart-rule-stack {
+      .form-step:is([data-step="1"], [data-step="2"], [data-step="3"]) .smart-rule-stack {
         gap: 30px;
       }
 
-      .form-step:is([data-step="1"], [data-step="2"]) .rule-section {
+      .form-step:is([data-step="1"], [data-step="2"], [data-step="3"]) .rule-section {
         padding: 0;
         border: 0;
         border-radius: 0;
         background: transparent;
       }
 
-      .form-step:is([data-step="1"], [data-step="2"]) .rule-section h3 {
+      .form-step:is([data-step="1"], [data-step="2"], [data-step="3"]) .rule-section h3 {
         margin: 0 0 18px;
         padding-left: 0;
         color: #303640;
@@ -3006,6 +3039,18 @@
         margin-top: 7px;
       }
 
+      #dataSourceSelector {
+        display: flex;
+        gap: 28px;
+        margin-top: 7px;
+      }
+
+      #searchTypeSelector {
+        display: flex;
+        gap: 28px;
+        margin-top: 7px;
+      }
+
       #inspectionTypeSelector {
         display: flex;
         gap: 28px;
@@ -3013,6 +3058,8 @@
       }
 
       .form-step[data-step="2"] .source-selector span,
+      #dataSourceSelector span,
+      #searchTypeSelector span,
       #perceptionObjectSelector span,
       #inspectionTypeSelector span {
         min-height: 30px;
@@ -3024,6 +3071,10 @@
 
       .form-step[data-step="2"] .source-selector label:hover span,
       .form-step[data-step="2"] .source-selector input:checked + span,
+      #dataSourceSelector label:hover span,
+      #dataSourceSelector input:checked + span,
+      #searchTypeSelector label:hover span,
+      #searchTypeSelector input:checked + span,
       #perceptionObjectSelector label:hover span,
       #perceptionObjectSelector input:checked + span,
       #inspectionTypeSelector label:hover span,
@@ -3035,6 +3086,8 @@
       }
 
       .form-step[data-step="2"] .source-selector span::before,
+      #dataSourceSelector span::before,
+      #searchTypeSelector span::before,
       #perceptionObjectSelector span::before,
       #inspectionTypeSelector span::before {
         display: grid;
@@ -3051,6 +3104,8 @@
       }
 
       .form-step[data-step="2"] .source-selector input:checked + span::before,
+      #dataSourceSelector input:checked + span::before,
+      #searchTypeSelector input:checked + span::before,
       #perceptionObjectSelector input:checked + span::before,
       #inspectionTypeSelector input:checked + span::before {
         border: 5px solid #252a31;
@@ -3068,29 +3123,123 @@
         margin-bottom: 16px;
       }
 
+      .rule-editor-card {
+        overflow: hidden;
+        border: 1px solid #dce3ec;
+        border-radius: 8px;
+        background: #fff;
+      }
+
+      .rule-editor-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-height: 48px;
+        padding: 0 16px;
+        border-bottom: 1px solid #e6ebf1;
+        color: #303640;
+        font-size: 14px;
+        font-weight: 650;
+      }
+
+      .rule-editor-title strong {
+        font-weight: 760;
+      }
+
+      .rule-editor-body {
+        padding: 18px;
+        background: #fbfcfd;
+      }
+
       .form-step[data-step="2"] .dynamic-rule-row {
+        grid-template-columns: 36px minmax(180px, 1fr) minmax(120px, 0.36fr) minmax(220px, 1fr) 32px;
+        gap: 10px;
+        padding: 14px 16px;
         border-color: #e3e6ea;
         border-radius: 6px;
-        background: #fff;
+        background: #f7f8fa;
         box-shadow: none;
       }
 
-      .form-step[data-step="2"] .add-rule-button-wide {
+      .form-step[data-step="2"] .dynamic-rule-row select {
+        appearance: none;
+        -webkit-appearance: none;
+        padding-right: 48px;
+        background-color: #fff;
+        background-image:
+          linear-gradient(45deg, transparent 50%, #5f6b7a 50%),
+          linear-gradient(135deg, #5f6b7a 50%, transparent 50%);
+        background-position:
+          calc(100% - 30px) 50%,
+          calc(100% - 24px) 50%;
+        background-size:
+          6px 6px,
+          6px 6px;
+        background-repeat: no-repeat;
+      }
+
+      .form-step[data-step="2"] .dynamic-rule-row select:hover {
+        background-image:
+          linear-gradient(45deg, transparent 50%, #252a31 50%),
+          linear-gradient(135deg, #252a31 50%, transparent 50%);
+      }
+
+      .rule-editor-footer {
+        display: grid;
+        grid-template-columns: 140px minmax(0, 1fr);
+        gap: 18px;
+        align-items: center;
+        margin-top: 18px;
+      }
+
+      .rule-editor-footer .add-rule-button {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 100%;
         height: 40px;
-        margin-top: 0;
-        border: 1px dashed #9ca3ad;
+        border: 1px solid #252a31;
+        border-radius: 6px;
         background: #fff;
         color: #353b44;
+        font-size: 14px;
+        font-weight: 650;
       }
 
-      .form-step[data-step="2"] .add-rule-button-wide:hover {
+      .rule-editor-footer .add-rule-button:hover {
         border-color: #252a31;
         background: #f7f7f7;
         color: #252a31;
+      }
+
+      .rule-relation-field {
+        display: grid;
+        grid-template-columns: 96px minmax(0, 1fr);
+        gap: 14px;
+        align-items: center;
+      }
+
+      .rule-relation-field span {
+        color: #737d8c;
+        font-size: 13px;
+        font-weight: 650;
+      }
+
+      .rule-relation-field input {
+        width: 100%;
+        height: 40px;
+        padding: 0 12px;
+        border: 1px solid #dce3ec;
+        border-radius: 6px;
+        outline: 0;
+        background: #fff;
+        color: #4b596c;
+        font: inherit;
+        font-size: 13px;
+      }
+
+      .rule-relation-field input:focus {
+        border-color: #252a31;
+        box-shadow: 0 0 0 2px rgba(23, 25, 28, 0.08);
       }
 
       .form-step[data-step="2"] .switch-line {
@@ -3120,26 +3269,35 @@
         background: #fff;
       }
 
-      .form-step[data-step="4"] .field-grid {
+      .form-step[data-step="3"] .field-grid,
+      .form-step[data-step="5"] .field-grid {
         gap: 28px;
       }
 
-      .form-step[data-step="4"] .field.full {
+      .form-step[data-step="3"] .field.full,
+      .form-step[data-step="4"] .field.full,
+      .form-step[data-step="5"] .field.full {
         padding-bottom: 0;
         border-bottom: 0;
       }
 
-      .form-step[data-step="4"] .field.full:last-child {
+      .form-step[data-step="3"] .field.full:last-child,
+      .form-step[data-step="4"] .field.full:last-child,
+      .form-step[data-step="5"] .field.full:last-child {
         padding-bottom: 0;
         border-bottom: 0;
       }
 
+      .form-step[data-step="2"] > .step-heading,
+      .form-step[data-step="3"] > .step-heading,
       .form-step[data-step="4"] > .step-heading,
-      .form-step[data-step="2"] > .step-heading {
+      .form-step[data-step="5"] > .step-heading {
         margin-bottom: 30px;
       }
 
-      .form-step[data-step="4"] .field > .field-label {
+      .form-step[data-step="3"] .field > .field-label,
+      .form-step[data-step="4"] .field > .field-label,
+      .form-step[data-step="5"] .field > .field-label {
         margin-bottom: 12px;
         padding-left: 0;
         border-left: 0;
@@ -3147,11 +3305,11 @@
         font-size: 14px;
       }
 
-      .form-step[data-step="4"] .radio-dot {
+      .form-step[data-step="5"] .radio-dot {
         border-color: #9da5ae;
       }
 
-      .form-step[data-step="4"] .radio-option input:checked + .radio-dot {
+      .form-step[data-step="5"] .radio-option input:checked + .radio-dot {
         border-color: #252a31;
       }
 
@@ -3202,26 +3360,26 @@
         transform: translate(-50%, 0);
       }
 
-      .form-step[data-step="4"] .scheduled-config {
+      .form-step[data-step="5"] .scheduled-config {
         margin-left: 0;
       }
 
-      .form-step[data-step="4"] input,
-      .form-step[data-step="4"] select {
+      .form-step[data-step="5"] input,
+      .form-step[data-step="5"] select {
         border-color: #d9dde3;
         background: #fff;
         color: #3f4650;
       }
 
-      .form-step[data-step="4"] .inline-field {
+      .form-step[data-step="5"] .inline-field {
         display: grid;
         grid-template-columns: minmax(0, 1fr) 100px;
         gap: 10px;
         width: 300px;
       }
 
-      .form-step[data-step="4"] .inline-field input[type="number"],
-      .form-step[data-step="4"] .inline-field select {
+      .form-step[data-step="5"] .inline-field input[type="number"],
+      .form-step[data-step="5"] .inline-field select {
         width: 100%;
       }
 
@@ -3229,6 +3387,8 @@
       .choice-check,
       .radio-dot,
       .form-step[data-step="2"] .source-selector span::before,
+      #dataSourceSelector span::before,
+      #searchTypeSelector span::before,
       #perceptionObjectSelector span::before,
       #inspectionTypeSelector span::before,
       .form-step[data-step="2"] .switch-line input {
@@ -3243,6 +3403,8 @@
       .choice-card.selected .choice-check,
       .radio-option input:checked + .radio-dot,
       .form-step[data-step="2"] .source-selector input:checked + span::before,
+      #dataSourceSelector input:checked + span::before,
+      #searchTypeSelector input:checked + span::before,
       #perceptionObjectSelector input:checked + span::before,
       #inspectionTypeSelector input:checked + span::before {
         border: 4px solid #252a31;
@@ -3253,6 +3415,29 @@
       @media (max-width: 760px) {
         .form-step[data-step="2"] .switch-line {
           width: 100%;
+        }
+
+        .rule-editor-footer,
+        .rule-relation-field {
+          grid-template-columns: 1fr;
+        }
+
+        .form-step[data-step="2"] .dynamic-rule-row {
+          grid-template-columns: 32px 1fr;
+        }
+
+        .agent-list {
+          grid-template-columns: 1fr;
+        }
+
+        .agent-table-head {
+          display: none;
+        }
+
+        .agent-table-row {
+          grid-template-columns: 1fr;
+          gap: 8px;
+          align-items: stretch;
         }
       }
 
@@ -3267,6 +3452,1249 @@
       .remove-rule-button:hover {
         border-color: #e0aab2;
         background: #fff5f6;
+      }
+
+      .agent-search {
+        width: 100%;
+        height: 42px;
+        margin: 8px 0 14px;
+        padding: 0 14px;
+        border: 1px solid #dce3ec;
+        border-radius: 8px;
+        outline: 0;
+        background: #fff;
+        color: #303640;
+        font: inherit;
+        font-size: 13px;
+      }
+
+      .agent-search:focus {
+        border-color: #252a31;
+        box-shadow: 0 0 0 2px rgba(23, 25, 28, 0.08);
+      }
+
+      .agent-groups {
+        display: block;
+        overflow: hidden;
+        border: 1px solid #dfe5ec;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 12px 28px rgba(31, 41, 55, 0.04);
+      }
+
+      .agent-group {
+        display: contents;
+      }
+
+      .agent-group h3 {
+        display: none;
+      }
+
+      .agent-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .agent-form-table {
+        display: contents;
+      }
+
+      .agent-table-head,
+      .agent-table-row {
+        display: grid;
+        grid-template-columns: 52px minmax(180px, 1fr) 104px 72px;
+        gap: 18px;
+        align-items: center;
+      }
+
+      .agent-table-head {
+        min-height: 44px;
+        padding: 0 20px;
+        border-bottom: 1px solid #e8edf3;
+        background: #fbfcfd;
+        color: #7a8493;
+        font-size: 12px;
+        font-weight: 760;
+      }
+
+      .agent-table-head span:nth-child(1) {
+        grid-column: 2;
+      }
+
+      .agent-table-head span:nth-child(2) {
+        grid-column: 3;
+      }
+
+      .agent-table-head span:nth-child(3) {
+        display: none;
+      }
+
+      .agent-table-head span:nth-child(4) {
+        grid-column: 4;
+      }
+
+      .agent-group + .agent-group .agent-table-head {
+        display: none;
+      }
+
+      .agent-card {
+        position: relative;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        min-height: 92px;
+        padding: 14px;
+        border: 0;
+        border-radius: 8px;
+        background: #fff;
+        color: #303640;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 620;
+        line-height: 1.45;
+        transition:
+          border-color 160ms ease,
+          background 160ms ease,
+          color 160ms ease,
+          box-shadow 160ms ease;
+      }
+
+      .agent-table-row {
+        display: grid;
+        grid-template-columns: 52px minmax(180px, 1fr) 104px 72px;
+        grid-template-rows: auto auto;
+        min-height: 96px;
+        padding: 18px 20px;
+        border: 0;
+        border-bottom: 1px solid #edf1f5;
+        border-radius: 0;
+        color: #303640;
+      }
+
+      .agent-table-row::before {
+        position: absolute;
+        top: 50%;
+        left: 46px;
+        width: 24px;
+        height: 24px;
+        border: 1.5px solid #c8d0da;
+        border-radius: 7px;
+        background: #fff;
+        box-shadow: 0 2px 6px rgba(31, 41, 55, 0.035);
+        transform: translate(-50%, -50%);
+        content: "";
+      }
+
+      .agent-table-row::after {
+        position: absolute;
+        top: 50%;
+        left: 46px;
+        width: 6px;
+        height: 11px;
+        border-right: 2px solid #fff;
+        border-bottom: 2px solid #fff;
+        opacity: 0;
+        transform: translate(-50%, -58%) rotate(42deg);
+        content: "";
+      }
+
+      .agent-table-row:hover {
+        background: #fafbfc;
+      }
+
+      .agent-table-row.selected {
+        background: #f8fafc;
+        box-shadow: inset 2px 0 0 #252a31;
+      }
+
+      .agent-table-row.selected::before {
+        border-color: #252a31;
+        background: #252a31;
+      }
+
+      .agent-table-row.selected::after {
+        opacity: 1;
+      }
+
+      .agent-card:hover {
+        background: #fafafa;
+      }
+
+      .agent-card input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .agent-dot {
+        display: none;
+        flex: 0 0 14px;
+        width: 14px;
+        height: 14px;
+        margin-top: 3px;
+        border: 1px solid #adb4bd;
+        border-radius: 50%;
+        background: #fff;
+        box-sizing: border-box;
+      }
+
+      .agent-card.selected {
+        background: #f8fafc;
+      }
+
+      .agent-card.selected .agent-dot {
+        border: 4px solid #252a31;
+      }
+
+      .agent-card.disabled {
+        cursor: not-allowed;
+        background: #fafbfc;
+        color: #b1bac5;
+      }
+
+      .agent-card.disabled::before {
+        opacity: 0.45;
+      }
+
+      .agent-card.disabled .agent-dot {
+        border-color: #ccd3db;
+        background: #f0f2f5;
+      }
+
+      .agent-skill-name {
+        display: flex;
+        align-items: center;
+        grid-column: 2;
+        grid-row: 1;
+        min-width: 0;
+      }
+
+      .agent-skill-name strong {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: #252a31;
+        font-size: 15px;
+        font-weight: 760;
+      }
+
+      .agent-object-badge {
+        display: inline-flex;
+        align-items: center;
+        height: 24px;
+        width: fit-content;
+        padding: 0 9px;
+        border-radius: 7px;
+        background: #f2f4f7;
+        color: #566172;
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .agent-table-row > div:has(.agent-object-badge) {
+        grid-column: 3;
+        grid-row: 1;
+      }
+
+      .agent-desc {
+        grid-column: 2 / 4;
+        grid-row: 2;
+        overflow: hidden;
+        margin-top: 7px;
+        color: #6b7585;
+        font-size: 13px;
+        line-height: 1.6;
+        text-overflow: ellipsis;
+        white-space: normal;
+      }
+
+      .agent-group .agent-table-row:last-child {
+        border-bottom: 1px solid #edf1f5;
+      }
+
+      .agent-group:last-child .agent-table-row:last-child {
+        border-bottom: 0;
+      }
+
+      @media (max-width: 760px) {
+        .agent-table-head {
+          display: none;
+        }
+
+        .agent-table-row {
+          grid-template-columns: 36px minmax(0, 1fr) 70px;
+          gap: 8px 12px;
+          min-height: 112px;
+          padding: 16px;
+        }
+
+        .agent-table-row::before,
+        .agent-table-row::after {
+          left: 28px;
+        }
+
+        .agent-skill-name {
+          grid-column: 2;
+          grid-row: 1;
+        }
+
+        .agent-table-row > div:has(.agent-object-badge) {
+          grid-column: 3;
+          grid-row: 1;
+        }
+
+        .agent-desc {
+          grid-column: 2 / 4;
+          grid-row: 2;
+        }
+
+      }
+
+      /* Analysis skill cards */
+      .form-step[data-step="3"] .agent-search {
+        margin: 8px 0 16px;
+        border-radius: 8px;
+      }
+
+      .form-step[data-step="3"] .agent-groups {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        overflow: visible;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .form-step[data-step="3"] .agent-group,
+      .form-step[data-step="3"] .agent-form-table {
+        display: contents;
+      }
+
+      .form-step[data-step="3"] .agent-table-head,
+      .form-step[data-step="3"] .agent-group h3 {
+        display: none;
+      }
+
+      .form-step[data-step="3"] .agent-table-row {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-rows: auto auto minmax(52px, 1fr) auto;
+        gap: 10px 12px;
+        min-height: 176px;
+        padding: 18px;
+        border: 1px solid #dfe5ec;
+        border-radius: 12px;
+        background: #fff;
+        color: #303640;
+        box-shadow: 0 10px 24px rgba(31, 41, 55, 0.035);
+      }
+
+      .form-step[data-step="3"] .agent-table-row::before {
+        top: 18px;
+        right: 18px;
+        left: auto;
+        width: 20px;
+        height: 20px;
+        border: 1.5px solid #c6ced8;
+        border-radius: 6px;
+        background: #fff;
+        box-shadow: none;
+        transform: none;
+      }
+
+      .form-step[data-step="3"] .agent-table-row::after {
+        top: 21px;
+        right: 25px;
+        left: auto;
+        width: 5px;
+        height: 10px;
+        border-right: 2px solid #fff;
+        border-bottom: 2px solid #fff;
+        transform: rotate(42deg);
+      }
+
+      .form-step[data-step="3"] .agent-table-row:hover {
+        border-color: #c8d0da;
+        background: #fff;
+        box-shadow: 0 12px 28px rgba(31, 41, 55, 0.055);
+      }
+
+      .form-step[data-step="3"] .agent-table-row.selected {
+        border-color: #252a31;
+        background: #fbfcfd;
+        box-shadow: 0 12px 28px rgba(31, 41, 55, 0.065);
+      }
+
+      .form-step[data-step="3"] .agent-table-row.selected::before {
+        border-color: #252a31;
+        background: #252a31;
+      }
+
+      .form-step[data-step="3"] .agent-skill-name {
+        grid-column: 1;
+        grid-row: 1;
+        padding-right: 30px;
+      }
+
+      .form-step[data-step="3"] .agent-skill-name strong {
+        color: #252a31;
+        font-size: 15px;
+        line-height: 1.35;
+      }
+
+      .form-step[data-step="3"] .agent-table-row > div:has(.agent-object-badge) {
+        grid-column: 1;
+        grid-row: 2;
+      }
+
+      .form-step[data-step="3"] .agent-object-badge {
+        height: 24px;
+        border-radius: 999px;
+        background: #f2f4f7;
+        color: #536174;
+      }
+
+      .form-step[data-step="3"] .agent-desc {
+        grid-column: 1 / -1;
+        grid-row: 3;
+        margin-top: 0;
+        color: #667085;
+        font-size: 13px;
+        line-height: 1.58;
+      }
+
+      .form-step[data-step="3"] .agent-card.disabled {
+        opacity: 0.48;
+        filter: grayscale(0.15);
+      }
+
+      .form-step[data-step="3"] .agent-card.disabled:hover {
+        border-color: #dfe5ec;
+        box-shadow: 0 10px 24px rgba(31, 41, 55, 0.035);
+      }
+
+      @media (max-width: 760px) {
+        .form-step[data-step="3"] .agent-groups {
+          grid-template-columns: 1fr;
+        }
+
+        .form-step[data-step="3"] .agent-table-row {
+          min-height: 156px;
+        }
+
+      }
+
+      /* Analysis skill table */
+      .form-step[data-step="3"] .agent-groups {
+        display: block;
+        overflow: hidden;
+        border: 1px solid #dfe5ec;
+        border-radius: 10px;
+        background: #fff;
+        box-shadow: 0 10px 24px rgba(31, 41, 55, 0.035);
+      }
+
+      .form-step[data-step="3"] .agent-table-head,
+      .form-step[data-step="3"] .agent-table-row {
+        display: grid;
+        grid-template-columns: 52px minmax(150px, 0.9fr) 112px minmax(260px, 1.7fr);
+        gap: 16px;
+        align-items: center;
+      }
+
+      .form-step[data-step="3"] .agent-table-head {
+        min-height: 44px;
+        padding: 0 18px;
+        border-bottom: 1px solid #e8edf3;
+        background: #f8fafc;
+        color: #747f8f;
+        font-size: 12px;
+        font-weight: 760;
+      }
+
+      .form-step[data-step="3"] .agent-group + .agent-group .agent-table-head {
+        display: none;
+      }
+
+      .form-step[data-step="3"] .agent-table-head span:nth-child(1) {
+        grid-column: 2;
+      }
+
+      .form-step[data-step="3"] .agent-table-head span:nth-child(2) {
+        grid-column: 3;
+      }
+
+      .form-step[data-step="3"] .agent-table-head span:nth-child(3) {
+        display: inline;
+        grid-column: 4;
+      }
+
+      .form-step[data-step="3"] .agent-table-row {
+        min-height: 72px;
+        padding: 14px 18px;
+        border: 0;
+        border-bottom: 1px solid #edf1f5;
+        border-radius: 0;
+        background: #fff;
+        box-shadow: none;
+      }
+
+      .form-step[data-step="3"] .agent-table-row:hover {
+        border-color: transparent;
+        background: #fbfcfd;
+        box-shadow: none;
+      }
+
+      .form-step[data-step="3"] .agent-table-row.selected {
+        border-color: transparent;
+        background: #f8fafc;
+        box-shadow: inset 3px 0 0 #252a31;
+      }
+
+      .form-step[data-step="3"] .agent-table-row::before {
+        top: 50%;
+        right: auto;
+        left: 30px;
+        width: 18px;
+        height: 18px;
+        border: 1.5px solid #c6ced8;
+        border-radius: 5px;
+        background: #fff;
+        transform: translate(-50%, -50%);
+      }
+
+      .form-step[data-step="3"] .agent-table-row::after {
+        top: 50%;
+        right: auto;
+        left: 30px;
+        width: 5px;
+        height: 9px;
+        transform: translate(-50%, -58%) rotate(42deg);
+      }
+
+      .form-step[data-step="3"] .agent-table-row.selected::before {
+        border-color: #252a31;
+        background: #252a31;
+      }
+
+      .form-step[data-step="3"] .agent-skill-name {
+        grid-column: 2;
+        grid-row: auto;
+        padding-right: 0;
+      }
+
+      .form-step[data-step="3"] .agent-skill-name strong {
+        font-size: 14px;
+        line-height: 1.35;
+      }
+
+      .form-step[data-step="3"] .agent-table-row > div:has(.agent-object-badge) {
+        grid-column: 3;
+        grid-row: auto;
+      }
+
+      .form-step[data-step="3"] .agent-object-badge {
+        height: 24px;
+        border-radius: 999px;
+      }
+
+      .form-step[data-step="3"] .agent-desc {
+        grid-column: 4;
+        grid-row: auto;
+        margin-top: 0;
+        color: #667085;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      @media (max-width: 760px) {
+        .form-step[data-step="3"] .agent-table-head {
+          display: none;
+        }
+
+        .form-step[data-step="3"] .agent-table-row {
+          grid-template-columns: 34px minmax(0, 1fr) auto;
+          gap: 8px 12px;
+          min-height: 98px;
+          padding: 14px;
+        }
+
+        .form-step[data-step="3"] .agent-table-row::before,
+        .form-step[data-step="3"] .agent-table-row::after {
+          left: 26px;
+        }
+
+        .form-step[data-step="3"] .agent-skill-name {
+          grid-column: 2;
+          grid-row: 1;
+        }
+
+        .form-step[data-step="3"] .agent-table-row > div:has(.agent-object-badge) {
+          grid-column: 3;
+          grid-row: 1;
+        }
+
+        .form-step[data-step="3"] .agent-desc {
+          grid-column: 2 / 4;
+          grid-row: 2;
+        }
+      }
+
+      /* Polished skill table inspired by capability lists */
+      .form-step[data-step="3"] .agent-groups {
+        overflow: hidden;
+        border: 1px solid #dfe5ec;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 8px 22px rgba(31, 41, 55, 0.035);
+      }
+
+      .form-step[data-step="3"] .agent-table-head,
+      .form-step[data-step="3"] .agent-table-row {
+        grid-template-columns: 38px minmax(128px, 0.72fr) 92px minmax(260px, 1.7fr) 108px;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .form-step[data-step="3"] .agent-table-head {
+        min-height: 40px;
+        padding: 0 16px;
+        border-bottom: 1px solid #edf1f5;
+        background: #fbfcfd;
+        color: #697586;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0;
+      }
+
+      .form-step[data-step="3"] .agent-table-head span {
+        align-self: center;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .form-step[data-step="3"] .agent-table-head span:nth-child(4) {
+        display: inline;
+        grid-column: 5;
+      }
+
+      .form-step[data-step="3"] .agent-table-row {
+        grid-template-rows: 1fr;
+        min-height: 46px;
+        padding: 6px 16px;
+        border-bottom: 1px solid #edf1f5;
+        background: #fff;
+      }
+
+      .form-step[data-step="3"] .agent-table-row:hover {
+        background: #fafbfc;
+      }
+
+      .form-step[data-step="3"] .agent-table-row.selected {
+        background: #f8fafc;
+        box-shadow: inset 3px 0 0 #252a31;
+      }
+
+      .form-step[data-step="3"] .agent-table-row::before {
+        left: 22px;
+        width: 15px;
+        height: 15px;
+        border-color: #b8c1cc;
+        border-radius: 4px;
+      }
+
+      .form-step[data-step="3"] .agent-table-row::after {
+        left: 22px;
+        width: 4px;
+        height: 8px;
+        border-width: 0 1.8px 1.8px 0;
+      }
+
+      .form-step[data-step="3"] .agent-skill-name strong {
+        font-size: 14px;
+        font-weight: 760;
+      }
+
+      .form-step[data-step="3"] .agent-skill-name,
+      .form-step[data-step="3"] .agent-table-row > div:has(.agent-object-badge),
+      .form-step[data-step="3"] .agent-desc,
+      .form-step[data-step="3"] .agent-updated {
+        align-self: center;
+      }
+
+      .form-step[data-step="3"] .agent-object-badge {
+        height: 22px;
+        padding: 0 8px;
+        border-radius: 6px;
+        background: #f1f3f5;
+        color: #596575;
+        font-size: 12px;
+        font-weight: 680;
+      }
+
+      .form-step[data-step="3"] .agent-desc {
+        grid-column: 4;
+        grid-row: 1;
+        overflow: hidden;
+        color: #697586;
+        font-size: 12px;
+        line-height: 1.45;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .form-step[data-step="3"] .agent-updated {
+        grid-column: 5;
+        grid-row: 1;
+        color: #8a94a3;
+        font-size: 12px;
+        text-align: left;
+        white-space: nowrap;
+      }
+
+      .form-step[data-step="3"] .agent-card.disabled {
+        background: #fbfcfd;
+        opacity: 0.52;
+      }
+
+      .form-step[data-step="3"] .agent-card.disabled:hover {
+        background: #fbfcfd;
+      }
+
+      .skill-pagination {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        min-height: 44px;
+        padding: 0 16px;
+        border: 1px solid #dfe5ec;
+        border-top: 0;
+        border-radius: 0 0 12px 12px;
+        background: #fbfcfd;
+        color: #7b8492;
+        font-size: 12px;
+      }
+
+      .skill-pagination-info {
+        white-space: nowrap;
+      }
+
+      .skill-pagination-controls {
+        --skill-page-control-height: 34px;
+        display: inline-flex;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 8px;
+      }
+
+      .skill-page-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        min-width: 32px;
+        height: var(--skill-page-control-height);
+        padding: 0 10px;
+        border: 1px solid #dce3ec;
+        border-radius: 8px;
+        background: #fff;
+        color: #586273;
+        cursor: pointer;
+        font: inherit;
+        font-size: 12px;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .skill-page-button:first-child,
+      .skill-page-button:nth-child(4) {
+        min-width: 64px;
+      }
+
+      .skill-page-button:hover {
+        border-color: #b9c0c8;
+        background: #f7f8fa;
+      }
+
+      .skill-page-button.active {
+        border-color: #252a31;
+        background: #252a31;
+        color: #fff;
+      }
+
+      .skill-page-button[disabled] {
+        cursor: not-allowed;
+        opacity: 0.45;
+      }
+
+      .skill-page-size {
+        box-sizing: border-box;
+        min-width: 104px;
+        height: var(--skill-page-control-height);
+        padding: 0 30px 0 12px;
+        border: 1px solid #dce3ec;
+        border-radius: 8px;
+        appearance: none;
+        background-color: #fff;
+        background-image: linear-gradient(45deg, transparent 50%, #667085 50%), linear-gradient(135deg, #667085 50%, transparent 50%);
+        background-position: calc(100% - 16px) 14px, calc(100% - 10px) 14px;
+        background-repeat: no-repeat;
+        background-size: 6px 6px, 6px 6px;
+        color: #586273;
+        font: inherit;
+        font-size: 12px;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      /* Modern data-table treatment for skill selection */
+      body,
+      main {
+        background: #f8fafc;
+      }
+
+      main {
+        padding-bottom: 96px;
+      }
+
+      .form-step[data-step="3"] .field.full {
+        padding: 20px 24px 96px;
+        border: 1px solid #eceef3;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+      }
+
+      .form-step[data-step="3"] .agent-search {
+        height: 40px;
+        margin: 0 0 16px;
+        border-color: #e5e7eb;
+        border-radius: 10px;
+        background: #fff;
+        color: #111827;
+        font-size: 14px;
+      }
+
+      .form-step[data-step="3"] .agent-search:hover {
+        border-color: #cbd5e1;
+      }
+
+      .form-step[data-step="3"] .agent-search:focus {
+        border-color: #111827;
+        box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+      }
+
+      .form-step[data-step="3"] .agent-groups {
+        border: 1px solid #eceef3;
+        border-radius: 14px 14px 0 0;
+        box-shadow: none;
+      }
+
+      .form-step[data-step="3"] .agent-table-head,
+      .form-step[data-step="3"] .agent-table-row {
+        grid-template-columns: 36px minmax(130px, 0.68fr) 88px minmax(220px, 1.7fr) 92px;
+        gap: 12px;
+      }
+
+      .form-step[data-step="3"] .agent-table-head {
+        min-height: 48px;
+        padding: 0 20px;
+        border-bottom: 1px solid #f1f3f5;
+        background: #fafafb;
+        color: #6b7280;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      .form-step[data-step="3"] .agent-table-row {
+        min-height: 64px;
+        padding: 0 20px;
+        border-bottom: 1px solid #f1f3f5;
+        background: #fff;
+        transition:
+          background-color 160ms ease,
+          box-shadow 160ms ease,
+          transform 200ms ease;
+      }
+
+      .form-step[data-step="3"] .agent-table-row:hover {
+        background: #f8fafc;
+        transform: translateY(-1px);
+      }
+
+      .form-step[data-step="3"] .agent-table-row.selected {
+        background: #f3f4f6;
+        box-shadow: inset 4px 0 0 #111827;
+      }
+
+      .form-step[data-step="3"] .agent-table-row::before {
+        left: 29px;
+        width: 16px;
+        height: 16px;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 5px;
+        background: #fff;
+        box-shadow: none;
+        transition:
+          border-color 160ms ease,
+          background-color 160ms ease,
+          box-shadow 160ms ease,
+          transform 200ms ease;
+      }
+
+      .form-step[data-step="3"] .agent-table-row:hover::before {
+        border-color: #111827;
+        box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+        transform: translate(-50%, -50%) scale(1.05);
+      }
+
+      .form-step[data-step="3"] .agent-table-row.selected::before {
+        border-color: #111827;
+        background: #111827;
+      }
+
+      .form-step[data-step="3"] .agent-table-row::after {
+        left: 29px;
+        width: 4px;
+        height: 8px;
+        border-width: 0 1.8px 1.8px 0;
+      }
+
+      .form-step[data-step="3"] .agent-skill-name strong {
+        color: #111827;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.35;
+      }
+
+      .form-step[data-step="3"] .agent-object-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 26px;
+        padding: 0 8px;
+        border-radius: 5px;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1;
+        transition:
+          box-shadow 200ms ease,
+          transform 200ms ease;
+      }
+
+      .form-step[data-step="3"] .agent-object-badge:hover {
+        box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
+        transform: translateY(-1px);
+      }
+
+      .form-step[data-step="3"] .agent-table-row[data-agent-object="live-room"] .agent-object-badge {
+        background: #eaf7f1;
+        color: #168260;
+      }
+
+      .form-step[data-step="3"] .agent-table-row[data-agent-object="product"] .agent-object-badge {
+        background: #eef4ff;
+        color: #2f5fa8;
+      }
+
+      .form-step[data-step="3"] .agent-desc {
+        overflow: hidden;
+        color: #6b7280;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 400;
+        line-height: 20px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .form-step[data-step="3"] .agent-desc:hover {
+        color: #374151;
+      }
+
+      .form-step[data-step="3"] .agent-table-row.desc-expanded {
+        min-height: 88px;
+      }
+
+      .form-step[data-step="3"] .agent-table-row.desc-expanded .agent-desc {
+        overflow: visible;
+        align-self: center;
+        display: block;
+        white-space: normal;
+        text-overflow: clip;
+      }
+
+      .form-step[data-step="3"] .agent-updated {
+        display: block;
+        overflow: hidden;
+        color: #9ca3af;
+        font-size: 13px;
+        font-weight: 400;
+        text-overflow: clip;
+        white-space: nowrap;
+      }
+
+      .form-step[data-step="3"] .agent-updated::before {
+        content: none;
+      }
+
+      .skill-pagination {
+        margin-bottom: 36px;
+        min-height: 52px;
+        padding: 10px 16px;
+        border-color: #eceef3;
+        border-radius: 0 0 14px 14px;
+        background: #fff;
+        color: #6b7280;
+      }
+
+      .skill-pagination-controls {
+        --skill-page-control-height: 28px;
+        gap: 6px;
+      }
+
+      .skill-page-button,
+      .skill-page-size {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: var(--skill-page-control-height);
+        height: var(--skill-page-control-height);
+        max-height: var(--skill-page-control-height);
+        border-color: #e5e7eb;
+        color: #4b5563;
+        border-radius: 7px;
+        transition:
+          border-color 200ms ease,
+          background-color 200ms ease,
+          color 200ms ease,
+          box-shadow 200ms ease,
+          transform 200ms ease;
+      }
+
+      .skill-page-button {
+        padding: 0 9px;
+      }
+
+      .skill-page-button:first-child,
+      .skill-page-button:nth-child(4) {
+        min-width: 58px;
+      }
+
+      .skill-page-size {
+        display: inline-block;
+        min-width: 88px;
+        width: 88px;
+        min-height: var(--skill-page-control-height) !important;
+        height: var(--skill-page-control-height) !important;
+        max-height: var(--skill-page-control-height);
+        padding: 0 24px 0 10px;
+        line-height: 26px;
+        vertical-align: middle;
+        background-position: calc(100% - 14px) 11px, calc(100% - 9px) 11px;
+      }
+
+      .skill-page-button:hover {
+        border-color: #cbd5e1;
+        background: #f8fafc;
+        transform: translateY(-1px);
+      }
+
+      .skill-page-button.active {
+        border-color: #111827;
+        background: #111827;
+        color: #fff;
+        box-shadow: 0 5px 12px rgba(17, 24, 39, 0.14);
+      }
+
+      .skill-page-size:hover {
+        border-color: #cbd5e1;
+        background-color: #f8fafc;
+        transform: translateY(-1px);
+      }
+
+      @media (max-width: 760px) {
+        .form-step[data-step="3"] .agent-table-row {
+          grid-template-columns: 28px minmax(0, 1fr) auto;
+          min-height: 74px;
+          padding: 10px 12px;
+        }
+
+        .form-step[data-step="3"] .agent-table-row::before,
+        .form-step[data-step="3"] .agent-table-row::after {
+          left: 20px;
+        }
+
+        .form-step[data-step="3"] .agent-desc {
+          white-space: normal;
+        }
+
+        .form-step[data-step="3"] .agent-updated {
+          grid-column: 2 / 4;
+          grid-row: 3;
+        }
+
+        .skill-pagination {
+          align-items: flex-start;
+          flex-direction: column;
+          padding: 12px;
+        }
+      }
+
+      .agent-copy {
+        display: grid;
+        gap: 5px;
+        min-width: 0;
+      }
+
+      .agent-copy strong {
+        color: inherit;
+        font-size: 14px;
+        font-weight: 760;
+      }
+
+      .agent-copy small {
+        color: #737d8c;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .agent-card.disabled .agent-copy small {
+        color: #b1bac5;
+      }
+
+      .agent-card.agent-hidden {
+        display: none;
+      }
+
+      .agent-group.agent-hidden {
+        display: none;
+      }
+
+      #perceptionObjectField[hidden],
+      #frontendSearchConfig[hidden],
+      #liveRoomRuleConfig[hidden],
+      [data-search-type-option][hidden] {
+        display: none !important;
+      }
+
+      .ranking-config-list {
+        display: grid;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .keyword-config-row,
+      .ranking-config-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 160px;
+        gap: 14px;
+        align-items: start;
+      }
+
+      .keyword-config-row .field,
+      .ranking-config-row .field {
+        gap: 7px;
+      }
+
+      .ranking-multi-select summary {
+        min-height: 42px;
+        padding: 0 13px;
+        border-color: #dce3ec;
+        color: #48566b;
+        font-size: 13px;
+      }
+
+      .ranking-multi-select summary::after {
+        color: #4f5967;
+        font-size: 13px;
+      }
+
+      .ranking-multi-select:hover summary {
+        border-color: #b9c0c8;
+      }
+
+      .ranking-multi-select[open] summary {
+        border-color: var(--form-blue);
+        box-shadow: 0 0 0 2px rgba(23, 25, 28, 0.08);
+      }
+
+      @media (max-width: 760px) {
+        .keyword-config-row,
+        .ranking-config-row {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      #ownerTeam,
+      #dataSourceSelect {
+        width: 100%;
+        min-height: 42px;
+        border: 1px solid #dce3ec;
+        border-radius: 6px;
+        outline: 0;
+        appearance: none;
+        -webkit-appearance: none;
+        padding: 0 42px 0 13px;
+        color: #48566b;
+        font: inherit;
+        font-size: 13px;
+        padding-right: 42px;
+        background-color: #fff;
+        background-image:
+          linear-gradient(45deg, transparent 50%, #4f5967 50%),
+          linear-gradient(135deg, #4f5967 50%, transparent 50%);
+        background-position:
+          calc(100% - 20px) 50%,
+          calc(100% - 14px) 50%;
+        background-size:
+          6px 6px,
+          6px 6px;
+        background-repeat: no-repeat;
+      }
+
+      #ownerTeam:hover,
+      #dataSourceSelect:hover {
+        border-color: #b9c0c8;
+        background-image:
+          linear-gradient(45deg, transparent 50%, #252a31 50%),
+          linear-gradient(135deg, #252a31 50%, transparent 50%);
+      }
+
+      #ownerTeam:focus,
+      #dataSourceSelect:focus {
+        border-color: var(--form-blue);
+        box-shadow: 0 0 0 2px rgba(23, 25, 28, 0.08);
+      }
+
+      #intervalUnit {
+        appearance: none;
+        -webkit-appearance: none;
+        padding-right: 46px;
+        background-color: #fff;
+        background-image:
+          linear-gradient(45deg, transparent 50%, #4f5967 50%),
+          linear-gradient(135deg, #4f5967 50%, transparent 50%);
+        background-position:
+          calc(100% - 30px) 50%,
+          calc(100% - 24px) 50%;
+        background-repeat: no-repeat;
+        background-size:
+          6px 6px,
+          6px 6px;
+      }
+
+      #intervalUnit:hover {
+        border-color: #b9c0c8;
+        background-image:
+          linear-gradient(45deg, transparent 50%, #252a31 50%),
+          linear-gradient(135deg, #252a31 50%, transparent 50%);
       }
 
       .rule-group {
@@ -3373,7 +4801,7 @@
           grid-template-columns: 1fr;
         }
 
-        .form-step[data-step="4"] .inline-field,
+        .form-step[data-step="5"] .inline-field,
         .time-range {
           width: 100%;
         }
@@ -3433,16 +4861,19 @@
 
           <nav class="stepper" aria-label="创建任务步骤">
             <button class="step-tab active" type="button" data-step-target="1">
-              <span class="step-number">1</span><span class="step-label">数据源</span>
+              <span class="step-number">1</span><span class="step-label">基础信息</span>
             </button>
             <button class="step-tab" type="button" data-step-target="2">
-              <span class="step-number">2</span><span class="step-label">圈选去重</span>
+              <span class="step-number">2</span><span class="step-label">数据源</span>
             </button>
             <button class="step-tab" type="button" data-step-target="3">
-              <span class="step-number">3</span><span class="step-label">治理动作</span>
+              <span class="step-number">3</span><span class="step-label">分析技能</span>
             </button>
             <button class="step-tab" type="button" data-step-target="4">
-              <span class="step-number">4</span><span class="step-label">任务时间</span>
+              <span class="step-number">4</span><span class="step-label">治理动作</span>
+            </button>
+            <button class="step-tab" type="button" data-step-target="5">
+              <span class="step-number">5</span><span class="step-label">任务时间</span>
             </button>
           </nav>
 
@@ -3450,101 +4881,111 @@
             <form id="taskForm">
               <section class="form-step active" data-step="1">
                 <div class="step-heading">
-                  <h2>选择数据源</h2>
+                  <h2>基础信息</h2>
                 </div>
                 <label class="field full" style="margin-bottom: 24px;">
                   <span class="field-label">任务名称<span class="required">*</span></span>
-                  <input id="taskName" type="text" placeholder="请输入任务名称" />
+                  <input id="taskName" type="text" maxlength="30" placeholder="请输入任务名称，最多30字" />
                 </label>
                 <label class="field full">
-                  <span class="field-label">感知场景<span class="required">*</span></span>
-                  <select id="signalSource" name="signalSource">
-                    <option value="inspection" selected>巡检捉虫</option>
+                  <span class="field-label">归属团队<span class="required">*</span></span>
+                  <select id="ownerTeam" name="ownerTeam">
+                    <option value="g1-apparel" selected>G1-大服饰</option>
+                    <option value="g2-local-cross">G2-快消&amp;跨境</option>
+                    <option value="g3-durable-virtual">G3-耐消&amp;虚拟</option>
+                    <option value="g7-daily-fresh-food">G7-日用生鲜&amp;食品</option>
+                    <option value="g8-jewelry-luxury-medical">G8-珠宝二奢&amp;医疗</option>
+                    <option value="other">其他</option>
                   </select>
                 </label>
-                <div class="field full" style="margin-top: 24px;">
-                  <span class="field-label">感知对象<span class="required">*</span></span>
+                <label class="field full" style="margin-top: 24px;">
+                  <span class="field-label">数据源类型<span class="required">*</span></span>
+                  <select id="dataSourceSelect" name="dataSource">
+                    <option value="frontend-search" selected>前端搜索</option>
+                  </select>
+                </label>
+                <div class="field full" id="perceptionObjectField" style="margin-top: 24px;">
+                  <span class="field-label">感知对象类型<span class="required">*</span></span>
                   <div class="source-selector" id="perceptionObjectSelector">
                     <label><input type="radio" name="perceptionObject" value="live-room" checked /><span>直播间</span></label>
                     <label><input type="radio" name="perceptionObject" value="product" /><span>商品</span></label>
                   </div>
                 </div>
-
-                <div class="field full" style="margin-top: 24px;">
-                  <span class="field-label">巡检类别<span class="required">*</span></span>
-                  <div class="source-selector" id="inspectionTypeSelector">
-                    <label><input type="radio" name="inspectionType" value="ranking" checked /><span>榜单巡检</span></label>
-                    <label><input type="radio" name="inspectionType" value="special" /><span>专项巡检</span></label>
-                  </div>
-                </div>
-
-                <div class="smart-rule-stack" style="margin-top: 24px;">
-                  <div class="inspection-config-panel" data-inspection-config="ranking">
-                    <div class="field-grid">
-                      <div class="field">
-                        <span class="field-label">榜单名称<span class="required">*</span></span>
-                        <details class="multi-dropdown" data-placeholder="请选择榜单">
-                          <summary>男装榜</summary>
-                          <div class="multi-dropdown-menu">
-                            <label class="multi-dropdown-option"><input type="checkbox" data-select-all />全选</label>
-                            <label class="multi-dropdown-option"><input type="checkbox" value="男装榜" checked />男装榜</label>
-                            <label class="multi-dropdown-option"><input type="checkbox" value="女装榜" />女装榜</label>
-                            <label class="multi-dropdown-option"><input type="checkbox" value="生鲜榜" />生鲜榜</label>
-                            <label class="multi-dropdown-option"><input type="checkbox" value="食品饮料榜" />食品饮料榜</label>
-                            <label class="multi-dropdown-option"><input type="checkbox" value="家电榜" />家电榜</label>
-                          </div>
-                        </details>
-                      </div>
-                      <label class="field">
-                        <span class="field-label">Top 数<span class="required">*</span></span>
-                        <input type="number" value="50" min="1" max="100" />
-                      </label>
-                    </div>
-                  </div>
-
-                  <div class="inspection-config-panel" data-inspection-config="special" hidden>
-                    <div class="field-grid">
-                      <div class="field">
-                        <span class="field-label">专项名称<span class="required">*</span></span>
-                        <details class="multi-dropdown" data-placeholder="请选择专项">
-                          <summary>榴莲虚假宣传专项</summary>
-                          <div class="multi-dropdown-menu">
-                            <label class="multi-dropdown-option"><input type="checkbox" data-select-all />全选</label>
-                            <label class="multi-dropdown-option"><input type="checkbox" value="榴莲虚假宣传专项" checked />榴莲虚假宣传专项</label>
-                            <label class="multi-dropdown-option"><input type="checkbox" value="空调直播间虚假宣传专项" />空调直播间虚假宣传专项</label>
-                            <label class="multi-dropdown-option"><input type="checkbox" value="服装直播间材质违规专项" />服装直播间材质违规专项</label>
-                            <label class="multi-dropdown-option"><input type="checkbox" value="生鲜直播间虚假宣传专项" />生鲜直播间虚假宣传专项</label>
-                          </div>
-                        </details>
-                      </div>
-                      <label class="field">
-                        <span class="field-label">单次巡检数<span class="required">*</span></span>
-                        <input type="number" value="20" min="1" max="100" />
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
               </section>
 
               <section class="form-step" data-step="2">
                 <div class="step-heading">
-                  <h2>配置圈选去重</h2>
+                  <h2>数据源</h2>
+                </div>
+                <div id="frontendSearchConfig">
+                  <div class="field full" style="margin-top: 24px;">
+                    <span class="field-label">搜索类型<span class="required">*</span></span>
+                    <div class="source-selector" id="searchTypeSelector">
+                      <label><input type="radio" name="searchType" value="keyword" checked /><span>关键词搜索</span></label>
+                      <label data-search-type-option="ranking"><input type="radio" name="searchType" value="ranking" /><span>榜单搜索</span></label>
+                    </div>
+                  </div>
+                  <div class="smart-rule-stack" style="margin-top: 24px;">
+                    <div class="search-config-panel" data-search-config="keyword">
+                      <div class="keyword-config-row">
+                        <label class="field">
+                          <span class="field-label">关键词<span class="required">*</span></span>
+                          <input id="searchKeywords" type="text" placeholder="请输入关键词，多个关键词逗号分隔，最多输入xx个" value="请输入关键词，多个关键词逗号分隔，最多输入xx个" />
+                        </label>
+                        <label class="field">
+                          <span class="field-label">搜索对象数量<span class="required">*</span></span>
+                          <input id="searchObjectCount" type="number" min="1" max="1000" value="100" placeholder="请输入搜索对象数量" />
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="search-config-panel" data-search-config="ranking" hidden>
+                      <div class="ranking-config-list" id="rankingConfigList">
+                        <div class="ranking-config-row">
+                          <label class="field">
+                            <span class="field-label">榜单名称<span class="required">*</span></span>
+                            <details class="ranking-multi-select multi-dropdown" data-placeholder="请选择榜单">
+                              <summary>男装榜</summary>
+                              <div class="multi-dropdown-menu">
+                                <label class="multi-dropdown-option"><input type="checkbox" data-select-all />全选</label>
+                                <label class="multi-dropdown-option"><input type="checkbox" name="searchRankingName" value="男装榜" checked />男装榜</label>
+                                <label class="multi-dropdown-option"><input type="checkbox" name="searchRankingName" value="女装榜" />女装榜</label>
+                                <label class="multi-dropdown-option"><input type="checkbox" name="searchRankingName" value="生鲜榜" />生鲜榜</label>
+                                <label class="multi-dropdown-option"><input type="checkbox" name="searchRankingName" value="食品饮料榜" />食品饮料榜</label>
+                                <label class="multi-dropdown-option"><input type="checkbox" name="searchRankingName" value="家电榜" />家电榜</label>
+                              </div>
+                            </details>
+                          </label>
+                          <label class="field">
+                            <span class="field-label">Top N<span class="required">*</span></span>
+                            <input class="ranking-top-input" name="searchRankingTop" type="number" value="50" min="1" max="100" />
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                <div class="smart-rule-stack">
+                <div class="smart-rule-stack" id="liveRoomRuleConfig" style="margin-top: 32px;">
                   <section class="rule-section">
                     <div class="rule-section-head">
                       <h3>圈选规则</h3>
                     </div>
-                    <div class="dynamic-rule-list" id="hitRuleList"></div>
-                    <button class="add-rule-button add-rule-button-wide" id="addHitRule" type="button">＋ 添加条件</button>
-                    <label class="field full" style="margin-top: 18px;">
-                      <span class="field-label relation-label">
-                        条件关系
-                      </span>
-                      <input id="conditionRelation" placeholder="支持逻辑表达式与&amp;或|，如1&amp;(2|3)" />
-                    </label>
+                    <div class="rule-editor-card">
+                      <div class="rule-editor-title">
+                        <strong>直播间圈选规则</strong>
+                      </div>
+                      <div class="rule-editor-body">
+                        <div class="dynamic-rule-list" id="hitRuleList"></div>
+                        <div class="rule-editor-footer">
+                          <button class="add-rule-button" id="addHitRule" type="button">＋ 添加条件</button>
+                          <label class="rule-relation-field">
+                            <span>逻辑表达式</span>
+                            <input id="conditionRelation" placeholder="支持逻辑表达式与&amp;或|，如1&amp;(2|3)" />
+                          </label>
+                        </div>
+                      </div>
+                    </div>
                   </section>
 
                   <section class="rule-section">
@@ -3559,19 +5000,152 @@
 
               <section class="form-step" data-step="3">
                 <div class="step-heading">
-                  <h2>选择治理动作</h2>
+                  <h2>分析技能</h2>
                 </div>
-                <div class="choice-grid">
-                  <label class="choice-card selected">
-                    <input type="radio" name="governance" value="auto-report" checked />
-                    <span class="choice-check">✓</span>
-                    <span class="choice-title">自动上报研判</span>
-                    <span class="choice-desc">将命中的风险对象自动推送至研判平台。</span>
-                  </label>
+                <div class="field full">
+                  <input class="agent-search" id="agentSearch" type="search" placeholder="搜索分析技能名称" />
+                  <div class="agent-groups" id="agentList">
+                    <section class="agent-group" data-agent-group="live-room">
+                      <h3>直播间</h3>
+                      <div class="agent-form-table">
+                        <div class="agent-table-head">
+                          <span>技能名称</span>
+                          <span>适用对象</span>
+                          <span>简述</span>
+                          <span>更新时间</span>
+                        </div>
+                          <div class="agent-card agent-table-row" data-agent-object="live-room" data-agent-name="榴莲">
+                            <input type="radio" name="selectedAgent" value="榴莲" checked />
+                            <div class="agent-skill-name"><span class="agent-dot"></span><strong>榴莲</strong></div>
+                            <div><span class="agent-object-badge">直播间</span></div>
+                            <div class="agent-desc">识别榴莲直播间虚假宣传、产地夸大和低价引流风险。</div>
+                            <div class="agent-updated">2026-07-06</div>
+                          </div>
+                          <div class="agent-card agent-table-row" data-agent-object="live-room" data-agent-name="红薯">
+                            <input type="radio" name="selectedAgent" value="红薯" />
+                            <div class="agent-skill-name"><span class="agent-dot"></span><strong>红薯</strong></div>
+                            <div><span class="agent-object-badge">直播间</span></div>
+                            <div class="agent-desc">识别红薯直播间规格不实、功效宣传和价格异常风险。</div>
+                            <div class="agent-updated">2026-07-05</div>
+                          </div>
+                          <div class="agent-card agent-table-row" data-agent-object="live-room" data-agent-name="书画">
+                            <input type="radio" name="selectedAgent" value="书画" />
+                            <div class="agent-skill-name"><span class="agent-dot"></span><strong>书画</strong></div>
+                            <div><span class="agent-object-badge">直播间</span></div>
+                            <div class="agent-desc">识别书画直播间名家背书、收藏价值和授权资质风险。</div>
+                            <div class="agent-updated">2026-07-04</div>
+                          </div>
+                          <div class="agent-card agent-table-row" data-agent-object="live-room" data-agent-name="钱币">
+                            <input type="radio" name="selectedAgent" value="钱币" />
+                            <div class="agent-skill-name"><span class="agent-dot"></span><strong>钱币</strong></div>
+                            <div><span class="agent-object-badge">直播间</span></div>
+                            <div class="agent-desc">识别钱币直播间稀缺性夸大、评级误导和价格引流风险。</div>
+                            <div class="agent-updated">2026-07-04</div>
+                          </div>
+                          <div class="agent-card agent-table-row" data-agent-object="live-room" data-agent-name="植物种子苗">
+                            <input type="radio" name="selectedAgent" value="植物种子苗" />
+                            <div class="agent-skill-name"><span class="agent-dot"></span><strong>植物种子苗</strong></div>
+                            <div><span class="agent-object-badge">直播间</span></div>
+                            <div class="agent-desc">识别种苗直播间品种混淆、成活承诺和资质缺失风险。</div>
+                            <div class="agent-updated">2026-07-03</div>
+                          </div>
+                          <div class="agent-card agent-table-row" data-agent-object="live-room" data-agent-name="农药">
+                            <input type="radio" name="selectedAgent" value="农药" />
+                            <div class="agent-skill-name"><span class="agent-dot"></span><strong>农药</strong></div>
+                            <div><span class="agent-object-badge">直播间</span></div>
+                            <div class="agent-desc">识别农药直播间禁限用、功效夸大和登记信息异常风险。</div>
+                            <div class="agent-updated">2026-07-02</div>
+                          </div>
+                          <div class="agent-card agent-table-row" data-agent-object="live-room" data-agent-name="水果">
+                            <input type="radio" name="selectedAgent" value="水果" />
+                            <div class="agent-skill-name"><span class="agent-dot"></span><strong>水果</strong></div>
+                            <div><span class="agent-object-badge">直播间</span></div>
+                            <div class="agent-desc">识别水果直播间产地、等级、规格和售后承诺相关风险。</div>
+                            <div class="agent-updated">2026-07-01</div>
+                          </div>
+                      </div>
+                    </section>
+                    <section class="agent-group" data-agent-group="product">
+                      <h3>商品</h3>
+                      <div class="agent-form-table">
+                        <div class="agent-table-head">
+                          <span>技能名称</span>
+                          <span>适用对象</span>
+                          <span>简述</span>
+                          <span>更新时间</span>
+                        </div>
+                          <div class="agent-card agent-table-row" data-agent-object="product" data-agent-name="夏凉电器-虚假宣传">
+                            <input type="radio" name="selectedAgent" value="夏凉电器-虚假宣传" />
+                            <div class="agent-skill-name"><span class="agent-dot"></span><strong>夏凉电器-虚假宣传</strong></div>
+                            <div><span class="agent-object-badge">商品</span></div>
+                            <div class="agent-desc">识别空调、空调扇、风扇商品的降温效果和参数宣传风险。</div>
+                            <div class="agent-updated">2026-07-06</div>
+                          </div>
+                          <div class="agent-card agent-table-row" data-agent-object="product" data-agent-name="夏凉电器-假货山寨">
+                            <input type="radio" name="selectedAgent" value="夏凉电器-假货山寨" />
+                            <div class="agent-skill-name"><span class="agent-dot"></span><strong>夏凉电器-假货山寨</strong></div>
+                            <div><span class="agent-object-badge">商品</span></div>
+                            <div class="agent-desc">识别夏凉电器商品品牌冒用、授权异常和山寨外观风险。</div>
+                            <div class="agent-updated">2026-07-05</div>
+                          </div>
+                          <div class="agent-card agent-table-row" data-agent-object="product" data-agent-name="植物种子苗">
+                            <input type="radio" name="selectedAgent" value="植物种子苗" />
+                            <div class="agent-skill-name"><span class="agent-dot"></span><strong>植物种子苗</strong></div>
+                            <div><span class="agent-object-badge">商品</span></div>
+                            <div class="agent-desc">识别植物种子苗商品品类、资质、承诺和适种区域风险。</div>
+                            <div class="agent-updated">2026-07-03</div>
+                          </div>
+                          <div class="agent-card agent-table-row" data-agent-object="product" data-agent-name="农药">
+                            <input type="radio" name="selectedAgent" value="农药" />
+                            <div class="agent-skill-name"><span class="agent-dot"></span><strong>农药</strong></div>
+                            <div><span class="agent-object-badge">商品</span></div>
+                            <div class="agent-desc">识别农药商品登记证、适用范围、禁限售和功效宣传风险。</div>
+                            <div class="agent-updated">2026-07-02</div>
+                          </div>
+                          <div class="agent-card agent-table-row" data-agent-object="product" data-agent-name="生鲜灯">
+                            <input type="radio" name="selectedAgent" value="生鲜灯" />
+                            <div class="agent-skill-name"><span class="agent-dot"></span><strong>生鲜灯</strong></div>
+                            <div><span class="agent-object-badge">商品</span></div>
+                            <div class="agent-desc">识别生鲜灯商品误导展示、适用场景和合规描述风险。</div>
+                            <div class="agent-updated">2026-07-01</div>
+                          </div>
+                      </div>
+                    </section>
+                  </div>
+                  <div class="skill-pagination" aria-label="分析技能分页">
+                    <span class="skill-pagination-info">共 12 个技能</span>
+                    <div class="skill-pagination-controls">
+                      <button class="skill-page-button" type="button" disabled>上一页</button>
+                      <button class="skill-page-button active" type="button">1</button>
+                      <button class="skill-page-button" type="button">2</button>
+                      <button class="skill-page-button" type="button">下一页</button>
+                      <select class="skill-page-size" aria-label="每页数量">
+                        <option>10 / 页</option>
+                        <option>20 / 页</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
+
               </section>
 
               <section class="form-step" data-step="4">
+                <div class="step-heading">
+                  <h2>治理动作</h2>
+                </div>
+                <div class="field full">
+                  <div class="choice-grid">
+                    <label class="choice-card selected">
+                      <input type="radio" name="governance" value="auto-report" checked />
+                      <span class="choice-check">✓</span>
+                      <span class="choice-title">自动上报研判</span>
+                      <span class="choice-desc">将命中的风险对象自动推送至研判平台。</span>
+                    </label>
+                  </div>
+                </div>
+              </section>
+
+              <section class="form-step" data-step="5">
                 <div class="step-heading">
                   <h2>配置任务时间</h2>
                 </div>
@@ -3641,7 +5215,14 @@
       const nextButton = document.querySelector("#nextStep");
       const createButton = document.querySelector("#createTask");
       const cancelButton = document.querySelector("#cancelTask");
-      const inspectionTypeInputs = document.querySelectorAll('input[name="inspectionType"]');
+      const perceptionObjectInputs = document.querySelectorAll('input[name="perceptionObject"]');
+      const agentSearchInput = document.querySelector("#agentSearch");
+      const dataSourceSelect = document.querySelector("#dataSourceSelect");
+      const perceptionObjectField = document.querySelector("#perceptionObjectField");
+      const frontendSearchConfig = document.querySelector("#frontendSearchConfig");
+      const liveRoomRuleConfig = document.querySelector("#liveRoomRuleConfig");
+      const rankingSearchOption = document.querySelector('[data-search-type-option="ranking"]');
+      const searchTypeInputs = document.querySelectorAll('input[name="searchType"]');
       const hitRuleList = document.querySelector("#hitRuleList");
 
       const hitRuleFields = [
@@ -3653,13 +5234,85 @@
         },
       ];
 
-      function updateInspectionType() {
-        const selectedType = document.querySelector('input[name="inspectionType"]:checked').value;
-        inspectionTypeInputs.forEach((input) => {
+      function updateSearchType() {
+        const selectedType = document.querySelector('input[name="searchType"]:checked').value;
+        searchTypeInputs.forEach((input) => {
           input.closest("label").classList.toggle("selected", input.checked);
         });
-        document.querySelectorAll("[data-inspection-config]").forEach((panel) => {
-          panel.hidden = panel.dataset.inspectionConfig !== selectedType;
+        document.querySelectorAll("[data-search-config]").forEach((panel) => {
+          panel.hidden = panel.dataset.searchConfig !== selectedType;
+        });
+      }
+
+      function updateDataSource() {
+        const isFrontendSearch = dataSourceSelect.value === "frontend-search";
+        perceptionObjectField.hidden = !isFrontendSearch;
+        frontendSearchConfig.hidden = !isFrontendSearch;
+        updatePerceptionObjectConfig();
+      }
+
+      function updatePerceptionObjectConfig() {
+        const isFrontendSearch = dataSourceSelect.value === "frontend-search";
+        const selectedObject = document.querySelector('input[name="perceptionObject"]:checked').value;
+        const isLiveRoom = selectedObject === "live-room";
+        rankingSearchOption.hidden = !isFrontendSearch || !isLiveRoom;
+        rankingSearchOption.setAttribute("aria-hidden", String(!isFrontendSearch || !isLiveRoom));
+        rankingSearchOption.querySelector("input").disabled = !isFrontendSearch || !isLiveRoom;
+        if ((!isFrontendSearch || !isLiveRoom) && document.querySelector('input[name="searchType"]:checked').value === "ranking") {
+          document.querySelector('input[name="searchType"][value="keyword"]').checked = true;
+        }
+        liveRoomRuleConfig.hidden = !isFrontendSearch || !isLiveRoom;
+        liveRoomRuleConfig.setAttribute("aria-hidden", String(!isFrontendSearch || !isLiveRoom));
+        updateSearchType();
+        updateAgentList();
+      }
+
+      function updateAgentList() {
+        const selectedObject = document.querySelector('input[name="perceptionObject"]:checked').value;
+        const keyword = agentSearchInput.value.trim().toLowerCase();
+        const enabledInputs = [];
+        const agentInputs = document.querySelectorAll('input[name="selectedAgent"]');
+        agentInputs.forEach((input) => {
+          const card = input.closest(".agent-card");
+          const available = card.dataset.agentObject === selectedObject;
+          const matchesSearch = !keyword || card.dataset.agentName.toLowerCase().includes(keyword);
+          input.disabled = !available;
+          card.classList.toggle("disabled", !available);
+          card.classList.toggle("agent-hidden", !matchesSearch);
+          if (available && matchesSearch) enabledInputs.push(input);
+        });
+        document.querySelectorAll(".agent-group").forEach((group) => {
+          const hasVisibleCard = Boolean(group.querySelector(".agent-card:not(.agent-hidden)"));
+          group.classList.toggle("agent-hidden", !hasVisibleCard);
+        });
+        const checkedAgent = document.querySelector('input[name="selectedAgent"]:checked');
+        if (checkedAgent?.disabled || checkedAgent?.closest(".agent-card").classList.contains("agent-hidden")) {
+          document.querySelector('input[name="selectedAgent"]:checked').checked = false;
+        }
+        if (!document.querySelector('input[name="selectedAgent"]:checked') && enabledInputs.length) {
+          enabledInputs[0].checked = true;
+        }
+        agentInputs.forEach((input) => {
+          input.closest(".agent-card").classList.toggle("selected", input.checked && !input.disabled);
+        });
+      }
+
+      function bindAgentRows() {
+        document.querySelectorAll(".agent-card").forEach((row) => {
+          row.addEventListener("click", (event) => {
+            const input = row.querySelector('input[name="selectedAgent"]');
+            if (input.disabled || row.classList.contains("agent-hidden")) return;
+            input.checked = true;
+            updateAgentList();
+          });
+        });
+
+        document.querySelectorAll(".agent-desc").forEach((desc) => {
+          desc.title = "点击查看完整简述";
+          desc.addEventListener("click", (event) => {
+            event.stopPropagation();
+            desc.closest(".agent-table-row")?.classList.toggle("desc-expanded");
+          });
         });
       }
 
@@ -3773,7 +5426,7 @@
       }
 
       function showStep(step) {
-        currentStep = Math.max(1, Math.min(4, step));
+        currentStep = Math.max(1, Math.min(5, step));
         steps.forEach((item) => item.classList.toggle("active", Number(item.dataset.step) === currentStep));
         stepTabs.forEach((item) => {
           const number = Number(item.dataset.stepTarget);
@@ -3782,14 +5435,18 @@
         });
         prevButton.hidden = currentStep === 1;
         cancelButton.hidden = currentStep !== 1;
-        nextButton.hidden = currentStep === 4;
-        createButton.hidden = currentStep !== 4;
+        nextButton.hidden = currentStep === 5;
+        createButton.hidden = currentStep !== 5;
       }
 
       document.querySelectorAll('input[name="governance"]').forEach((input) => {
         input.addEventListener("change", updateGovernanceCards);
       });
-      inspectionTypeInputs.forEach((input) => input.addEventListener("change", updateInspectionType));
+      perceptionObjectInputs.forEach((input) => input.addEventListener("change", updatePerceptionObjectConfig));
+      agentSearchInput.addEventListener("input", updateAgentList);
+      bindAgentRows();
+      dataSourceSelect.addEventListener("change", updateDataSource);
+      searchTypeInputs.forEach((input) => input.addEventListener("change", updateSearchType));
       document.querySelector("#addHitRule").addEventListener("click", () => addHitRule());
       document.querySelectorAll('input[name="deadlineType"]').forEach((input) => {
         input.addEventListener("change", () => {
@@ -3804,7 +5461,8 @@
       nextButton.addEventListener("click", () => showStep(currentStep + 1));
       createButton.addEventListener("click", () => location.href = "task-list.html");
       document.querySelectorAll(".multi-dropdown").forEach(bindMultiDropdown);
-      updateInspectionType();
+      updateDataSource();
+      updateAgentList();
       updateGovernanceCards();
       addHitRule("liveReportCount", "大等于", ["25"]);
     </script>
